@@ -1,0 +1,1711 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.7.25">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Nextflow Development - Developing Modularised Workflows – Peter Mac Nextflow Workshop</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-fe31d7bd2deb2a321418d01dba375a64.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-a14e3238c51140e99ccc48519b6ed9ce.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+</head>
+
+<body class="nav-fixed fullcontent quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../index.html">
+    <span class="navbar-title">Peter Mac Nextflow Workshop</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../index.html"> 
+<span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../workshops/00_setup.html"> 
+<span class="menu-text">Setup</span></a>
+  </li>  
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-sessions" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Sessions</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-sessions">    
+        <li>
+    <a class="dropdown-item" href="../sessions/1_intro_run_nf.html">
+ <span class="dropdown-text">Introduction to Nextflow and Nf-core</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../sessions/2_nf_dev_intro.html">
+ <span class="dropdown-text">Developing bioinformatics workflows with Nextflow</span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-workshop" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Workshop</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-workshop">    
+        <li>
+    <a class="dropdown-item" href="../workshops/1.1_intro_nextflow.html">
+ <span class="dropdown-text">Introduction to Nextflow</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../workshops/1.2_intro_nf_core.html">
+ <span class="dropdown-text">Introduction to nf-core</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../workshops/2.1_customise_and_run.html">
+ <span class="dropdown-text">Customising &amp; running nf-core pipelines</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../workshops/2.2_troubleshooting.html">
+ <span class="dropdown-text">Troubleshooting Nextflow run</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../workshops/2.3_tips_and_tricks.html">
+ <span class="dropdown-text">Best practise, tips and tricks</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../workshops/3.1_creating_a_workflow.html">
+ <span class="dropdown-text">Creating a workflow</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../workshops/4.1_modules.html">
+ <span class="dropdown-text">Modularisation</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../workshops/5.1_nf_core_template.html">
+ <span class="dropdown-text">Nf-core Template</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../workshops/6.1_operators.html">
+ <span class="dropdown-text">Nextflow Operators</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../workshops/7.1_metadata_propagation.html">
+ <span class="dropdown-text">Metadata Propagation</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../workshops/8.1_scatter_gather_output.html">
+ <span class="dropdown-text">Output, scatter, and Gather</span></a>
+  </li>  
+    </ul>
+  </li>
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title"><strong>Nextflow Development - Developing Modularised Workflows</strong></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Objectives
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li>Develop a basic Nextflow workflow with nf-core templates</li>
+<li>Test and set up profiles for a Nextflow workflow</li>
+<li>Create conditional processes, and conditional scripts within a processs</li>
+<li>Read data of different types into a Nextflow workflow</li>
+</ul>
+</div>
+</div>
+<section id="environment-setup" class="level2">
+<h2 class="anchored" data-anchor-id="environment-setup"><strong>Environment Setup</strong></h2>
+<p>Set up an interactive shell to run our Nextflow workflow:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>srun --pty -p prod_short --mem 8GB --mincpus 2 -t 0-2:00 bash</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Load the required modules to run Nextflow:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>module load nextflow/23.04.1</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>module load singularity/3.7.3</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Set the singularity cache environment variable:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>export NXF_SINGULARITY_CACHEDIR=/config/binaries/singularity/containers_devel/nextflow</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Singularity images downloaded by workflow executions will now be stored in this directory.</p>
+<p>You may want to include these, or other environmental variables, in your <code>.bashrc</code> file (or alternate) that is loaded when you log in so you don’t need to export variables every session. A complete list of environment variables can be found <a href="https://www.nextflow.io/docs/latest/config.html#environment-variables">here</a>.</p>
+<p>Set up a python virtual environment with <a href="https://nf-co.re/docs/nf-core-tools">nf-core/tools</a> installed:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>module load python/3.11.2</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>python -m venv /scratch/users/${USER}/nfcorevenv</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>source /scratch/users/${USER}/nfcorevenv/bin/activate</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>pip install nf-core==2.14.1</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="nf-core" class="level2">
+<h2 class="anchored" data-anchor-id="nf-core"><strong>5. Nf-core</strong></h2>
+<p>nf-core is a <strong>community</strong> effort to collect a curated set of <strong>analysis workflows</strong> built using Nextflow.</p>
+<p>nf-core provides a standardized set of <strong>best practices</strong>, <strong>guidelines</strong>, and <strong>templates</strong> for building and sharing bioinformatics workflows. These workflows are designed to be <strong>modular</strong>, <strong>scalable</strong>, and <strong>portable</strong>, allowing researchers to easily adapt and execute them using their own data and compute resources.</p>
+<p>The community is a diverse group of bioinformaticians, developers, and researchers from around the world who collaborate on <strong>developing</strong> and <strong>maintaining</strong> a growing collection of high-quality workflows. These workflows cover a range of applications, including transcriptomics, proteomics, and metagenomics.</p>
+<p>One of the key benefits of nf-core is that it promotes <strong>open development</strong>, <strong>testing</strong>, and <strong>peer review</strong>, ensuring that the workflows are robust, well-documented, and validated against real-world datasets. This helps to increase the reliability and reproducibility of bioinformatics analyses and ultimately enables researchers to accelerate their scientific discoveries.</p>
+<p>nf-core is published in Nature Biotechnology: <a href="https://www.nature.com/articles/s41587-020-0439-x">Nat Biotechnol 38, 276–278 (2020). Nature Biotechnology</a></p>
+<p><strong>Key Features of nf-core workflows</strong></p>
+<ul>
+<li><strong>Documentation</strong>
+<ul>
+<li>nf-core workflows have extensive documentation covering installation, usage, and description of output files to ensure that you won’t be left in the dark.</li>
+</ul></li>
+<li><strong>Stable Releases</strong>
+<ul>
+<li>nf-core workflows use GitHub releases to tag stable versions of the code and software, making workflow runs totally reproducible.</li>
+</ul></li>
+<li><strong>Packaged software</strong>
+<ul>
+<li>Pipeline dependencies are automatically downloaded and handled using Docker, Singularity, Conda, or other software management tools. There is no need for any software installations.</li>
+</ul></li>
+<li><strong>Portable and reproducible</strong>
+<ul>
+<li>nf-core workflows follow best practices to ensure maximum portability and reproducibility. The large community makes the workflows exceptionally well-tested and easy to execute.</li>
+</ul></li>
+<li><strong>Cloud-ready</strong>
+<ul>
+<li>nf-core workflows are tested on AWS</li>
+</ul></li>
+</ul>
+</section>
+<section id="nf-core-tools" class="level2">
+<h2 class="anchored" data-anchor-id="nf-core-tools"><strong>5.1 Nf-core tools</strong></h2>
+<p><code>nf-core-tools</code> is a python package with helper tools for the nf-core community.</p>
+<p>These helper tools can be used for both building and running nf-core workflows.</p>
+<p>Today we will be focusing on the developer commands to build a workflow using nf-core templates and structures.</p>
+<p>Take a look at what is within with <code>nf-core-tools</code> suite</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>nf-core -h</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>                                          ,--./,-.</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>          ___     __   __   __   ___     /,-._.--~\</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    |\ | |__  __ /  ` /  \ |__) |__         }  {</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    | \| |       \__, \__/ |  \ |___     \`-._,-`-,</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>                                          `._,._,'</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>    nf-core/tools version 2.14.1 - https://nf-co.re</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>                                                                                                    </span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a> Usage: nf-core [OPTIONS] COMMAND [ARGS]...                                                         </span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>                                                                                                    </span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a> nf-core/tools provides a set of helper tools for use with nf-core Nextflow pipelines.              </span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a> It is designed for both end-users running pipelines and also developers creating new pipelines.    </span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>                                                                                                    </span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>╭─ Options ────────────────────────────────────────────────────────────────────────────────────────╮</span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>│ --version                        Show the version and exit.                                      │</span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>│ --verbose        -v              Print verbose output to the console.                            │</span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>│ --hide-progress                  Don't show progress bars.                                       │</span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>│ --log-file       -l  &lt;filename&gt;  Save a verbose log to a file.                                   │</span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>│ --help           -h              Show this message and exit.                                     │</span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>╰──────────────────────────────────────────────────────────────────────────────────────────────────╯</span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>╭─ Commands for users ─────────────────────────────────────────────────────────────────────────────╮</span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>│ list                  List available nf-core pipelines with local info.                          │</span>
+<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a>│ launch                Launch a pipeline using a web GUI or command line prompts.                 │</span>
+<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a>│ create-params-file    Build a parameter file for a pipeline.                                     │</span>
+<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a>│ download              Download a pipeline, nf-core/configs and pipeline singularity images.      │</span>
+<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a>│ licences              List software licences for a given workflow (DSL1 only).                   │</span>
+<span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a>│ tui                   Open Textual TUI.                                                          │</span>
+<span id="cb6-30"><a href="#cb6-30" aria-hidden="true" tabindex="-1"></a>╰──────────────────────────────────────────────────────────────────────────────────────────────────╯</span>
+<span id="cb6-31"><a href="#cb6-31" aria-hidden="true" tabindex="-1"></a>╭─ Commands for developers ────────────────────────────────────────────────────────────────────────╮</span>
+<span id="cb6-32"><a href="#cb6-32" aria-hidden="true" tabindex="-1"></a>│ create            Create a new pipeline using the nf-core template.                              │</span>
+<span id="cb6-33"><a href="#cb6-33" aria-hidden="true" tabindex="-1"></a>│ lint              Check pipeline code against nf-core guidelines.                                │</span>
+<span id="cb6-34"><a href="#cb6-34" aria-hidden="true" tabindex="-1"></a>│ modules           Commands to manage Nextflow DSL2 modules (tool wrappers).                      │</span>
+<span id="cb6-35"><a href="#cb6-35" aria-hidden="true" tabindex="-1"></a>│ subworkflows      Commands to manage Nextflow DSL2 subworkflows (tool wrappers).                 │</span>
+<span id="cb6-36"><a href="#cb6-36" aria-hidden="true" tabindex="-1"></a>│ schema            Suite of tools for developers to manage pipeline schema.                       │</span>
+<span id="cb6-37"><a href="#cb6-37" aria-hidden="true" tabindex="-1"></a>│ create-logo       Generate a logo with the nf-core logo template.                                │</span>
+<span id="cb6-38"><a href="#cb6-38" aria-hidden="true" tabindex="-1"></a>│ bump-version      Update nf-core pipeline version number.                                        │</span>
+<span id="cb6-39"><a href="#cb6-39" aria-hidden="true" tabindex="-1"></a>│ sync              Sync a pipeline TEMPLATE branch with the nf-core template.                     │</span>
+<span id="cb6-40"><a href="#cb6-40" aria-hidden="true" tabindex="-1"></a>╰──────────────────────────────────────────────────────────────────────────────────────────────────╯</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Today we will be predominately focusing on most of the tools for developers.</p>
+</section>
+<section id="nf-core-pipeline" class="level2">
+<h2 class="anchored" data-anchor-id="nf-core-pipeline"><strong>5.2 Nf-core Pipeline</strong></h2>
+<p>Let’s review the structure of the <a href="https://github.com/nf-core/rnaseq">nf-core/rnaseq</a> pipeline.</p>
+<p>Almost all of the structure provided here is from the nf-core templates. As we briefly covered last week in <a href="./4.1_modules.html">Developing Modularised Workflows</a>, it is good practice to separate your workflow from subworkflows and modules. As this allows you to modularise your workflows and reuse modules.</p>
+<p>Nf-core assists in enforcing this structure with the subfolders:</p>
+<ul>
+<li><code>workflows</code> - contains the main workflow</li>
+<li><code>subworkflows</code> - contains subworkflows either as written by the nf-core community or self-written</li>
+<li><code>modules</code> - contains modules either as written by the nf-core community or self-written</li>
+</ul>
+<p>In our <strong>Introduction to Nextflow and running nf-core workflows</strong> workshop in <a href="./2.1_customise_and_run.html">Customising &amp; running nf-core pipelines</a>, we briefly touched on configuration files in the <code>conf/</code> folder and <code>nextflow.config</code>.</p>
+<p>Today we will be working on files in these locations and expanding our use of the nf-core template to include:</p>
+<ul>
+<li>files in the <code>assets</code> folder</li>
+<li><code>nextflow_schema.json</code></li>
+<li></li>
+</ul>
+<section id="nf-core-create" class="level3">
+<h3 class="anchored" data-anchor-id="nf-core-create"><strong>5.2.1 nf-core create</strong></h3>
+<p>The <code>create</code> subcommand makes a new pipeline using the nf-core base template. With a given pipeline name, description and author, it makes a starter pipeline which follows nf-core best practices.</p>
+<p>After creating the files, the command initialises the folder as a git repository and makes an initial commit. This first “vanilla” commit which is identical to the output from the templating tool is important, as it allows us to keep your pipeline in sync with the base template in the future. See the <a href="https://nf-co.re/developers/sync">nf-core syncing docs</a> for more information.</p>
+<p>Let’s set up the nf-core template for today’s workshop:</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>nf-core create</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>As we progress through the interactive prompts, we will use the following values below: <img src="./media/5.2.1_nf_core_create_interactive.png" class="img-fluid"></p>
+<p><strong>Remember to swap out the <code>Author</code> name with your own!</strong></p>
+<p>The creates a pipeline called <code>myrnaseq</code> in the directory <code>pmcc-myrnaseq</code> (<code>&lt;prefix&gt;-&lt;name&gt;</code>) with <code>mmyeung</code> as the author. If selected exclude the following:</p>
+<ul>
+<li><code>github</code>: removed all files required for GitHub hosting of the pipeline. Specifically, the <code>.github</code> folder and <code>.gitignore</code> file.</li>
+<li><code>ci</code>: removes the GitHub continuous integration tests from the pipeline. Specifically, the <code>.github/workflows/</code> folder.</li>
+<li><code>github_badges</code>: removes GitHub badges from the <code>README.md</code> file.</li>
+<li><code>igenomes</code>: removes pipeline options related to iGenomes. Including the <code>conf/igenomes.config</code> file and all references to it.</li>
+<li><code>nf_core_configs</code>: excludes <code>nf_core/configs</code> repository options, which make multiple config profiles for various institutional clusters available.</li>
+</ul>
+<p>To run the pipeline creation silently (i.e.&nbsp;without any prompts) with the nf-core template, you can use the <code>--plain</code> option.</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<strong>Author name</strong>
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Typically, we would use your github username as the value here, this allows an extra layer of traceability.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<strong>Customised pipeline prefix</strong>
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Remember we are currently only making the most of the nf-core templates and <strong>not contributing</strong> back to <code>nf-core</code>. As such, we should not use the <code>nf-core</code> prefix to our pipeline.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<strong>Skipped templates</strong>
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Note that the highlighted values under <code>Skip template areas?</code> are the sections that will be skipped. As this is a test pipeline we are <strong>skipping</strong> the set up of github CI and badges</p>
+</div>
+</div>
+<p>As we have requested <code>GitHub hosting</code>, on completion of the command, you will note there are suggested github commands included in the output. Use these commands to push the commits from your computer. You can then continue to edit, commit and push normally as you build your pipeline.</p>
+<p><img src="./media/5.2.1_nf_core_create_github.png" class="img-fluid"></p>
+</section>
+<section id="nf-core-template" class="level3">
+<h3 class="anchored" data-anchor-id="nf-core-template"><strong>nf-core template</strong></h3>
+<p>Let’s see what has been minimally provided by <code>nf-core create</code></p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>ll pmcc-myrnaseq/</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<pre><code>total 47
+drwxrwxr-x 2 myeung myeung  4096 Jun 11 15:00 assets
+-rw-rw-r-- 1 myeung myeung   372 Jun 11 15:00 CHANGELOG.md
+-rw-rw-r-- 1 myeung myeung  2729 Jun 11 15:00 CITATIONS.md
+drwxrwxr-x 2 myeung myeung  4096 Jun 11 15:00 conf
+drwxrwxr-x 3 myeung myeung  4096 Jun 11 15:00 docs
+-rw-rw-r-- 1 myeung myeung  1060 Jun 11 15:00 LICENSE
+-rw-rw-r-- 1 myeung myeung  3108 Jun 11 15:00 main.nf
+drwxrwxr-x 3 myeung myeung  4096 Jun 11 15:00 modules
+-rw-rw-r-- 1 myeung myeung  1561 Jun 11 15:00 modules.json
+-rw-rw-r-- 1 myeung myeung  9982 Jun 11 15:00 nextflow.config
+-rw-rw-r-- 1 myeung myeung 16657 Jun 11 15:00 nextflow_schema.json
+-rw-rw-r-- 1 myeung myeung  3843 Jun 11 15:00 README.md
+drwxrwxr-x 4 myeung myeung  4096 Jun 11 15:00 subworkflows
+-rw-rw-r-- 1 myeung myeung   165 Jun 11 15:00 tower.yml
+drwxrwxr-x 2 myeung myeung  4096 Jun 11 15:00 workflows</code></pre>
+<p>As you take look through the files created you will see many comments through the files starting with <code>// TODO nf-core</code>. These are pointers from nf-core towards areas of the pipeline that you may be intersted in changing.</p>
+<p>They are also the “key word” used by the <code>nf-core lint</code>.</p>
+<section id="alternative-setups-for-nf-core-create" class="level4">
+<h4 class="anchored" data-anchor-id="alternative-setups-for-nf-core-create"><strong>Alternative setups for <code>nf-core create</code></strong></h4>
+<p>Aside from the interactive setup we have just completed for <code>nf-core create</code>, there are two alternative methods.</p>
+<ol type="1">
+<li>Provide the option using the optional flags from <code>nf-core create</code></li>
+<li>Provide a <code>template.yaml</code> via the <code>--template-yaml</code> option</li>
+</ol>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<strong>Challenge</strong>
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Create a second pipeline template using the optional flags with the <code>name</code> “myworkflow”, provide a <code>description</code>, <code>author</code> name and set the <code>version</code> to “0.0.1”</p>
+<p>What options are still you still prompted for?</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-caution callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-6-contents" aria-controls="callout-6" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Solution
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-6" class="callout-6-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Run the following:</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>nf-core create --name myworkflow --description "my workflow test" --author "@mmyeung" --version "0.0.1"</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Note that you are still prompted for any additional customisations such as the pipeline prefix and steps to skip</p>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<strong>Advanced Challange</strong>
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Create another pipeline template using a yaml file called <code>mytemplate.yaml</code></p>
+<p><em>Hint: the key values in the yaml should be <code>name</code>, <code>description</code>, <code>author</code>, <code>prefix</code> and <code>skip</code></em></p>
+<p>Set the pipeline to skip <code>ci</code>, <code>igenomes</code> and <code>nf_core_configs</code></p>
+</div>
+</div>
+<div class="callout callout-style-default callout-caution callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-8-contents" aria-controls="callout-8" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Solution
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-8" class="callout-8-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Run the following:</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>vim mytemplate.yaml</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Values in <code>mytemplate.yaml</code></p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>name: coolpipe</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>description: A cool pipeline</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>author: me</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>prefix: myorg</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>skip:</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>  - ci</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>  - igenomes</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>  - nf_core_configs</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb13"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>nf-core create --template-yaml mytemplate.yaml</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+</section>
+<section id="test-profile" class="level2">
+<h2 class="anchored" data-anchor-id="test-profile"><strong>5.3 Test Profile</strong></h2>
+<p>nf-core tries to encourage software engineering concepts such as minimal test sets, this can be set up using the <code>conf/test.config</code> and <code>conf/test_full.config</code></p>
+<p>For the duration of this workshop we will be making use of the <code>conf/test.config</code>, to test our pipeline.</p>
+<p>Let’s take a look at what is currently in the <code>conf/test.config</code>.</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>cat pmcc-myrnaseq/conf/test.config</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb15"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>/*</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    Nextflow config file for running minimal tests</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>    Defines input files and everything required to run a fast and simple pipeline test.</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>    Use as follows:</span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>        nextflow run pmcc/myrnaseq -profile test,&lt;docker/singularity&gt; --outdir &lt;OUTDIR&gt;</span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>----------------------------------------------------------------------------------------</span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>*/</span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a>params {</span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a>    config_profile_name        = 'Test profile'</span>
+<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a>    config_profile_description = 'Minimal test dataset to check pipeline function'</span>
+<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a>    // Limit resources so that this can run on GitHub Actions</span>
+<span id="cb15-18"><a href="#cb15-18" aria-hidden="true" tabindex="-1"></a>    max_cpus   = 2</span>
+<span id="cb15-19"><a href="#cb15-19" aria-hidden="true" tabindex="-1"></a>    max_memory = '6.GB'</span>
+<span id="cb15-20"><a href="#cb15-20" aria-hidden="true" tabindex="-1"></a>    max_time   = '6.h'</span>
+<span id="cb15-21"><a href="#cb15-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-22"><a href="#cb15-22" aria-hidden="true" tabindex="-1"></a>    // Input data</span>
+<span id="cb15-23"><a href="#cb15-23" aria-hidden="true" tabindex="-1"></a>    // TODO nf-core: Specify the paths to your test data on nf-core/test-datasets</span>
+<span id="cb15-24"><a href="#cb15-24" aria-hidden="true" tabindex="-1"></a>    // TODO nf-core: Give any required params for the test so that command line flags are not needed</span>
+<span id="cb15-25"><a href="#cb15-25" aria-hidden="true" tabindex="-1"></a>    input  = params.pipelines_testdata_base_path + 'viralrecon/samplesheet/samplesheet_test_illumina_amplicon.csv'</span>
+<span id="cb15-26"><a href="#cb15-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-27"><a href="#cb15-27" aria-hidden="true" tabindex="-1"></a>    // Genome references</span>
+<span id="cb15-28"><a href="#cb15-28" aria-hidden="true" tabindex="-1"></a>    genome = 'R64-1-1'</span>
+<span id="cb15-29"><a href="#cb15-29" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>From this, we can see that this config uses the <code>params</code> scope to define:</p>
+<ul>
+<li>Maximal values for resources</li>
+<li>Directs the <code>input</code> parameter to a sample sheet hosted in the <a href="https://github.com/nf-core/test-datasets"><code>nf-core/testdata</code></a> github</li>
+<li>Sets the genome to “R64-1-1”</li>
+</ul>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+How does setting the parameter <code>genome</code> set all the genome references?
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>This is possible due to us using the <code>igenomes</code> configs from <code>nf-core</code>.</p>
+<p>You can see in the <code>conf/igenomes.config</code> how nested within each <code>genome</code> definition are paths to various reference files.</p>
+<p>To find out more about the <code>igenomes</code> project <a href="https://sapac.support.illumina.com/sequencing/sequencing_software/igenome.html">here</a></p>
+</div>
+</div>
+<p>For the duration of this workshop we are going to use the data from <code>nf-training</code> that was cloned in the first workshop. We are also going to update our <code>test.config</code> to contain the <code>igenomes_base</code> parameter, as we have a local cache on the cluster.</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>input = "/home/Shared/For_NF_Workshop/training/nf-training/data/ggal/samplesheet.csv"</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>outdir = "/scratch/users/${USER}/myrnaseqtest"</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>// genome references</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>genome = "GRCh38"</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>igenomes_base = "/data/janis/nextflow/references/genomes/ngi-igenomes"</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Also, we will need to change the value, <code>custom_config_base</code> to <code>null</code>, in <code>nextflow.config</code></p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>custom_config_base         = null</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Let’s quickly check that our pipeline runs with the test profile.</p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>cd ..</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>nextflow run ./pmcc-myrnaseq -profile test,singularity</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+What’s the difference between the <code>test.config</code> and the <code class="unlisted">test_full.config</code>
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Typically the <code>test.config</code> contains the minimal test example, while the <code>test_full.config</code> contains at least one full sized example data.</p>
+</div>
+</div>
+</section>
+<section id="nf-core-modules" class="level2">
+<h2 class="anchored" data-anchor-id="nf-core-modules"><strong>5.4 Nf-core modules</strong></h2>
+<p>You can find all the nf-core modules that have been accepted and peer-tested by the community in <a href="https://nf-co.re/modules">nf-core modules</a>.</p>
+<p>or with</p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>nf-core modules list remote</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>you can check which modules are installed localling in your pipeline by running <code>nf-core modules list local</code>, within the pipeline folder.</p>
+<div class="sourceCode" id="cb20"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>cd pmcc-myrnaseq</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>nf-core modules list local</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb21"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>                                          ,--./,-.</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>          ___     __   __   __   ___     /,-._.--~\</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>    |\ | |__  __ /  ` /  \ |__) |__         }  {</span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>    | \| |       \__, \__/ |  \ |___     \`-._,-`-,</span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>                                          `._,._,'</span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>    nf-core/tools version 2.14.1 - https://nf-co.re</span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a>INFO     Repository type: pipeline</span>
+<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a>INFO     Modules installed in '.':</span>
+<span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a>┏━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━┓</span>
+<span id="cb21-14"><a href="#cb21-14" aria-hidden="true" tabindex="-1"></a>┃ Module Name ┃ Repository      ┃ Version SHA ┃ Message                              ┃ Date       ┃</span>
+<span id="cb21-15"><a href="#cb21-15" aria-hidden="true" tabindex="-1"></a>┡━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━┩</span>
+<span id="cb21-16"><a href="#cb21-16" aria-hidden="true" tabindex="-1"></a>│ fastqc      │ nf-core/modules │ 285a505     │ Fix FastQC memory allocation (#5432) │ 2024-04-05 │</span>
+<span id="cb21-17"><a href="#cb21-17" aria-hidden="true" tabindex="-1"></a>│ multiqc     │ nf-core/modules │ b7ebe95     │ Update MQC container (#5006)         │ 2024-02-29 │</span>
+<span id="cb21-18"><a href="#cb21-18" aria-hidden="true" tabindex="-1"></a>└─────────────┴─────────────────┴─────────────┴──────────────────────────────────────┴────────────┘</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<strong>Overall Challenge</strong>
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>We are going to replicate sections of the workflow from last week.</p>
+<p>FASTQC -&gt; Trimgalore -&gt; FASTQC -&gt; MULTIQC</p>
+</div>
+</div>
+<section id="installing-nf-core-modules" class="level3">
+<h3 class="anchored" data-anchor-id="installing-nf-core-modules"><strong>5.3.1 Installing nf-core modules</strong></h3>
+<p>The general format for installing modules is as below.</p>
+<div class="sourceCode" id="cb22"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>nf-core modules install &lt;tool&gt;/&lt;subcommand&gt;</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Tip
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Note that if you search for the modules on the <a href="https://nf-co.re/modules">nf-core modules website</a>, you can find the install command at the top of the tool</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Tip
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Remember to run the install commands from within the nf-core pipeline folder (in this case the <code>pmcc-myrnaseq</code> folder)</p>
+<p>If you are not in an nf-core folder you will see the following error</p>
+<div class="sourceCode" id="cb23"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>                                          ,--./,-.</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>          ___     __   __   __   ___     /,-._.--~\</span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>    |\ | |__  __ /  ` /  \ |__) |__         }  {</span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>    | \| |       \__, \__/ |  \ |___     \`-._,-`-,</span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>                                          `._,._,'</span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>    nf-core/tools version 2.14.1 - https://nf-co.re</span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a>WARNING  'repository_type' not defined in .nf-core.yml</span>
+<span id="cb23-12"><a href="#cb23-12" aria-hidden="true" tabindex="-1"></a>? Is this repository an nf-core pipeline or a fork of nf-core/modules? (Use arrow keys)</span>
+<span id="cb23-13"><a href="#cb23-13" aria-hidden="true" tabindex="-1"></a> » Pipeline</span>
+<span id="cb23-14"><a href="#cb23-14" aria-hidden="true" tabindex="-1"></a>   nf-core/modules</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<strong>Challenge</strong>
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Install the following nf-core modules</p>
+<ul>
+<li>trimgalore</li>
+<li>salmon quant</li>
+<li>fastqc</li>
+</ul>
+<p>What happens when we try to install the <code>fastqc</code> module?</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-caution callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-15-contents" aria-controls="callout-15" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Solution
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-15" class="callout-15-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Unfortunately, nf-core does not allow the installation of multiple modules in one line therefore we mush provide the commands separately for each module.</p>
+<div class="sourceCode" id="cb24"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>nf-core modules install trimgalore</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>nf-core modules install salmon/quant</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>nf-core modules install fastqc</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Note that from above, when we checked which modules have been installed locally in our pipeline, <code>fastqc</code> was already installed. As such, we see the following output warning us that <code>fastqc</code> is installed and we can either force the reinstallation or we can update the module</p>
+<div class="sourceCode" id="cb25"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>                                          ,--./,-.</span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>          ___     __   __   __   ___     /,-._.--~\</span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>    |\ | |__  __ /  ` /  \ |__) |__         }  {</span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>    | \| |       \__, \__/ |  \ |___     \`-._,-`-,</span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>                                          `._,._,'</span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a>    nf-core/tools version 2.14.1 - https://nf-co.re</span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a>INFO     Module 'fastqc' is already installed.</span>
+<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a>INFO     To update 'fastqc' run 'nf-core modules update fastqc'. To force reinstallation use '--force'. </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<strong>Advanced Challenge</strong>
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Can you think of a way to streamline the installation of modules?</p>
+</div>
+</div>
+<p>following the installation what files changed, check with</p>
+<div class="sourceCode" id="cb26"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>git status</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb27"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>On branch master</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>Changes not staged for commit:</span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>  (use "git add &lt;file&gt;..." to update what will be committed)</span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>  (use "git restore &lt;file&gt;..." to discard changes in working directory)</span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>        modified:   modules.json</span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>Untracked files:</span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a>  (use "git add &lt;file&gt;..." to include in what will be committed)</span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a>        modules/nf-core/salmon/</span>
+<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a>        modules/nf-core/trimgalore/</span>
+<span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a>no changes added to commit (use "git add" and/or "git commit -a")</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><code>modules.json</code> is a running record of the modules installed and should be included in your pipeline. Note: you can find the github SHA for the exact “version” of the module installed.</p>
+<p>This insulates your pipeline from when a module is deleted.</p>
+<div class="sourceCode" id="cb28"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>rm -r modules/nf-core/salmon/quant</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>nf-core modules list local</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb29"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>                                          ,--./,-.</span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>          ___     __   __   __   ___     /,-._.--~\</span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>    |\ | |__  __ /  ` /  \ |__) |__         }  {</span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>    | \| |       \__, \__/ |  \ |___     \`-._,-`-,</span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>                                          `._,._,'</span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a>    nf-core/tools version 2.14.1 - https://nf-co.re</span>
+<span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-10"><a href="#cb29-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-11"><a href="#cb29-11" aria-hidden="true" tabindex="-1"></a>INFO     Repository type: pipeline</span>
+<span id="cb29-12"><a href="#cb29-12" aria-hidden="true" tabindex="-1"></a>INFO     Reinstalling modules found in 'modules.json' but missing from directory: 'modules/nf-core/salmon/quant'</span>
+<span id="cb29-13"><a href="#cb29-13" aria-hidden="true" tabindex="-1"></a>INFO     Modules installed in '.':</span>
+<span id="cb29-14"><a href="#cb29-14" aria-hidden="true" tabindex="-1"></a>┏━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━┓</span>
+<span id="cb29-15"><a href="#cb29-15" aria-hidden="true" tabindex="-1"></a>┃ Module Name  ┃ Repository      ┃ Version SHA ┃ Message                                ┃ Date       ┃</span>
+<span id="cb29-16"><a href="#cb29-16" aria-hidden="true" tabindex="-1"></a>┡━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━┩</span>
+<span id="cb29-17"><a href="#cb29-17" aria-hidden="true" tabindex="-1"></a>│ fastqc       │ nf-core/modules │ 285a505     │ Fix FastQC memory allocation (#5432)   │ 2024-04-05 │</span>
+<span id="cb29-18"><a href="#cb29-18" aria-hidden="true" tabindex="-1"></a>│ multiqc      │ nf-core/modules │ b7ebe95     │ Update MQC container (#5006)           │ 2024-02-29 │</span>
+<span id="cb29-19"><a href="#cb29-19" aria-hidden="true" tabindex="-1"></a>│ salmon/quant │ nf-core/modules │ cb6b2b9     │ fix stubs salmon (#5517)               │ 2024-04-24 │</span>
+<span id="cb29-20"><a href="#cb29-20" aria-hidden="true" tabindex="-1"></a>│ trimgalore   │ nf-core/modules │ a984184     │ run nf-core lint on trimgalore (#5129) │ 2024-03-15 │</span>
+<span id="cb29-21"><a href="#cb29-21" aria-hidden="true" tabindex="-1"></a>└──────────────┴─────────────────┴─────────────┴────────────────────────────────────────┴────────────┘</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<strong>Advanced Challenge</strong>
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>How would you look up previous versions of the module?</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-caution callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-18-contents" aria-controls="callout-18" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Caution
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-18" class="callout-18-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>There are a few ways to approach this.</p>
+<ol type="1">
+<li>You could hop onto github and search throught the git history for the <code>main.nf</code> of the particular module, to identify the git SHA and provide it to the <code>--sha</code> flag.</li>
+<li>You could run the install command with the <code>--prompt</code> flag, as seen below</li>
+</ol>
+<div class="sourceCode" id="cb30"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>                                          ,--./,-.</span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>          ___     __   __   __   ___     /,-._.--~\</span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>    |\ | |__  __ /  ` /  \ |__) |__         }  {</span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>    | \| |       \__, \__/ |  \ |___     \`-._,-`-,</span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a>                                          `._,._,'</span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a>    nf-core/tools version 2.14.1 - https://nf-co.re</span>
+<span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-10"><a href="#cb30-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-11"><a href="#cb30-11" aria-hidden="true" tabindex="-1"></a>INFO     Module 'fastqc' is already installed.</span>
+<span id="cb30-12"><a href="#cb30-12" aria-hidden="true" tabindex="-1"></a>? Module fastqc is already installed.</span>
+<span id="cb30-13"><a href="#cb30-13" aria-hidden="true" tabindex="-1"></a>Do you want to force the reinstallation? Yes</span>
+<span id="cb30-14"><a href="#cb30-14" aria-hidden="true" tabindex="-1"></a>? Select 'fastqc' commit: (Use arrow keys)</span>
+<span id="cb30-15"><a href="#cb30-15" aria-hidden="true" tabindex="-1"></a>   Fix FastQC memory allocation (#5432) 285a50500f9e02578d90b3ce6382ea3c30216acd (installed version)</span>
+<span id="cb30-16"><a href="#cb30-16" aria-hidden="true" tabindex="-1"></a>   Update FASTQC to use unique names for snapshots (#4825) f4ae1d942bd50c5c0b9bd2de1393ce38315ba57c</span>
+<span id="cb30-17"><a href="#cb30-17" aria-hidden="true" tabindex="-1"></a>   CHORES: update fasqc tests with new data organisation (#4760) c9488585ce7bd35ccd2a30faa2371454c8112fb9</span>
+<span id="cb30-18"><a href="#cb30-18" aria-hidden="true" tabindex="-1"></a>   fix fastqc tests n snap (#4669) 617777a807a1770f73deb38c80004bac06807eef</span>
+<span id="cb30-19"><a href="#cb30-19" aria-hidden="true" tabindex="-1"></a>   Update version strings (#4556) 65ad3e0b9a4099592e1102e92e10455dc661cf53</span>
+<span id="cb30-20"><a href="#cb30-20" aria-hidden="true" tabindex="-1"></a>   Remove pytest-workflow tests for modules covered by nf-test (#4521) 3e8b0c1144ccf60b7848efbdc2be285ff20b49ee</span>
+<span id="cb30-21"><a href="#cb30-21" aria-hidden="true" tabindex="-1"></a>   Add conda environment names (#4327) 3f5420aa22e00bd030a2556dfdffc9e164ec0ec5</span>
+<span id="cb30-22"><a href="#cb30-22" aria-hidden="true" tabindex="-1"></a>   Fix conda declaration (#4252) 8fc1d24c710ebe1d5de0f2447ec9439fd3d9d66a</span>
+<span id="cb30-23"><a href="#cb30-23" aria-hidden="true" tabindex="-1"></a>   Move conda environment to yml (#4079) 516189e968feb4ebdd9921806988b4c12b4ac2dc</span>
+<span id="cb30-24"><a href="#cb30-24" aria-hidden="true" tabindex="-1"></a>   authors =&gt; maintainers (#4173) cfd937a668919d948f6fcbf4218e79de50c2f36f</span>
+<span id="cb30-25"><a href="#cb30-25" aria-hidden="true" tabindex="-1"></a> » older commits</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="updating-nf-core-modules" class="level3">
+<h3 class="anchored" data-anchor-id="updating-nf-core-modules"><strong>5.3.2 Updating nf-core modules</strong></h3>
+<p>Above we got and error message for fastq because the module was already installed. As listed in the output, one of the suggested solutions is that we might be looking to update the module</p>
+<div class="sourceCode" id="cb31"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>nf-core modules update fastqc</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>After running the command you will find that you are prompted for whether you wish to view the differences between the current installation and the update.</p>
+<div class="sourceCode" id="cb32"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>                                          ,--./,-.</span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>          ___     __   __   __   ___     /,-._.--~\</span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>    |\ | |__  __ /  ` /  \ |__) |__         }  {</span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>    | \| |       \__, \__/ |  \ |___     \`-._,-`-,</span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a>                                          `._,._,'</span>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a>    nf-core/tools version 2.14.1 - https://nf-co.re</span>
+<span id="cb32-9"><a href="#cb32-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-10"><a href="#cb32-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-11"><a href="#cb32-11" aria-hidden="true" tabindex="-1"></a>? Do you want to view diffs of the proposed changes? (Use arrow keys)</span>
+<span id="cb32-12"><a href="#cb32-12" aria-hidden="true" tabindex="-1"></a> » No previews, just update everything</span>
+<span id="cb32-13"><a href="#cb32-13" aria-hidden="true" tabindex="-1"></a>   Preview diff in terminal, choose whether to update files</span>
+<span id="cb32-14"><a href="#cb32-14" aria-hidden="true" tabindex="-1"></a>   Just write diffs to a patch file</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>For the sake of this exercise, we are going to roll fastqc back by one commit.</p>
+<p>If you select the 2nd option <code>Preview diff in terminal, choose whether to update files</code></p>
+<div class="sourceCode" id="cb33"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>nf-core modules update fastqc -p</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb34"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>                                          ,--./,-.</span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>          ___     __   __   __   ___     /,-._.--~\</span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>    |\ | |__  __ /  ` /  \ |__) |__         }  {</span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>    | \| |       \__, \__/ |  \ |___     \`-._,-`-,</span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a>                                          `._,._,'</span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a>    nf-core/tools version 2.14.1 - https://nf-co.re</span>
+<span id="cb34-8"><a href="#cb34-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-9"><a href="#cb34-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-10"><a href="#cb34-10" aria-hidden="true" tabindex="-1"></a>? Do you want to view diffs of the proposed changes? Preview diff in terminal, choose whether to update files</span>
+<span id="cb34-11"><a href="#cb34-11" aria-hidden="true" tabindex="-1"></a>? Select 'fastqc' commit: (Use arrow keys)</span>
+<span id="cb34-12"><a href="#cb34-12" aria-hidden="true" tabindex="-1"></a>   Fix FastQC memory allocation (#5432) 285a50500f9e02578d90b3ce6382ea3c30216acd (installed version)</span>
+<span id="cb34-13"><a href="#cb34-13" aria-hidden="true" tabindex="-1"></a> » Update FASTQC to use unique names for snapshots (#4825) f4ae1d942bd50c5c0b9bd2de1393ce38315ba57c</span>
+<span id="cb34-14"><a href="#cb34-14" aria-hidden="true" tabindex="-1"></a>   CHORES: update fasqc tests with new data organisation (#4760) c9488585ce7bd35ccd2a30faa2371454c8112fb9</span>
+<span id="cb34-15"><a href="#cb34-15" aria-hidden="true" tabindex="-1"></a>   fix fastqc tests n snap (#4669) 617777a807a1770f73deb38c80004bac06807eef</span>
+<span id="cb34-16"><a href="#cb34-16" aria-hidden="true" tabindex="-1"></a>   Update version strings (#4556) 65ad3e0b9a4099592e1102e92e10455dc661cf53</span>
+<span id="cb34-17"><a href="#cb34-17" aria-hidden="true" tabindex="-1"></a>   Remove pytest-workflow tests for modules covered by nf-test (#4521) 3e8b0c1144ccf60b7848efbdc2be285ff20b49ee</span>
+<span id="cb34-18"><a href="#cb34-18" aria-hidden="true" tabindex="-1"></a>   Add conda environment names (#4327) 3f5420aa22e00bd030a2556dfdffc9e164ec0ec5</span>
+<span id="cb34-19"><a href="#cb34-19" aria-hidden="true" tabindex="-1"></a>   Fix conda declaration (#4252) 8fc1d24c710ebe1d5de0f2447ec9439fd3d9d66a</span>
+<span id="cb34-20"><a href="#cb34-20" aria-hidden="true" tabindex="-1"></a>   Move conda environment to yml (#4079) 516189e968feb4ebdd9921806988b4c12b4ac2dc</span>
+<span id="cb34-21"><a href="#cb34-21" aria-hidden="true" tabindex="-1"></a>   authors =&gt; maintainers (#4173) cfd937a668919d948f6fcbf4218e79de50c2f36f</span>
+<span id="cb34-22"><a href="#cb34-22" aria-hidden="true" tabindex="-1"></a>   older commits</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb35"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>? Select 'fastqc' commit: Update FASTQC to use unique names for snapshots (#4825) f4ae1d942bd50c5c0b9bd2de1393ce38315ba57c</span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>INFO     Changes in module 'nf-core/fastqc' between (285a50500f9e02578d90b3ce6382ea3c30216acd) and (f4ae1d942bd50c5c0b9bd2de1393ce38315ba57c)</span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>INFO     Changes in 'fastqc/main.nf':</span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a> --- modules/nf-core/fastqc/main.nf</span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a> +++ modules/nf-core/fastqc/main.nf</span>
+<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a> @@ -25,11 +25,6 @@</span>
+<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a>      def old_new_pairs = reads instanceof Path || reads.size() == 1 ? [[ reads, "${prefix}.${reads.extension}" ]] : reads.withIndex().collect { entry, index -&gt; [ entry, "${prefix}_${index + 1}.${entry.extension}" ] }</span>
+<span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a>      def rename_to = old_new_pairs*.join(' ').join(' ')</span>
+<span id="cb35-9"><a href="#cb35-9" aria-hidden="true" tabindex="-1"></a>      def renamed_files = old_new_pairs.collect{ old_name, new_name -&gt; new_name }.join(' ')</span>
+<span id="cb35-10"><a href="#cb35-10" aria-hidden="true" tabindex="-1"></a> -</span>
+<span id="cb35-11"><a href="#cb35-11" aria-hidden="true" tabindex="-1"></a> -    def memory_in_mb = MemoryUnit.of("${task.memory}").toUnit('MB')</span>
+<span id="cb35-12"><a href="#cb35-12" aria-hidden="true" tabindex="-1"></a> -    // FastQC memory value allowed range (100 - 10000)</span>
+<span id="cb35-13"><a href="#cb35-13" aria-hidden="true" tabindex="-1"></a> -    def fastqc_memory = memory_in_mb &gt; 10000 ? 10000 : (memory_in_mb &lt; 100 ? 100 : memory_in_mb)</span>
+<span id="cb35-14"><a href="#cb35-14" aria-hidden="true" tabindex="-1"></a> -</span>
+<span id="cb35-15"><a href="#cb35-15" aria-hidden="true" tabindex="-1"></a>      """</span>
+<span id="cb35-16"><a href="#cb35-16" aria-hidden="true" tabindex="-1"></a>      printf "%s %s\\n" $rename_to | while read old_name new_name; do</span>
+<span id="cb35-17"><a href="#cb35-17" aria-hidden="true" tabindex="-1"></a>          [ -f "\${new_name}" ] || ln -s \$old_name \$new_name</span>
+<span id="cb35-18"><a href="#cb35-18" aria-hidden="true" tabindex="-1"></a> @@ -38,7 +33,6 @@</span>
+<span id="cb35-19"><a href="#cb35-19" aria-hidden="true" tabindex="-1"></a>      fastqc \\</span>
+<span id="cb35-20"><a href="#cb35-20" aria-hidden="true" tabindex="-1"></a>          $args \\</span>
+<span id="cb35-21"><a href="#cb35-21" aria-hidden="true" tabindex="-1"></a>          --threads $task.cpus \\</span>
+<span id="cb35-22"><a href="#cb35-22" aria-hidden="true" tabindex="-1"></a> -        --memory $fastqc_memory \\</span>
+<span id="cb35-23"><a href="#cb35-23" aria-hidden="true" tabindex="-1"></a>          $renamed_files</span>
+<span id="cb35-24"><a href="#cb35-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-25"><a href="#cb35-25" aria-hidden="true" tabindex="-1"></a>      cat &lt;&lt;-END_VERSIONS &gt; versions.yml</span>
+<span id="cb35-26"><a href="#cb35-26" aria-hidden="true" tabindex="-1"></a>INFO     'modules/nf-core/fastqc/meta.yml' is unchanged</span>
+<span id="cb35-27"><a href="#cb35-27" aria-hidden="true" tabindex="-1"></a>INFO     'modules/nf-core/fastqc/environment.yml' is unchanged</span>
+<span id="cb35-28"><a href="#cb35-28" aria-hidden="true" tabindex="-1"></a>INFO     'modules/nf-core/fastqc/tests/main.nf.test.snap' is unchanged</span>
+<span id="cb35-29"><a href="#cb35-29" aria-hidden="true" tabindex="-1"></a>INFO     'modules/nf-core/fastqc/tests/tags.yml' is unchanged</span>
+<span id="cb35-30"><a href="#cb35-30" aria-hidden="true" tabindex="-1"></a>INFO     'modules/nf-core/fastqc/tests/main.nf.test' is unchanged</span>
+<span id="cb35-31"><a href="#cb35-31" aria-hidden="true" tabindex="-1"></a>? Update module 'fastqc'? No</span>
+<span id="cb35-32"><a href="#cb35-32" aria-hidden="true" tabindex="-1"></a>INFO     Updates complete ✨   </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="removing-nf-core-modules" class="level3">
+<h3 class="anchored" data-anchor-id="removing-nf-core-modules"><strong>5.3.3 Removing nf-core modules</strong></h3>
+<p>As mentioned above, if you decide that you don’t need a module anymore, you can’t just remove the folder with <code>rm -r</code>.</p>
+<p>For <code>nf-core</code> to no longer register the module is to be distributed with your pipeline you need to use:</p>
+<div class="sourceCode" id="cb36"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>nf-core modules remove</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>As an exercise, we are going to install the <code>samtools/sort</code> module</p>
+<div class="sourceCode" id="cb37"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>nf-core modules install samtools/sort</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Quickly view the <code>modules.json</code> or use <code>nf-core modules list local</code> to view the changes from installing the module.</p>
+<p>Now remove the <code>samtools/sort</code> module</p>
+<div class="sourceCode" id="cb38"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>nf-core modules remove samtools/sort</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<strong>Overall Challenge</strong>
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Now add the <code>include</code> module statements to the our <code>workflows/myrnaseq.nf</code></p>
+</div>
+</div>
+<div class="callout callout-style-default callout-caution callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-20-contents" aria-controls="callout-20" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Caution
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-20" class="callout-20-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="sourceCode" id="cb39"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>include { FASTQC as FASTQC_one } from '../modules/nf-core/fastq/main' </span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>include { FASTQC as FASTQC_two } from '../modules/nf-core/fastq/main' </span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a>include { TRIMGALORE } from '../modules/nf-core/trimgalore/main'</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="writing-modules-with-nf-core-template" class="level3">
+<h3 class="anchored" data-anchor-id="writing-modules-with-nf-core-template"><strong>5.3.4 Writing modules with nf-core template</strong></h3>
+<p>For this section we are going to refer to the <a href="https://nf-co.re/docs/guidelines/components/modules">nf-core guidelines for modules</a>.</p>
+<p>While these are the full guidelines for <em>contributing</em> back to nf-core, there are still some general components that are good practice even if you are NOT planning to contribute.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Summary of guidelines
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ol type="1">
+<li>All required and optional input <strong>files</strong> must be included in the input as a <code>path</code> variable</li>
+<li>The command should run without any additional argument, any required flag values should be included as an input <code>val</code> variable</li>
+<li><code>task.ext.args</code> must be provided as a variable</li>
+<li>Where possible all input and output files should be compressed (i.e.&nbsp;<code>fastq.gz</code> and <code>.bam</code>)</li>
+<li>A <code>versions.yml</code> file is output</li>
+<li>Naming conventions include using all lowercase without puntuation and follows the convention of <code>software/tool</code> (i.e.&nbsp;<code>bwa/mem</code>)</li>
+<li>All outputs must include an <code>emit</code> definition</li>
+</ol>
+</div>
+</div>
+<p>We are going to write up our own <code>samtools/view</code> module.</p>
+<div class="sourceCode" id="cb40"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>nf-core modules create </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb41"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>                                          ,--./,-.</span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>          ___     __   __   __   ___     /,-._.--~\</span>
+<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a>    |\ | |__  __ /  ` /  \ |__) |__         }  {</span>
+<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a>    | \| |       \__, \__/ |  \ |___     \`-._,-`-,</span>
+<span id="cb41-6"><a href="#cb41-6" aria-hidden="true" tabindex="-1"></a>                                          `._,._,'</span>
+<span id="cb41-7"><a href="#cb41-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-8"><a href="#cb41-8" aria-hidden="true" tabindex="-1"></a>    nf-core/tools version 2.14.1 - https://nf-co.re</span>
+<span id="cb41-9"><a href="#cb41-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-10"><a href="#cb41-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-11"><a href="#cb41-11" aria-hidden="true" tabindex="-1"></a>INFO     Repository type: pipeline</span>
+<span id="cb41-12"><a href="#cb41-12" aria-hidden="true" tabindex="-1"></a>INFO     Press enter to use default values (shown in brackets) or type your own responses. ctrl+click underlined text to open links.</span>
+<span id="cb41-13"><a href="#cb41-13" aria-hidden="true" tabindex="-1"></a>Name of tool/subtool: samtools/view</span>
+<span id="cb41-14"><a href="#cb41-14" aria-hidden="true" tabindex="-1"></a>INFO     Using Bioconda package: 'bioconda::samtools=1.20'</span>
+<span id="cb41-15"><a href="#cb41-15" aria-hidden="true" tabindex="-1"></a>INFO     Could not find a Docker/Singularity container (Unexpected response code `500` for https://api.biocontainers.pro/ga4gh/trs/v2/tools/samtools/versions/samtools-1.20) ## Cluster</span>
+<span id="cb41-16"><a href="#cb41-16" aria-hidden="true" tabindex="-1"></a>GitHub Username: (@author): @mmyeung</span>
+<span id="cb41-17"><a href="#cb41-17" aria-hidden="true" tabindex="-1"></a>INFO     Provide an appropriate resource label for the process, taken from the nf-core pipeline template.</span>
+<span id="cb41-18"><a href="#cb41-18" aria-hidden="true" tabindex="-1"></a>         For example: process_single, process_low, process_medium, process_high, process_long</span>
+<span id="cb41-19"><a href="#cb41-19" aria-hidden="true" tabindex="-1"></a>? Process resource label: process_low</span>
+<span id="cb41-20"><a href="#cb41-20" aria-hidden="true" tabindex="-1"></a>INFO     Where applicable all sample-specific information e.g. 'id', 'single_end', 'read_group' MUST be provided as an input via a Groovy Map called</span>
+<span id="cb41-21"><a href="#cb41-21" aria-hidden="true" tabindex="-1"></a>         'meta'. This information may not be required in some instances, for example indexing reference genome files.</span>
+<span id="cb41-22"><a href="#cb41-22" aria-hidden="true" tabindex="-1"></a>Will the module require a meta map of sample information? [y/n] (y): y</span>
+<span id="cb41-23"><a href="#cb41-23" aria-hidden="true" tabindex="-1"></a>INFO     Created component template: 'samtools/view'</span>
+<span id="cb41-24"><a href="#cb41-24" aria-hidden="true" tabindex="-1"></a>INFO     Created following files:</span>
+<span id="cb41-25"><a href="#cb41-25" aria-hidden="true" tabindex="-1"></a>           modules/local/samtools/view.nf</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>As we progressed through the interactive prompt, you will have noticed that nf-core always attempts to locate the corresponding <code>bioconda</code> package and <code>singularity</code>/<code>Docker</code> container.</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-22-contents" aria-controls="callout-22" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+What happens when there is no <code>bioconda</code> package or container?
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-22" class="callout-22-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="sourceCode" id="cb42"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>nf-core modules create --author @mmyeung --label process_single --meta testscript</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>The command will indicate that the there is no <code>bioconda</code> package with the software name, and prompt you for a package name you might wish to use.</p>
+<div class="sourceCode" id="cb43"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>INFO     Repository type: pipeline</span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>INFO     Press enter to use default values (shown in brackets) or type your own responses. ctrl+click underlined text to open links.</span>
+<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a>WARNING  Could not find Conda dependency using the Anaconda API: 'testscript'</span>
+<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a>Do you want to enter a different Bioconda package name? [y/n]: n</span>
+<span id="cb43-5"><a href="#cb43-5" aria-hidden="true" tabindex="-1"></a>WARNING  Could not find Conda dependency using the Anaconda API: 'testscript'</span>
+<span id="cb43-6"><a href="#cb43-6" aria-hidden="true" tabindex="-1"></a>         Building module without tool software and meta, you will need to enter this information manually.</span>
+<span id="cb43-7"><a href="#cb43-7" aria-hidden="true" tabindex="-1"></a>INFO     Created component template: 'testscript'</span>
+<span id="cb43-8"><a href="#cb43-8" aria-hidden="true" tabindex="-1"></a>INFO     Created following files:</span>
+<span id="cb43-9"><a href="#cb43-9" aria-hidden="true" tabindex="-1"></a>           modules/local/testscript.nf      </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>within the module <code>.nf</code> script you will note that the definitions for the <code>conda</code> and <code>container</code> are incomplete for the tool.</p>
+<div class="sourceCode" id="cb44"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>    conda "${moduleDir}/environment.yml"</span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>    container "${ workflow.containerEngine == 'singularity' &amp;&amp; !task.ext.singularity_pull_docker_container ?</span>
+<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a>        'https://depot.galaxyproject.org/singularity/YOUR-TOOL-HERE':</span>
+<span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a>        'biocontainers/YOUR-TOOL-HERE' }"</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>nf-core has a large cache of containers <a href="https://depot.galaxyproject.org/singularity">here</a>. Though you can also provide a simple path to docker hub.</p>
+<div class="sourceCode" id="cb45"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a>    container "mmyeung/trccustomunix:0.0.1"</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+</div>
+<p>The resource labels, are those as defined in <code>conf/base.config</code></p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<strong>Challenge</strong>
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Write up the <code>inputs</code>, <code>outputs</code> and <code>script</code> for <code>samtools/view</code>.</p>
+<p>Assume that all the inputs will be <code>.bam</code> and the outputs will also be <code>.bam</code>.</p>
+<p>For reference look at the documentation for <a href="http://www.htslib.org/doc/1.19/samtools-view.html"><code>samtools/view</code></a></p>
+<p>Are there optional flags that take file inputs? What options need to set to ensure that the command runs without error?</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-caution callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-24-contents" aria-controls="callout-24" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Caution
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-24" class="callout-24-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="sourceCode" id="cb46"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>process SAMTOOLS_VIEW {</span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>    tag "$meta.id"</span>
+<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a>    label 'process_low'</span>
+<span id="cb46-4"><a href="#cb46-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb46-5"><a href="#cb46-5" aria-hidden="true" tabindex="-1"></a>    conda "${moduleDir}/environment.yml"</span>
+<span id="cb46-6"><a href="#cb46-6" aria-hidden="true" tabindex="-1"></a>    container "${ workflow.containerEngine == 'singularity' &amp;&amp; !task.ext.singularity_pull_docker_container ?</span>
+<span id="cb46-7"><a href="#cb46-7" aria-hidden="true" tabindex="-1"></a>        'https://depot.galaxyproject.org/singularity/samtools:1.20--h50ea8bc_0' :</span>
+<span id="cb46-8"><a href="#cb46-8" aria-hidden="true" tabindex="-1"></a>        'biocontainers/samtools:1.20--h50ea8bc_0' }"</span>
+<span id="cb46-9"><a href="#cb46-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb46-10"><a href="#cb46-10" aria-hidden="true" tabindex="-1"></a>    input:</span>
+<span id="cb46-11"><a href="#cb46-11" aria-hidden="true" tabindex="-1"></a>    tuple val(meta), path(input), path(index)</span>
+<span id="cb46-12"><a href="#cb46-12" aria-hidden="true" tabindex="-1"></a>    tuple val(meta2), path(fasta)</span>
+<span id="cb46-13"><a href="#cb46-13" aria-hidden="true" tabindex="-1"></a>    path bed</span>
+<span id="cb46-14"><a href="#cb46-14" aria-hidden="true" tabindex="-1"></a>    path qname</span>
+<span id="cb46-15"><a href="#cb46-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb46-16"><a href="#cb46-16" aria-hidden="true" tabindex="-1"></a>    output:</span>
+<span id="cb46-17"><a href="#cb46-17" aria-hidden="true" tabindex="-1"></a>    tuple val(meta), path("*.bam"),  emit: bam</span>
+<span id="cb46-18"><a href="#cb46-18" aria-hidden="true" tabindex="-1"></a>    path  "versions.yml",            emit: versions</span>
+<span id="cb46-19"><a href="#cb46-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb46-20"><a href="#cb46-20" aria-hidden="true" tabindex="-1"></a>    when:</span>
+<span id="cb46-21"><a href="#cb46-21" aria-hidden="true" tabindex="-1"></a>    task.ext.when == null || task.ext.when</span>
+<span id="cb46-22"><a href="#cb46-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb46-23"><a href="#cb46-23" aria-hidden="true" tabindex="-1"></a>    script:</span>
+<span id="cb46-24"><a href="#cb46-24" aria-hidden="true" tabindex="-1"></a>    def args = task.ext.args ?: ''</span>
+<span id="cb46-25"><a href="#cb46-25" aria-hidden="true" tabindex="-1"></a>    def args2 = task.ext.args2 ?: ''</span>
+<span id="cb46-26"><a href="#cb46-26" aria-hidden="true" tabindex="-1"></a>    def prefix = task.ext.prefix ?: "${meta.id}"</span>
+<span id="cb46-27"><a href="#cb46-27" aria-hidden="true" tabindex="-1"></a>    def reference = fasta ? "--reference ${fasta}" : ""</span>
+<span id="cb46-28"><a href="#cb46-28" aria-hidden="true" tabindex="-1"></a>    def readnames = qname ? "--qname-file ${qname}": ""</span>
+<span id="cb46-29"><a href="#cb46-29" aria-hidden="true" tabindex="-1"></a>    def regions = bed ? "-L ${bed}": ""</span>
+<span id="cb46-30"><a href="#cb46-30" aria-hidden="true" tabindex="-1"></a>    if ("$input" == "${prefix}.${file_type}") error "Input and output names are the same, use \"task.ext.prefix\" to disambiguate!"</span>
+<span id="cb46-31"><a href="#cb46-31" aria-hidden="true" tabindex="-1"></a>    """</span>
+<span id="cb46-32"><a href="#cb46-32" aria-hidden="true" tabindex="-1"></a>    samtools \\</span>
+<span id="cb46-33"><a href="#cb46-33" aria-hidden="true" tabindex="-1"></a>        view \\</span>
+<span id="cb46-34"><a href="#cb46-34" aria-hidden="true" tabindex="-1"></a>        -hb \\</span>
+<span id="cb46-35"><a href="#cb46-35" aria-hidden="true" tabindex="-1"></a>        --threads ${task.cpus-1} \\</span>
+<span id="cb46-36"><a href="#cb46-36" aria-hidden="true" tabindex="-1"></a>        ${reference} \\</span>
+<span id="cb46-37"><a href="#cb46-37" aria-hidden="true" tabindex="-1"></a>        ${readnames} \\</span>
+<span id="cb46-38"><a href="#cb46-38" aria-hidden="true" tabindex="-1"></a>        ${regions} \\</span>
+<span id="cb46-39"><a href="#cb46-39" aria-hidden="true" tabindex="-1"></a>        $args \\</span>
+<span id="cb46-40"><a href="#cb46-40" aria-hidden="true" tabindex="-1"></a>        -o ${prefix}.bam \\</span>
+<span id="cb46-41"><a href="#cb46-41" aria-hidden="true" tabindex="-1"></a>        $input \\</span>
+<span id="cb46-42"><a href="#cb46-42" aria-hidden="true" tabindex="-1"></a>        $args2</span>
+<span id="cb46-43"><a href="#cb46-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb46-44"><a href="#cb46-44" aria-hidden="true" tabindex="-1"></a>    cat &lt;&lt;-END_VERSIONS &gt; versions.yml</span>
+<span id="cb46-45"><a href="#cb46-45" aria-hidden="true" tabindex="-1"></a>    "${task.process}":</span>
+<span id="cb46-46"><a href="#cb46-46" aria-hidden="true" tabindex="-1"></a>        samtools: \$(echo \$(samtools --version 2&gt;&amp;1) | sed 's/^.*samtools //; s/Using.*\$//')</span>
+<span id="cb46-47"><a href="#cb46-47" aria-hidden="true" tabindex="-1"></a>    END_VERSIONS</span>
+<span id="cb46-48"><a href="#cb46-48" aria-hidden="true" tabindex="-1"></a>    """</span>
+<span id="cb46-49"><a href="#cb46-49" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb46-50"><a href="#cb46-50" aria-hidden="true" tabindex="-1"></a>    stub:</span>
+<span id="cb46-51"><a href="#cb46-51" aria-hidden="true" tabindex="-1"></a>    def args = task.ext.args ?: ''</span>
+<span id="cb46-52"><a href="#cb46-52" aria-hidden="true" tabindex="-1"></a>    def prefix = task.ext.prefix ?: "${meta.id}"</span>
+<span id="cb46-53"><a href="#cb46-53" aria-hidden="true" tabindex="-1"></a>    def file_type = args.contains("--output-fmt sam") ? "sam" :</span>
+<span id="cb46-54"><a href="#cb46-54" aria-hidden="true" tabindex="-1"></a>                    args.contains("--output-fmt bam") ? "bam" :</span>
+<span id="cb46-55"><a href="#cb46-55" aria-hidden="true" tabindex="-1"></a>                    args.contains("--output-fmt cram") ? "cram" :</span>
+<span id="cb46-56"><a href="#cb46-56" aria-hidden="true" tabindex="-1"></a>                    input.getExtension()</span>
+<span id="cb46-57"><a href="#cb46-57" aria-hidden="true" tabindex="-1"></a>    if ("$input" == "${prefix}.${file_type}") error "Input and output names are the same, use \"task.ext.prefix\" to disambiguate!"</span>
+<span id="cb46-58"><a href="#cb46-58" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb46-59"><a href="#cb46-59" aria-hidden="true" tabindex="-1"></a>    def index = args.contains("--write-index") ? "touch ${prefix}.csi" : ""</span>
+<span id="cb46-60"><a href="#cb46-60" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb46-61"><a href="#cb46-61" aria-hidden="true" tabindex="-1"></a>    """</span>
+<span id="cb46-62"><a href="#cb46-62" aria-hidden="true" tabindex="-1"></a>    touch ${prefix}.${file_type}</span>
+<span id="cb46-63"><a href="#cb46-63" aria-hidden="true" tabindex="-1"></a>    ${index}</span>
+<span id="cb46-64"><a href="#cb46-64" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb46-65"><a href="#cb46-65" aria-hidden="true" tabindex="-1"></a>    cat &lt;&lt;-END_VERSIONS &gt; versions.yml</span>
+<span id="cb46-66"><a href="#cb46-66" aria-hidden="true" tabindex="-1"></a>    "${task.process}":</span>
+<span id="cb46-67"><a href="#cb46-67" aria-hidden="true" tabindex="-1"></a>        samtools: \$(echo \$(samtools --version 2&gt;&amp;1) | sed 's/^.*samtools //; s/Using.*\$//')</span>
+<span id="cb46-68"><a href="#cb46-68" aria-hidden="true" tabindex="-1"></a>    END_VERSIONS</span>
+<span id="cb46-69"><a href="#cb46-69" aria-hidden="true" tabindex="-1"></a>    """</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+</div>
+<p>Similar to <code>nf-core create</code> you can minimise a the number of prompts by using optional flags.</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<strong>Overall Challenge</strong>
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Write up the short workflow as discussed above</p>
+<p>FASTQC -&gt; trimgalore -&gt; FASTQC -&gt; MULTIQC</p>
+</div>
+</div>
+</section>
+</section>
+<section id="nf-core-subworkflow" class="level2">
+<h2 class="anchored" data-anchor-id="nf-core-subworkflow"><strong>5.4 Nf-core subworkflow</strong></h2>
+<p><a href="https://nf-co.re/subworkflows">nf-core subworkflows</a></p>
+<p>or with</p>
+<div class="sourceCode" id="cb47"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a>nf-core subworkflows list remote</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<section id="installing-nf-core-subworkflows" class="level3">
+<h3 class="anchored" data-anchor-id="installing-nf-core-subworkflows"><strong>5.4.1 Installing nf-core subworkflows</strong></h3>
+<p><strong>Subworkflows can be updated/removed like modules</strong></p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<strong>Challenge</strong>
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Install the subworkflow <code>fastq_subsample_fq_salmon</code> into the workflow</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-caution callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-27-contents" aria-controls="callout-27" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Caution
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-27" class="callout-27-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="sourceCode" id="cb48"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a>nf-core subworkflows install fastq_subsample_fq_salmon</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="writing-subworkflows-with-nf-core-template" class="level3">
+<h3 class="anchored" data-anchor-id="writing-subworkflows-with-nf-core-template"><strong>5.4.2 Writing subworkflows with nf-core template</strong></h3>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<strong>Challenge</strong>
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Write up the <code>QC_WF</code> subworkflow from last week.</p>
+</div>
+</div>
+</section>
+</section>
+<section id="nf-core-schema-and-input-validation" class="level2">
+<h2 class="anchored" data-anchor-id="nf-core-schema-and-input-validation"><strong>5.5 Nf-core schema and input validation</strong></h2>
+<p>Relies on <code>plugins</code> written by nf-core community</p>
+<p>In particular <a href="https://github.com/nextflow-io/nf-validation"><code>nf-validation</code></a></p>
+<p><code>nextflow_schmea.json</code> is for pipeline parameters</p>
+<div class="sourceCode" id="cb49"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a>nf-core schema build</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb50"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a>                                          ,--./,-.</span>
+<span id="cb50-3"><a href="#cb50-3" aria-hidden="true" tabindex="-1"></a>          ___     __   __   __   ___     /,-._.--~\</span>
+<span id="cb50-4"><a href="#cb50-4" aria-hidden="true" tabindex="-1"></a>    |\ | |__  __ /  ` /  \ |__) |__         }  {</span>
+<span id="cb50-5"><a href="#cb50-5" aria-hidden="true" tabindex="-1"></a>    | \| |       \__, \__/ |  \ |___     \`-._,-`-,</span>
+<span id="cb50-6"><a href="#cb50-6" aria-hidden="true" tabindex="-1"></a>                                          `._,._,'</span>
+<span id="cb50-7"><a href="#cb50-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-8"><a href="#cb50-8" aria-hidden="true" tabindex="-1"></a>    nf-core/tools version 2.14.1 - https://nf-co.re</span>
+<span id="cb50-9"><a href="#cb50-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-10"><a href="#cb50-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-11"><a href="#cb50-11" aria-hidden="true" tabindex="-1"></a>INFO     [✓] Default parameters match schema validation</span>
+<span id="cb50-12"><a href="#cb50-12" aria-hidden="true" tabindex="-1"></a>INFO     [✓] Pipeline schema looks valid (found 32 params)</span>
+<span id="cb50-13"><a href="#cb50-13" aria-hidden="true" tabindex="-1"></a>INFO     Writing schema with 32 params: 'nextflow_schema.json'</span>
+<span id="cb50-14"><a href="#cb50-14" aria-hidden="true" tabindex="-1"></a>🚀  Launch web builder for customisation and editing? [y/n]: y</span>
+<span id="cb50-15"><a href="#cb50-15" aria-hidden="true" tabindex="-1"></a>INFO     Opening URL: https://nf-co.re/pipeline_schema_builder?id=1718112529_0841fa08f86f</span>
+<span id="cb50-16"><a href="#cb50-16" aria-hidden="true" tabindex="-1"></a>INFO     Waiting for form to be completed in the browser. Remember to click Finished when you're done.</span>
+<span id="cb50-17"><a href="#cb50-17" aria-hidden="true" tabindex="-1"></a>⢿ Use ctrl+c to stop waiting and force exit.</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Recommend writing in web browser</p>
+<p>json format details <a href="https://json-schema.org/understanding-json-schema">additional reading</a></p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<strong>Challenge</strong>
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>We are going add the input parameter for the <code>transcript.fa</code></p>
+<p>Then install <code>salmon/index</code> and write up <code>quant_wf</code> subworkflow from last week.git</p>
+</div>
+</div>
+<section id="nf-core-inputs" class="level3">
+<h3 class="anchored" data-anchor-id="nf-core-inputs"><strong>5.5.2 Nf-core inputs</strong></h3>
+<p>nested in this schema is the <code>input</code> or samplesheet schema. unfortunately there isn’t a nice interface to help you write this schema yet.</p>
+<ul>
+<li><p>meta: Allows you to predesignate the “key” with in the “meta”</p></li>
+<li><p>required: value must be included</p></li>
+<li><p>dependency: value is dependant on other value existing in samplesheet (i.e.&nbsp;fastq_2 must imply there is a fastq_1)</p></li>
+</ul>
+</section>
+<section id="nf-core-tools-for-launching" class="level3">
+<h3 class="anchored" data-anchor-id="nf-core-tools-for-launching"><strong>5.6 Nf-core tools for launching</strong></h3>
+<p><code>create-params-file</code></p>
+</section>
+<section id="nf-core-for-pipeline-management" class="level3">
+<h3 class="anchored" data-anchor-id="nf-core-for-pipeline-management"><strong>5.7 Nf-core for pipeline management</strong></h3>
+<p><code>bump-version</code> ==&gt; good software management to note down versions</p>
+</section>
+</section>
+<section id="contributing-to-nf-core" class="level2">
+<h2 class="anchored" data-anchor-id="contributing-to-nf-core"><strong>Contributing to nf-core</strong></h2>
+<p>Full pipelines Please see the <a href="https://nf-co.re/docs/tutorials/adding_a_pipeline/overview">nf-core documentation</a> for a full walkthrough of how to create a new nf-core workflow. — <sup><em>This workshop is adapted from <a href="https://training.nextflow.io/basic_training/">Fundamentals Training</a>, <a href="https://training.nextflow.io/advanced/">Advanced Training</a>, <a href="https://nf-co.re/docs/contributing/tutorials/creating_with_nf_core#creating-a-pipeline">Developer Tutorials</a>, <a href="https://nextflow-io.github.io/patterns/">Nextflow Patterns</a> materials from Nextflow, nf-core <a href="https://nf-co.re/docs/nf-core-tools">nf-core tools documentation</a> and <a href="https://nextflow-io.github.io/nf-validation/">nf-validation</a></em></sup></p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
+          }
+        }
+        return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/PMCC-BioinformaticsCore\.github\.io\/nextflow-nf-core-workshop-2025\/");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
