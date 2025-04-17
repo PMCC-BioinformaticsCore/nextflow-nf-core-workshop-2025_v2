@@ -1,0 +1,277 @@
+---
+title: "**Introduction to Nextflow**"
+output:
+  html_document:
+    toc: false
+    toc_float: false
+from: markdown+emoji
+---
+
+::: callout-tip
+
+### Objectives{.unlisted}
+
+- Learn about the benefits of a workflow manager.
+- Learn Nextflow terminology.
+- Learn basic commands and options to run a Nextflow workflow
+
+:::
+
+### **1.1.1. What is a Workflow?**
+
+Workflow can be defined as sequence of steps or processes through which a piece of work passes [^1].  Steps may be dependent on other tasks to complete, or they can be run in parallel. 
+
+<img src="media/01_1_1_WorkflowMockUp.png" width="200">
+
+In bioinformatics workflows, each step would commonly comprises of a computation tool thats operate on some input files to produce output files. A workflow can be as simple as many command line tools chained together to facilitate complex data manipulations.  
+
+![](media/01_1_2_WorkflowExample.png)
+
+A simple script like this example above would probably be adequate to prototype a workflow for some once-off analysis. However, there are many other considerations to take into account to turn this into an efficient and scalable computational workflows. For example: 
+
+- How do we remove intermediate files? 
+- How do we handle tools' installations, versions, and dependencies? 
+- How do we submit each of these jobs into a job scheduler (e.g Slurm) in a HPC? 
+- How do we resume a partially failed workflow, especially if some of the initial completed tasks take long to compute? 
+- How do we capture the logs from each tool? 
+- How do we monitor how far the workflow has progressed? 
+- How do we share this workflow? 
+
+Some of these considerations are the primary reasons why people choose to use a workflow system to orchestrate and deploy their computational workflows. There are many [existing workflow systems](https://github.com/common-workflow-language/common-workflow-language/wiki/Existing-Workflow-systems), and Nextflow is one of them.  
+
+### **1.1.2. What is Nextflow?**
+
+Nextflow is one of the commonly used workflow systems to build scalable, portable, and reproducible computational workflows. 
+It addresses the considerations that we discussed in the previous sections, providing features such as: 
+
+- Scalability, portability, and reproducibility
+- Ease of workflow deployment and sharing
+- Execution abstraction between workflow logic and execution system 
+
+Nextflow implements its own **domain-specific language (DSL)**, which extends from the Groovy programming language (a derivation of Java).  
+You will notice there are libraries and functions used in Nextflow workflows that are still written in the native Groovy script. 
+
+<br/>
+
+### **1.1.3. Processes and Channels**
+
+In Nextflow, **processes** and **channels** are the fundamental building blocks of a workflow.
+
+A **process** is a unit of execution that represents a single computational step in a workflow. It is defined as a block of code that typically performs a one specific task and specifies its input and outputs, as well as any directives and conditional statements required for its execution. Processes can be written in any language that can be executed from the command line, such as Bash, Python, or R.
+
+```default
+process sayHello {
+  input: 
+    val x
+  output:
+    stdout
+  script:
+    """
+    echo '$x world!'
+    """
+}
+```
+
+Processes in are executed independently (i.e., they do not share a common writable state) as **tasks** and can run in parallel, allowing for efficient utilization of computing resources. Nextflow automatically manages the data dependencies between processes, ensuring that each process is executed only when its input data is available and all of its dependencies have been satisfied.
+
+A **channel** is an asynchronous first-in, first-out (FIFO) queue that is used to join processes together. Channels allow data to passed between processes and can be used to manage data, parallelize tasks, and structure workflows. Any process can define one or more channels as an input and output. Ultimately the workflow execution flow itself, is implicitly defined by these declarations.
+
+```default
+Channel.of('Bonjour', 'Ciao', 'Hello', 'Hola') | sayHello
+```
+
+Importantly, processes can be **parameterized** to allow for flexibility in their behavior and to enable their reuse in and between workflows.
+
+![](media/01_1_3_Channel_Process.png)
+
+<br/>
+
+### **1.1.4. Execution abstraction**
+
+While a process defines what command or script is executed, the **executor** determines how and where the script is executed.
+
+Nextflow provides an **abstraction** between the workflow’s functional logic and the underlying execution system. This abstraction allows users to define a workflow once and execute it on different computing platforms without having to modify the workflow definition. Nextflow provides a variety of built-in execution options, such as local execution, HPC cluster execution, and cloud-based execution, and allows users to easily switch between these options using command-line arguments.
+
+![](media/01_1_4_AbstractionExec.png)
+
+If not specified, processes are executed on your local computer. The local executor is useful for workflow development and testing purposes. However, for real-world computational workflows, a high-performance computing (HPC) or cloud platform is often required.
+
+You can find a full list of supported executors as well as how to configure them [here](https://www.nextflow.io/docs/latest/executor.html).
+
+### **1.1.5. Nextflow CLI**
+
+Nextflow provides a robust command line interface for the management and execution of workflows. Nextflow can be used on any POSIX compatible system (Linux, OS X, etc). It requires Bash 3.2 (or later) and Java 11 (or later, up to 18) to be installed.
+
+Nextflow is distributed as a self-installing package and does not require any special installation procedure.
+
+#### **How to install Nextflow**
+
+Nextflow can be installed on your local computer using a few easy steps (provided it is running in Linux-like environment, e.g WSL for Windows user):
+
+1. Download the executable package using either `wget -qO- https://get.nextflow.io | bash` or `curl -s https://get.nextflow.io | bash`
+2. Make the binary executable on your system by running `chmod +x nextflow`.
+3. Move the `nextflow` file to a directory accessible by your `$PATH` variable, e.g, `mv nextflow ~/bin/`
+
+#### **How to load Nextflow at Peter Mac's HPC**
+
+Nextflow has been pre-installed by the Research Computing Facility in our cluster as module. 
+
+There are currently two versions installed (as of 20 Nov 2023):
+
+``` default
+>>> module avail nextflow
+nextflow/21.04.3(default)   nextflow/23.04.1
+```
+
+Make sure to always use version 23 and above, as we have encountered problems running nf-core workflows that with older versions. 
+
+``` default
+>> module load nextflow/23.04.1
+```
+
+
+<br/>
+
+### **1.1.6.Nextflow options and commands**
+
+Nextflow provides a robust command line interface for the management and execution of workflows. The top-level interface consists of options and commands.
+
+You can list Nextflow options and commands with the `-h` option:
+
+```default
+nextflow -h
+```
+
+Options for a commands can also be viewed by appending the `-help` option to a Nextflow command.
+
+For example, options for the the `run` command can be viewed:
+
+``` default 
+nextflow run -help
+```
+
+
+### **1.1.7. Managing your environment**
+
+You can use [environment variables](https://www.nextflow.io/docs/latest/config.html#environment-variables) to control the Nextflow runtime and the underlying Java virtual machine. These variables can be exported before running a workflow and will be interpreted by Nextflow. For most users, Nextflow will work without setting any environment variables. However, to improve reproducibility and to optimise your resources, you will benefit from establishing environmental variables.
+
+For example, as we are using a shared storage, we should consider including common shared paths to where software is stored. These variables can be accessed using the `NXF_SINGULARITY_CACHEDIR` or the `NXF_CONDA_CACHEDIR` environment variables. We currently set this to `/config/binaries/singularity/containers_devel/nextflow` for the singularity cache directory. 
+
+You can set this folder as your cache directory for singularity images using the `NXF_SINGULARITY_CACHEDIR` environmental variable:
+
+```default
+export NXF_SINGULARITY_CACHEDIR=/config/binaries/singularity/containers_devel/nextflow
+```
+
+Singularity images downloaded by workflow executions will now be stored in this directory.
+
+You may want to include these, or other environmental variables, in your `.bashrc` file (or alternate) that is loaded when you log in so you don’t need to export variables every session.
+
+A complete list of environmental variables can be found [here](https://www.nextflow.io/docs/latest/config.html#environment-variables).
+
+<br/>
+
+### **1.1.8. Executing a workflow**
+
+Nextflow seamlessly integrates with code repositories such as [GitHub](https://github.com/). This feature allows you to manage your project code and use public Nextflow workflows quickly, consistently, and transparently.
+
+If you are running a workflow hosted in a remote code repository, you can specify its qualified name or the repository URL. The qualified name is formed by two parts - the owner name and the repository name separated by a `/` character. For example, if a Nextflow project `bar` is hosted in a GitHub repository `foo` at the address `http://github.com/foo/bar`, it could be run using:
+
+```default
+nextflow run foo/bar
+```
+
+If you `run` a workflow, it will look for a local file with the workflow name you’ve specified. If that file does not exist, it will look for a public repository with the same name on GitHub (unless otherwise specified). If it is found, Nextflow will automatically `pull` the workflow to your global cache and execute it.
+
+Be aware of what is already in your current working directory where you launch your workflow, if there are other workflows (or configuration files) you may encounter unexpected results.
+
+As our first exercise, we will execute the `hello` workflow directly from `nextflow-io` [GitHub](https://github.com/nextflow-io/hello) repository.
+
+Start by creating a new directory for the first section and move into it
+
+```default
+mkdir ./lesson1.1 && cd $_
+```
+
+Use the `run` command to execute the [nextflow-io/hello](https://github.com/nextflow-io/hello) workflow:
+
+```default
+nextflow run nextflow-io/hello
+```
+
+```default
+N E X T F L O W  ~  version 23.04.1
+Launching `https://github.com/nextflow-io/hello` [deadly_hoover] DSL2 - revision: 1d71f857bb [master]
+executor >  local (4)
+[a2/9c17c8] process > sayHello (2) [100%] 4 of 4 ✔
+Hello world!
+
+Bonjour world!
+
+Hola world!
+
+Ciao world!
+```
+
+#### **Should I be running Nextflow on login node? **{.unlisted}
+
+Short answer, no! Even though nextflow is not supposed to be doing any heavy computation, without the necessary execution config, all the processes within the workflow are being executed locally. 
+
+For the next few sessions, we will run nextflow in a compute note on an interactive slurm job. 
+
+``` default
+
+srun --pty -p prod_short --mem 8GB --mincpus 2 -t 0-2:00 bash
+
+```
+
+#### **Challenge**{.unlisted}
+
+Execute a simple workflow from [rlupat GitHub](https://github.com/rlupat/simple_wf) repository.
+
+::: {.callout-caution collapse="true"}
+
+### Solution
+
+Use the `run` command to execute the [rlupat/simple_wf](https://github.com/rlupat/simple_wf) workflow:
+
+```default
+nextflow run rlupat/simple_wf
+```
+
+```default
+N E X T F L O W  ~  version 23.04.1
+Pulling rlupat/simple_wf ...
+ downloaded from https://github.com/rlupat/simple_wf.git
+Launching `https://github.com/rlupat/simple_wf` [irreverent_bhabha] DSL2 - revision: 96780b2956 [main]
+executor >  local (8)
+[aa/890b8b] process > sayHello (4)        [100%] 4 of 4 ✔
+[c1/60ecc0] process > countCharacters (4) [100%] 4 of 4 ✔
+12 Ciao.txt
+
+15 Bonjour.txt
+
+13 Hello.txt
+
+12 Hola.txt
+```
+
+:::
+
+More information about the Nextflow `run` command can be found [here](https://www.nextflow.io/docs/latest/cli.html#run).
+
+<br/>
+
+::: {.callout-note}
+### **Key points**
+- Nextflow is a workflow system that provide features that enable a workflow to be scalable, portable and reproducible
+- Environment variables can be used to control your Nextflow runtime (especially to set your shared singularity container location)
+- Use `nextflow run` to execute a workflow 
+:::
+
+
+---
+^*These materials are adapted from [Customising Nf-Core Workshop](https://sydney-informatics-hub.github.io/customising-nfcore-workshop/notebooks/1.2_nfcore.html) by Sydney Informatics Hub*^
+
+
+[^1]: https://www.lexico.com/definition/workflow

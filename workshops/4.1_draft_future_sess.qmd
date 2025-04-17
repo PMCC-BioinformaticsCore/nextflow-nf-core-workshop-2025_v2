@@ -1,0 +1,128 @@
+---
+title: "**Nextflow Development - Metadata Parsing**"
+output:
+  html_document:
+    toc: false
+    toc_float: false
+from: markdown+emoji
+---
+
+## **Metadata Parsing
+
+
+Currently, we have defined the `reads` parameter as a string:
+
+```default
+params.reads = "/.../training/nf-training/data/ggal/gut_{1,2}.fq"
+```
+
+To group the `reads` parameter, the `fromFilePairs` channel factory can be used. Add the following to the `workflow` block and run the workflow:
+
+```default
+reads_ch = Channel.fromFilePairs("$params.reads")
+reads_ch.view()
+```
+
+The `reads` parameter is being converted into a file pair group using `fromFilePairs`, and is assigned to `reads_ch`. The `reads_ch` consists of a tuple of two items -- the first is the grouping key of the matching pair (gut), and the second is a list of paths to each file:
+
+```default
+[gut, [/.../training/nf-training/data/ggal/gut_1.fq, /.../training/nf-training/data/ggal/gut_2.fq]]
+```
+
+Glob patterns can also be used to create channels of file pair groups. Inside the data directory, we have pairs of gut, liver, and lung files that can all be read into `reads_ch`. 
+
+```default
+>>> ls "/.../training/nf-training/data/ggal/"
+
+gut_1.fq  gut_2.fq  liver_1.fq  liver_2.fq  lung_1.fq  lung_2.fq  transcriptome.fa
+```
+
+Run the `rnaseq.nf` workflow specifying all `.fq` files inside `/.../training/nf-training/data/ggal/` as the `reads` parameter via the command line:
+
+```default
+nextflow run rnaseq.nf --reads '/.../training/nf-training/data/ggal/*_{1,2}.fq'
+```
+File paths that include one or more wildcards (ie. `*`, `?`, etc.) MUST be wrapped in single-quoted characters to avoid Bash expanding the glob on the command line. 
+
+The `reads_ch` now contains three tuple elements with unique grouping keys:
+
+```default
+[gut, [/.../training/nf-training/data/ggal/gut_1.fq, /.../training/nf-training/data/ggal/gut_2.fq]]
+[liver, [/.../training/nf-training/data/ggal/liver_1.fq, /.../training/nf-training/data/ggal/liver_2.fq]]
+[lung, [/.../training/nf-training/data/ggal/lung_1.fq, /.../training/nf-training/data/ggal/lung_2.fq]]
+```
+
+The grouping key metadata can also be explicitly created without having to rely on file names, using the `map` channel operator. Let's start by creating a samplesheet `rnaseq_samplesheet.csv` with column headings `sample_name`, `fastq1`, and `fastq2`, and fill in a custom `sample_name`, along with the paths to the `.fq` files.
+
+```default
+sample_name,fastq1,fastq2
+gut_sample,/.../training/nf-training/data/ggal/gut_1.fq,/.../training/nf-training/data/ggal/gut_2.fq
+liver_sample,/.../training/nf-training/data/ggal/liver_1.fq,/.../training/nf-training/data/ggal/liver_2.fq
+lung_sample,/.../training/nf-training/data/ggal/lung_1.fq,/.../training/nf-training/data/ggal/lung_2.fq
+```
+
+Let's now supply the path to `rnaseq_samplesheet.csv` to the `reads` parameter in `rnaseq.nf`. 
+
+```default
+params.reads = "/.../rnaseq_samplesheet.csv"
+```
+
+Previously, the `reads` parameter consisted of a string of the `.fq` files directly. Now, it is a string to a `.csv` file containing the `.fq` files. Therefore, the channel factory method that reads the input file also needs to be changed. Since the parameter is now a single file path, the `fromPath` method can first be used, which creates a channel of `Path` type object. The `splitCsv` channel operator can then be used to parse the contents of the channel. 
+
+```default
+reads_ch = Channel.fromPath(params.reads)
+reads_ch.view()
+
+reads_ch = reads_ch.splitCsv(header:true)
+reads_ch.view()
+```
+
+When using `splitCsv` in the above example, `header` is set to `true`. This will use the first line of the `.csv` file as the column names. Let's run the pipeline containing the new input parameter.
+
+```default
+>>> nextflow run rnaseq.nf
+
+N E X T F L O W  ~  version 23.04.1
+Launching `rnaseq.nf` [distraught_avogadro] DSL2 - revision: 525e081ba2
+reads: rnaseq_samplesheet.csv
+reads: $params.reads
+executor >  local (1)
+[4e/eeae2a] process > INDEX [100%] 1 of 1 ✔
+/.../rnaseq_samplesheet.csv
+[sample_name:gut_sample, fastq1:/.../training/nf-training/data/ggal/gut_1.fq, fastq2:/.../training/nf-training/data/ggal/gut_2.fq]
+[sample_name:liver_sample, fastq1:/.../training/nf-training/data/ggal/liver_1.fq, fastq2:/.../training/nf-training/data/ggal/liver_2.f]
+[sample_name:lung_sample, fastq1:/.../training/nf-training/data/ggal/lung_1.fq, fastq2:/.../training/nf-training/data/ggal/lung_2.fq]
+
+```
+
+The `/.../rnaseq_samplesheet.csv` is the output of `reads_ch` directly after the `fromPath` channel factory method was used. Here, the channel is a `Path` type object. After invoking the `splitCsv` channel operator, the `reads_ch` is now replaced with a channel consisting of three elements, where each element is a row in the `.csv` file, returned as a list. Since `header` was set to `true`, each element in the list is also mapped to the column names. This can be used when creating the custom grouping key. 
+
+To create grouping key metadata from the list output by `splitCsv`, the `map` channel operator can be used.
+
+```default
+  reads_ch = reads_ch.map { row -> 
+      grp_meta = "$row.sample_name"
+      [grp_meta, [row.fastq1, row.fastq2]]
+      }
+  reads_ch.view()
+```
+Here, for each list in `reads_ch`, we assign it to a variable `row`. We then create custom grouping key metadata `grp_meta` based on the `sample_name` column from the `.csv`, which can be accessed via the `row` variable by `.` separation. After the custom metadata key is assigned, a tuple is created by assigning `grp_meta` as the first element, and the two `.fq` files as the second element, accessed via the `row` variable by `.` separation.
+
+
+Let's run the pipeline containing the custom grouping key: 
+
+```default
+>>> nextflow run rnaseq.nf
+
+N E X T F L O W  ~  version 23.04.1
+Launching `rnaseq.nf` [happy_torricelli] DSL2 - revision: e9e1499a97
+reads: rnaseq_samplesheet.csv
+reads: $params.reads
+[-        ] process > INDEX -
+[gut_sample, [/.../training/nf-training/data/ggal/gut_1.fq, /.../training/nf-training/data/ggal/gut_2.fq]]
+[liver_sample, [/home/sli/test/training/nf-training/data/ggal/liver_1.fq, /.../training/nf-training/data/ggal/liver_2.fq]]
+[lung_sample, [/.../training/nf-training/data/ggal/lung_1.fq, /.../training/nf-training/data/ggal/lung_2.fq]]
+```
+
+The custom grouping key can be created from multiple values in the samplesheet. For example, `grp_meta = [sample : row.sample_name , file : row.fastq1]` will create the metadata key using both the `sample_name` and `fastq1` file names. The samplesheet can also be created to include multiple sample characteristics, such as `lane`, `data_type`, etc. Each of these characteristics can be used to ensure an adequte grouping key is creaed for that sample. 
+

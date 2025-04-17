@@ -1,0 +1,300 @@
+---
+title: "**Nextflow Development - Metadata Proprogation**"
+output:
+  html_document:
+    toc: false
+    toc_float: false
+from: markdown+emoji
+---
+
+::: callout-tip
+### Objectives{.unlisted}
+- Gain and understanding of how to manipulate and proprogate metadata
+:::
+
+## **Environment Setup**
+
+Set up an interactive shell to run our Nextflow workflow: 
+
+``` default
+srun --pty -p prod_short --mem 8GB --mincpus 2 -t 0-2:00 bash
+```
+
+Load the required modules to run Nextflow:
+
+``` default
+module load nextflow/23.04.1
+module load singularity/3.7.3
+```
+
+Set the singularity cache environment variable:
+
+```default
+export NXF_SINGULARITY_CACHEDIR=/config/binaries/singularity/containers_devel/nextflow
+```
+
+Singularity images downloaded by workflow executions will now be stored in this directory.
+
+You may want to include these, or other environmental variables, in your `.bashrc` file (or alternate) that is loaded when you log in so you don’t need to export variables every session. A complete list of environment variables can be found [here](https://www.nextflow.io/docs/latest/config.html#environment-variables).
+
+The training data can be cloned from:
+```default
+git clone https://github.com/nextflow-io/training.git
+```
+
+## 7.1 **Metadata Parsing**
+We have covered a few different methods of metadata parsing.
+
+
+### **7.1.1 First Pass: `.fromFilePairs`**
+
+A first pass attempt at pulling these files into Nextflow might use the fromFilePairs method:
+```default
+workflow {
+    Channel.fromFilePairs("/home/Shared/For_NF_Workshop/training/nf-training-advanced/metadata/data/reads/*/*_R{1,2}.fastq.gz")
+    .view
+}
+```
+Nextflow will pull out the first part of the fastq filename and returned us a channel of tuple elements where the first element is the filename-derived ID and the second element is a list of two fastq files.
+
+The id is stored as a simple string. We'd like to move to using a map of key-value pairs because we have more than one piece of metadata to track. In this example, we have sample, replicate, tumor/normal, and treatment. We could add extra elements to the tuple, but this changes the 'cardinality' of the elements in the channel and adding extra elements would require updating all downstream processes. A map is a single object and is passed through Nextflow channels as one value, so adding extra metadata fields will not require us to change the cardinality of the downstream processes.
+
+There are a couple of different ways we can pull out the metadata
+
+We can use the tokenize method to split our id. To sanity-check, I just pipe the result directly into the view operator.
+```default
+workflow {
+    Channel.fromFilePairs("/home/Shared/For_NF_Workshop/training/nf-training-advanced/metadata/data/reads/*/*_R{1,2}.fastq.gz")
+    .map { id, reads ->
+        tokens = id.tokenize("_")
+    }
+    .view
+}
+```
+
+If we are confident about the stability of the naming scheme, we can destructure the list returned by tokenize and assign them to variables directly:
+```default
+map { id, reads ->
+    (sample, replicate, type) = id.tokenize("_")
+    meta = [sample:sample, replicate:replicate, type:type]
+    [meta, reads]
+}
+```
+
+::: callout-note
+```default
+Make sure that you're using a tuple with parentheses e.g. (one, two) rather than a List e.g. [one, two]
+```
+:::
+
+If we move back to the previous method, but decided that the 'rep' prefix on the replicate should be removed, we can use regular expressions to simply "subtract" pieces of a string. Here we remove a 'rep' prefix from the replicate variable if the prefix is present:
+
+```default
+map { id, reads ->
+    (sample, replicate, type) = id.tokenize("_")
+    replicate -= ~/^rep/
+    meta = [sample:sample, replicate:replicate, type:type]
+    [meta, reads]
+}
+```
+
+By setting up our the "meta", in our tuple with the format above, allows us to access the values in "sample" throughout our modules/configs as `${meta.sample}`.
+
+## **Second Parse: `.splitCsv`**
+We have briefly touched on `.splitCsv` in the first week.
+
+As a quick overview
+
+Assuming we have the samplesheet
+```default
+sample_name,fastq1,fastq2
+gut_sample,/.../training/nf-training/data/ggal/gut_1.fq,/.../training/nf-training/data/ggal/gut_2.fq
+liver_sample,/.../training/nf-training/data/ggal/liver_1.fq,/.../training/nf-training/data/ggal/liver_2.fq
+lung_sample,/.../training/nf-training/data/ggal/lung_1.fq,/.../training/nf-training/data/ggal/lung_2.fq
+```
+
+We can set up a workflow to read in these files as:
+
+```default
+params.reads = "/.../rnaseq_samplesheet.csv"
+
+reads_ch = Channel.fromPath(params.reads)
+reads_ch.view()
+reads_ch = reads_ch.splitCsv(header:true)
+reads_ch.view()
+```
+
+
+::: callout-tip
+## Challenge{.unlisted}
+Using `.splitCsv` and `.map` read in the samplesheet below:
+`/home/Shared/For_NF_Workshop/training/nf-training-advanced/metadata/data/samplesheet.csv`
+
+Set the meta to contain the following keys from the header `id`, `repeat` and `type`
+:::
+
+:::{.callout-caution collapse="true"}
+## Solution
+```default
+params.input = "/home/Shared/For_NF_Workshop/training/nf-training-advanced/metadata/data/samplesheet.csv"
+
+ch_sheet = Channel.fromPath(params.input)
+
+ch_sheet.splitCsv(header:true)
+    .map {
+        it ->
+            [[it.id, it.repeat, it.type], it.fastq_1, it.fastq_2]
+    }.view()
+
+
+```
+:::
+
+## **7.2 Manipulating Metadata and Channels**
+There are a number of use cases where we will be interested in manipulating our metadata and channels.
+
+Here we will look at 2 use cases.
+
+### **7.2.1 Matching input channels**
+As we have seen in examples/challenges in the operators section, it is important to ensure that the format of the channels that you provide as inputs match the process definition.
+
+```default
+params.reads = "/home/Shared/For_NF_Workshop/training/nf-training/data/ggal/*_{1,2}.fq"
+
+process printNumLines {
+    input:
+    path(reads)
+
+    output:
+    path("*txt")
+
+    script:
+    """
+    wc -l ${reads}
+    """
+}
+
+workflow {
+    ch_input = Channel.fromFilePairs("$params.reads")
+    printNumLines( ch_input )
+}
+```
+
+As if the format does not match you will see and error similar to below:
+```default
+[myeung@papr-res-compute204 lesson7.1test]$ nextflow run test.nf 
+N E X T F L O W  ~  version 23.04.1
+Launching `test.nf` [agitated_faggin] DSL2 - revision: c210080493
+[-        ] process > printNumLines -
+```
+or if using nf-core template
+
+```default
+ERROR ~ Error executing process > 'PMCCCGTRC_UMIHYBCAP:UMIHYBCAP:PREPARE_GENOME:BEDTOOLS_SLOP'
+
+Caused by:
+  Not a valid path value type: java.util.LinkedHashMap ([id:genome_size])
+
+
+Tip: you can replicate the issue by changing to the process work dir and entering the command `bash .command.run`
+
+ -- Check '.nextflow.log' file for details
+```
+
+When encountering these errors there are two methods to correct this:
+
+1. Change the `input` definition in the process
+2. Use variations of the channel operators to correct the format of your channel
+
+There are cases where changing the `input` definition is impractical (i.e. when using nf-core modules/subworkflows).
+
+Let's take a look at some select modules.
+
+[`BEDTOOLS_SLOP`](https://github.com/nf-core/modules/blob/master/modules/nf-core/bedtools/slop/main.nf)
+
+[`BEDTOOLS_INTERSECT`](https://github.com/nf-core/modules/blob/master/modules/nf-core/bedtools/intersect/main.nf)
+
+
+::: callout-tip
+## Challenge{.unlisted}
+Assuming that you have the following inputs
+
+```default
+ch_target = Channel.fromPath("/home/Shared/For_NF_Workshop/training/nf-training-advanced/grouping/data/intervals.bed")
+ch_bait = Channel.fromPath("/home/Shared/For_NF_Workshop/training/nf-training-advanced/grouping/data/intervals2.bed").map { fn -> [ [id: fn.baseName ], fn ] }
+ch_sizes = Channel.fromPath("/home/Shared/For_NF_Workshop/training/nf-training-advanced/grouping/data/genome.sizes")
+```
+
+Write a mini workflow that:
+
+1. Takes the `ch_target` bedfile and extends the bed by 20bp on both sides using `BEDTOOLS_SLOP` (You can use the config definition below as a helper, or write your own as an additional challenge)
+2. Take the output from `BEDTOOLS_SLOP` and input this output with the `ch_baits` to `BEDTOOLS_INTERSECT`
+
+HINT: The modules can be imported from this location: `/home/Shared/For_NF_Workshop/training/pmcc-test/modules/nf-core/bedtools`
+
+HINT: You will need need the following operators to achieve this `.map` and `.combine`
+:::
+
+::: {.callout-note collapse="true"}
+## Config
+```default
+
+process {
+    withName: 'BEDTOOLS_SLOP' {
+        ext.args = "-b 20"
+        ext.prefix = "extended.bed"
+    }
+
+    withName: 'BEDTOOLS_INTERSECT' {
+        ext.prefix = "intersect.bed"
+    }
+}
+:::
+
+:::{.callout-caution collapse="true"}
+## **Solution**
+```default
+include { BEDTOOLS_SLOP } from '/home/Shared/For_NF_Workshop/training/pmcc-test/modules/nf-core/bedtools/slop/main'
+include { BEDTOOLS_INTERSECT } from '/home/Shared/For_NF_Workshop/training/pmcc-test/modules/nf-core/bedtools/intersect/main'
+
+
+ch_target = Channel.fromPath("/home/Shared/For_NF_Workshop/training/nf-training-advanced/grouping/data/intervals.bed")
+ch_bait = Channel.fromPath("/home/Shared/For_NF_Workshop/training/nf-training-advanced/grouping/data/intervals2.bed").map { fn -> [ [id: fn.baseName ], fn ] }
+ch_sizes = Channel.fromPath("/home/Shared/For_NF_Workshop/training/nf-training-advanced/grouping/data/genome.sizes")
+
+workflow {
+    BEDTOOLS_SLOP ( ch_target.map{ fn -> [ [id:fn.baseName], fn ]}, ch_sizes)
+
+    target_bait_bed = BEDTOOLS_SLOP.out.bed.combine( ch_bait )
+    BEDTOOLS_INTERSECT( target_bait_bed, ch_sizes.map{ fn -> [ [id: fn.baseName], fn]} )
+}
+```
+
+```default
+nextflow run nfcoretest.nf -profile singularity -c test2.config --outdir nfcoretest
+```
+:::
+
+## **7.3 Grouping with Metadata**
+Earlier we introduced the function `groupTuple`
+
+
+```default
+
+ch_reads = Channel.fromFilePairs("/home/Shared/For_NF_Workshop/training/nf-training-advanced/metadata/data/reads/*/*_R{1,2}.fastq.gz")
+    .map { id, reads ->
+        (sample, replicate, type) = id.tokenize("_")
+        replicate -= ~/^rep/
+        meta = [sample:sample, replicate:replicate, type:type]
+    [meta, reads]
+}
+
+## Assume that we want to drop replicate from the meta and combine fastqs
+
+ch_reads.map {
+    meta, reads -> 
+        [ meta - meta.subMap('replicate') + [data_type: 'fastq'], reads ]
+    }
+    .groupTuple().view()
+```
+

@@ -1,0 +1,26 @@
+---
+title: "Intro to Nextflow Workshop"
+---
+
+These workshops are designed to provide participants with a foundational understanding of Nextflow and nf-core pipelines. Participants are expected to have prior experience with the command-line interface and working with cluster systems like Slurm. The primary goal of the workshop is to equip researchers with the skills needed to use nextflow and nf-core pipelines for their research data. 
+
+### Course Developers & Maintainers
+
+Collaborative workshop between Peter Mac, Melbourne Bioinformatics, and WEHI
+
+- Song Li, Bioinformatics Core Facility, Peter Mac
+- Richard Lupat, Bioinformatics Core Facility, Peter Mac
+- Miriam Yeung, Cancer Genomics Translational Research Centre, Peter Mac
+- Sanduni Rajapaksa, Research Computing Facility, Peter Mac
+
+### Workshop Sessions
+
+| Lesson     | Overview | Date | 
+|------------|----------| ---------- |
+| [Introduction to Nextflow and running nf-core workflows](./sessions/1_intro_run_nf.html)| Introduction to Nextflow: Introduce nextflow’s core features and concepts + nf-core  | 28th May 2025 | 
+| [Working with nf-core Templates](./sessions/2_nf_dev_intro.html) | Introduction to developing bioinformatics workflow with Nextflow (Part2) | 29th May 2025 | 
+
+
+### Credits and acknowledgement
+
+^*This workshop is adapted from [Customising Nf-Core Workshop](https://sydney-informatics-hub.github.io/customising-nfcore-workshop) materials from Sydney Informatics Hub*^

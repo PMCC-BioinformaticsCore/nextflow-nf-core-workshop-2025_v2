@@ -1,0 +1,197 @@
+---
+title: "**Best practise, tips and tricks**"
+output:
+  html_document:
+    toc: false
+    toc_float: false
+from: markdown+emoji
+---
+
+### **2.3.1. Running Nextflow Pipelines on a HPC **
+
+Nextflow, by default, spawns parallel task executions wherever it is running. You can use [Nextflow's executors](https://www.nextflow.io/docs/latest/executor.html) feature to run these tasks using an HPC job schedulers such as [SLURM](https://www.nextflow.io/docs/latest/executor.html#slurm) and [PBS Pro](https://www.nextflow.io/docs/latest/executor.html#pbs-pro). Use a custom configuration file to send all processes to the job scheduler as separate jobs and define essential resource requests like `cpus`, `time`, `memory`, and `queue` inside a `process {}` [scope](https://www.nextflow.io/docs/latest/process.html#processes). 
+
+#### **Run all workflow tasks as separate jobs on HPC**
+
+In this custom configuration file we have sent all tasks that a workflow is running to a PBS Pro job scheduler and specified jobs to be run on the normal queue, each running for a max time of 3 hours with 1 cpu and 4 Gb of memory:
+
+```default
+process {
+  executor = 'slurm'
+  queue = 'prod_short'
+  cpus = 1
+  time = '2h'
+  memory = '4.GB'
+}
+```
+
+#### **Run processes with different resource profiles as HPC jobs**
+
+Adjusting the custom configuration file above, we can use the `withName {}` [process selector](https://www.nextflow.io/docs/latest/config.html?highlight=withname#process-selectors) to specify process-specific resource requirements:
+
+```default
+process {
+  executor = 'slurm'
+	
+  withName processONE {
+    queue = 'prod_short'
+    cpus = 1
+    time = '2h'
+    memory = '4.GB'
+  }
+
+  withName processTWO {
+    queue = 'prod_med'
+    cpus = 2
+    time = '10h'
+    memory = '50.GB'
+  }
+}
+```
+
+#### **Specify infrastructure-specific directives for your jobs**
+
+Adjusting the custom configuration file above, we can define any native configuration options using the [clusterOptions](https://www.nextflow.io/docs/latest/process.html#process-clusteroptions) directive. We can use this to specify non-standard resources. Below we have specified which HPC project code to bill for all process jobs:
+
+You can also setup a config to tailor specific to Peter Mac's HPC partitions setup. 
+
+```default
+executor {
+    queueSize         = 100
+    queueStatInterval = '1 min'
+    pollInterval      = '1 min'
+    submitRateLimit   = '20 min'
+}
+
+process {
+    executor = 'slurm'
+    cache    = 'lenient'
+    beforeScript = 'module load singularity'
+    stageInMode = 'symlink'
+    queue = { task.time < 2.h ? 'prod_short' : task.time < 24.h ? 'prod_med' : 'prod' } 
+}
+```
+
+::: callout-tip
+
+### **Challenge**{.unlisted}
+
+Run the previous nf-core/rnaseq workflow using the `process` and `executor` scope above (in a config file), and send each task to slurm. 
+
+:::
+
+::: {.callout-caution collapse="true"}
+
+### Solution
+
+Create a nextflow.config file
+
+```default
+process.executor = 'slurm'
+```
+
+Run the nfcore/rna-seq workflow again
+```
+nextflow run nf-core/rnaseq -r 3.11.1 \
+    -params-file workshop-params.yaml
+    -profile singularity \
+    --max_memory '6.GB' \
+    --max_cpus 2 \
+    -resume 
+```
+
+Did you get the following error? 
+
+``` default
+sbatch: error: Batch job submission failed: Access/permission denied
+```
+
+Try running the same workflow on login-node and observe the difference
+
+```default
+>>> squeue -u rlupat -i 5
+
+          17429286      prod nf-NFCOR   rlupat  R       0:03      1 papr-res-compute01
+```
+
+:::
+
+<br/>
+
+### **2.3.3. Clean your work directory**
+
+Your work directory can get very big very quickly (especially if you are using full sized datasets). It is good practise to `clean` your work directory regularly. Rather than removing the `work` folder with all of it's contents, the Nextflow `clean` function allows you to selectively remove data associated with specific runs.
+
+```default
+nextflow clean -help
+```
+
+The `-after`, `-before`, and `-but` options are all very useful to select specific runs to `clean`. The `-dry-run` option is also very useful to see which files will be removed if you were to `-force` the `clean` command.
+
+::: callout-tip
+
+### **Challenge**{.unlisted}
+
+You Nextflow to `clean` your work `work` directory of staged files but **keep** your execution logs.
+
+:::
+
+::: {.callout-caution collapse="true"}
+
+### Solution
+
+Use the Nextflow `clean` command with the `-k` and `-f` options:
+
+```default
+nextflow clean -k -f
+```
+
+:::
+
+<br/>
+
+
+### **2.3.4. Change default Nextflow cache strategy**
+
+Workflow execution is [sometimes not resumed as expected](https://training.nextflow.io/basic_training/cache_and_resume/#resume-troubleshootingl). The [default behaviour of Nextflow cache keys](https://www.nextflow.io/docs/latest/process.html#cache) is to index the input files meta-data information. Reducing the cache stringency to `lenient` means the files cache keys are based only on filesize and path, and can help to avoid unexpectedly re-running certain processes when `-resume` is in use. 
+
+To apply lenient cache strategy to all of your runs, you could add to a custom configuration file:
+
+```default
+process {
+    cache = 'lenient'
+}
+```
+
+You can specify different cache stategies for different processes by using `withName` or `withLabel`. You can specify a particular cache strategy be applied to certain `profiles` within your institutional config, or to apply to all profiles described within that config by placing the above `process` code block outside the `profiles` scope.    
+
+
+
+### **2.3.5. Access private GitHub repositories**
+
+To interact with private repositories on GitHub, you can provide Nextflow with [access to GitHub](https://www.nextflow.io/docs/latest/sharing.html#github-credentials) by specifying your GitHub user name and a [Personal Access Token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token) in the [`scm` configuration file](https://www.nextflow.io/docs/latest/sharing.html#scm-configuration-file) inside your specified `.nextflow/` directory:
+
+```default
+providers {
+
+  github {
+    user = 'rlupat'
+    password = 'my-personal-access-token'
+  }
+
+}
+```
+
+### **2.3.7. Additional resources **
+
+Here are some useful resources to help you get started with running nf-core pipelines and developing Nextflow pipelines:
+
+* [Nextflow tutorials](https://nf-co.re/docs/usage/nextflow)
+* [nf-core pipeline tutorials](https://nf-co.re/usage/usage_tutorials)
+* [Nextflow patterns](https://nextflow-io.github.io/patterns/index.html)
+* [HPC tips and tricks](https://www.nextflow.io/blog/2021/5_tips_for_hpc_users.html)
+* [Nextflow coding best practice recommendations](https://carpentries-incubator.github.io/Pipeline_Training_with_Nextflow/07-Nextflow_Best_Practice/index.html)
+* [The Nextflow blog](https://www.nextflow.io/blog.html)
+
+---
+^*These materials are adapted from [Customising Nf-Core Workshop](https://sydney-informatics-hub.github.io/customising-nfcore-workshop/notebooks/1.2_nfcore.html) by Sydney Informatics Hub*^

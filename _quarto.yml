@@ -1,0 +1,44 @@
+project:
+  type: website
+
+website:
+  title: "Peter Mac Nextflow Workshop"
+  navbar:
+    left:
+      - href: index.qmd
+        text: Home
+      - href: workshops/00_setup.qmd
+        text: Setup
+      - text: Sessions
+        menu:
+        - text: "Introduction to Nextflow and Nf-core"
+          href: sessions/1_intro_run_nf.html
+        - text: "Developing bioinformatics workflows with Nextflow" 
+          href: sessions/2_nf_dev_intro.html
+      - text: Workshop
+        menu:
+        - text: "Introduction to Nextflow"
+          href: workshops/1.1_intro_nextflow.html
+        - text: "Introduction to nf-core"
+          href: workshops/1.2_intro_nf_core.html
+        - text: "Customising & running nf-core pipelines"
+          href: workshops/2.1_customise_and_run.html
+        - text: "Troubleshooting Nextflow run"
+          href: workshops/2.2_troubleshooting.html
+        - text: "Best practise, tips and tricks"
+          href: workshops/2.3_tips_and_tricks.html
+        - text: "Creating a workflow"
+          href: workshops/3.1_creating_a_workflow.html
+        - text: "Modularisation"
+          href: workshops/4.1_modules.html
+        - text: "Nf-core Template"
+          href: workshops/5.1_nf_core_template.html
+        - text: "Nextflow Operators"
+          href: workshops/6.1_operators.html
+        - text: "Metadata Propagation"
+          href: workshops/7.1_metadata_propagation.html
+        - text: "Output, scatter, and Gather"
+          href: workshops/8.1_scatter_gather_output.html
+
+
+

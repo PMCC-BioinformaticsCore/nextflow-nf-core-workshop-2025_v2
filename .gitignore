@@ -1,0 +1,7 @@
+/.quarto/
+/_site/
+/.vscode/
+/.venv/
+workshops/notes
+/index_files/
+index_example.html
