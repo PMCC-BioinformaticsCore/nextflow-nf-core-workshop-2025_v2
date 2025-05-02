@@ -19,43 +19,28 @@ from: markdown+emoji
 
 :::
 
-### **3.1.1. Environment Setup**
+### **2.1.1. Environment Setup**
 
 Clone the training materials repository on GitHub:
 ```default
 git clone https://github.com/nextflow-io/training.git
 ```
 
-Set up an interactive shell to run our Nextflow workflow: 
+Make sure to always use version 24 and above, as we have encountered problems running nf-core workflows with older versions. 
 
-``` default
-srun --pty -p prod_short --mem 8GB --mincpus 2 -t 0-2:00 bash
-```
+Since we are using a shared storage, we should consider including common shared paths to where software is stored. 
 
-Load the required modules to run Nextflow:
-
-``` default
-module load nextflow/23.04.1
-module load singularity/3.7.3
-```
-
-Make sure to always use version 23 and above, as we have encountered problems running nf-core workflows with older versions. 
-
-Since we are using a shared storage, we should consider including common shared paths to where software is stored. These variables can be accessed using the `NXF_SINGULARITY_CACHEDIR` or the `NXF_CONDA_CACHEDIR` environment variables. 
-
-Currently we set the singularity cache environment variable:
+Currently we set the <TODO_container> cache environment variable:
 
 ```default
-export NXF_SINGULARITY_CACHEDIR=/config/binaries/singularity/containers_devel/nextflow
+export NXF_<TODO_container>_CACHEDIR=<TODO_cachedir>
 ```
 
-Singularity images downloaded by workflow executions will now be stored in this directory.
-
-You may want to include these, or other environmental variables, in your `.bashrc` file (or alternate) that is loaded when you log in so you don’t need to export variables every session. A complete list of environment variables can be found [here](https://www.nextflow.io/docs/latest/config.html#environment-variables).
+<TODO_container> images downloaded by workflow executions will now be stored in this directory.
 
 <br/>
 
-### **3.1.2. Nextflow Workflow**
+### **2.1.2. Nextflow Workflow**
 A workflow can be defined as sequence of steps through which computational tasks are chained together. Steps may be dependent on other tasks to complete, or they can be run in parallel. 
 
 <img src="media/01_1_1_WorkflowMockUp.png" width="300">
@@ -63,7 +48,7 @@ A workflow can be defined as sequence of steps through which computational tasks
 In Nextflow, each step that will execute a single computational task is known as a `process`. Channels are used to join processes, and pass the outputs from one task into another task.
 
 
-### **3.1.3. Channels and Channel Factories**
+### **2.1.3. Channels and Channel Factories**
 
 Channels are a key data structure of Nextflow, used to pass data between processes. 
 
@@ -152,7 +137,7 @@ Launching `training/nf-training/snippet.nf` [jolly_archimedes] DSL2 - revision: 
 
 <br/>
 
-### **3.1.4. Processes**
+### **2.1.4. Processes**
 
 In Nextflow, a process is the basic computing task to execute functions (i.e., custom scripts or tools).
 
@@ -296,19 +281,19 @@ Hello world!
 
 The `path` qualifier allows the handling of files inside a process. When a new instance of a process is executed, a new process execution director will be created just for that process. When the `path` qualifier is specified as the input, Nextflow will stage the file inside the process execution directory, allowing it to be accessed by the script using the specified name in the `input` declaration.
 
-In this example, the `reads` channel is created from multiple `.fq` files inside `training/nf-training/data/ggal`, and input into process `FOO`. In the input declaration of the process, the file is referred to as `sample.fastq`. 
+In this example, the `reads` channel is created from multiple `.fq` files inside `<TODO_nxfdata>`, and input into process `FOO`. In the input declaration of the process, the file is referred to as `sample.fastq`. 
 
-The `training/nf-training/data/ggal` folder contains multiple `.fq` files, along with a `.fa` file. The wildcard `*`is used to match only `.fq` to be used as input. 
+The `<TODO_nxfdata>` folder contains multiple `.fq` files, along with a `.fa` file. The wildcard `*`is used to match only `.fq` to be used as input. 
 
 ```default
->>> ls training/nf-training/data/ggal
+>>> ls <TODO_nxfdata>
 gut_1.fq  gut_2.fq  liver_1.fq  liver_2.fq  lung_1.fq  lung_2.fq  transcriptome.fa
 ```
 
 Save the following code block as `foo.nf`. 
 
 ```default
-reads = Channel.fromPath('training/nf-training/data/ggal/*.fq')
+reads = Channel.fromPath('<TODO_nxfdata>/*.fq') 
 
 process FOO {
     debug true
@@ -346,7 +331,7 @@ Inside the process execution directory (ie. `work/78/a8a52d...`), the input file
 
 ```default
 >>> ll work/78/a8a52d...
-sample.fastq -> /.../training/nf-training/data/ggal/liver_1.fq
+sample.fastq -> /.../<TODO_nxfdata>/liver_1.fq
 ```
 
 Similarly, the `path` qualifier can also be used to specify one or more files that will be output by the process. In this example, the `RANDOMNUM` process creates a file `results.txt` containing a random number. Note that the Bash function is escaped with a back-slash character (ie. `\$RANDOM`).
@@ -388,15 +373,15 @@ To define paired/grouped input and output information, the `tuple` qualifier can
 In the example below, `reads_ch` is a channel created using the `fromFilePairs` channel factory, which automatically creates a tuple from file pairs. 
 
 ```default
-reads_ch = Channel.fromFilePairs("training/nf-training/data/ggal/*_{1,2}.fq")
+reads_ch = Channel.fromFilePairs("<TODO_nxfdata>/*_{1,2}.fq")
 reads_ch.view()
 ```
 The created tuple consists of two elements -- the first element is always the grouping key of the matching pair (based on similarities in the file name), and the second is a list of paths to each file. 
 
 ```default
-[gut, [/.../training/nf-training/data/ggal/gut_1.fq, /.../training/nf-training/data/ggal/gut_2.fq]]
-[liver, [/.../training/nf-training/data/ggal/liver_1.fq, /.../training/nf-training/data/ggal/liver_2.fq]]
-[lung, [/.../training/nf-training/data/ggal/lung_1.fq, /.../training/nf-training/data/ggal/lung_2.fq]]
+[gut, [/.../<TODO_nxfdata>/gut_1.fq, /.../<TODO_nxfdata>/gut_2.fq]]
+[liver, [/.../<TODO_nxfdata>/liver_1.fq, /.../<TODO_nxfdata>/liver_2.fq]]
+[lung, [/.../<TODO_nxfdata>/lung_1.fq, /.../<TODO_nxfdata>/lung_2.fq]]
 ```
 
 To input a tuple into a process, the `tuple` qualifier must be used in the `input` block. Below, the first element of the tuple (ie. the grouping key) is declared with the `val` qualifier, and the second element of the tuple is declared with the `path` qualifier. The `FOO` process then prints the `.fq` file paths to a file called `sample.txt`, and returns it as a `tuple` containing the same grouping key, declared with `val`, and the output file created inside the process, declared with `path`. 
@@ -485,8 +470,8 @@ Let's create a Nextflow script `rnaseq.nf` for a RNA-seq workflow. The code begi
 One way to define the workflow parameters is inside the Nextflow script.
 
 ```default
-params.reads = "/.../training/nf-training/data/ggal/*_{1,2}.fq"
-params.transcriptome_file = "/.../training/nf-training/data/ggal/transcriptome.fa"
+params.reads = "/.../<TODO_nxfdata>/*_{1,2}.fq"
+params.transcriptome_file = "/.../<TODO_nxfdata>/transcriptome.fa"
 params.multiqc = "/.../training/nf-training/multiqc"
 
 println "reads: $params.reads"
@@ -494,7 +479,7 @@ println "reads: $params.reads"
 
 Workflow parameters can be defined and accessed inside the Nextflow script by prepending the prefix `params` to a variable name, separated by a dot character, eg. `params.reads`.
 
-Different data types can be assigned as a parameter in Nextflow. The `reads` parameter is defined as multiple `.fq` files. The `transcriptome_file` parameter is defined as one file, `/.../training/nf-training/data/ggal/transcriptome.fa`. The `multiqc` parameter is defined as a directory, `/.../training/nf-training/data/ggal/multiqc`. 
+Different data types can be assigned as a parameter in Nextflow. The `reads` parameter is defined as multiple `.fq` files. The `transcriptome_file` parameter is defined as one file, `/.../<TODO_nxfdata>/transcriptome.fa`. The `multiqc` parameter is defined as a directory, `/.../<TODO_nxfdata>/multiqc`. 
 
 The Groovy `println` command is then used to print the contents of the `reads` parameter, which is access with the `$` character.
 
@@ -503,7 +488,7 @@ Run the script:
 >>> nextflow run rnaseq.nf
 N E X T F L O W  ~  version 23.04.1
 Launching `rnaseq.nf` [astonishing_raman] DSL2 - revision: 8c9adc1772
-reads: /.../training/nf-training/data/ggal/*_{1,2}.fq
+reads: /.../<TODO_nxfdata>/*_{1,2}.fq
 ```
 
 <br/>
@@ -586,13 +571,13 @@ We can see that the input file `transcriptome.fa` has been staged inside this pr
 
 Inside the `.command.err` script, we can see that the `salmon` command was not found, resulting in the termination of the Nextflow workflow. 
 
-Singularity containers can be used to execute the process within an environment that contains the package of interest. Create a config file `nextflow.config` containing the following:
+<TODO_container> containers can be used to execute the process within an environment that contains the package of interest. Create a config file `nextflow.config` containing the following:
 
 ```default
-singularity {
+<TODO_container> {
   enabled = true
   autoMounts = true
-  cacheDir = "/config/binaries/singularity/containers_devel/nextflow"
+  cacheDir = "<TODO_cachedir>"
 }
 ```
 
@@ -600,7 +585,7 @@ The `container` process directive can be used to specify the required container:
 
 ```default
 process INDEX {
-    container "/config/binaries/singularity/containers_devel/nextflow/depot.galaxyproject.org-singularity-salmon-1.10.1--h7e5ed60_0.img"
+    container "<TODO_cachedir>/depot.galaxyproject.org-singularity-salmon-1.10.1--h7e5ed60_0.img"
 
     input:
     path transcriptome
@@ -626,7 +611,7 @@ executor >  local (1)
 
 The newly created `nextflow.config` files does not need to be specified in the `nextflow run` command. This file is automatically searched for and used by Nextflow. 
 
-An alternative to singularity containers is the use of a `module`. Since the script block is executed as a Bash script, it can contain any command or script normally executed on the command line. If there is a module present in the host environment, it can be loaded as part of the process `script`. 
+An alternative to <TODO_container> containers is the use of a `module`. Since the script block is executed as a Bash script, it can contain any command or script normally executed on the command line. If there is a module present in the host environment, it can be loaded as part of the process `script`. 
 
 ```default
 process INDEX {
@@ -661,7 +646,7 @@ executor >  local (1)
 
 Previously, we have defined the `reads` parameter to be the following:
 ```default
-params.reads = "/.../training/nf-training/data/ggal/*_{1,2}.fq"
+params.reads = "/.../<TODO_nxfdata>/*_{1,2}.fq"
 ```
 
 **Challenge:** Convert the `reads` parameter into a tuple channel called `reads_ch`, where the first element is a unique grouping key, and the second element is the paired `.fq` files. Then, view the contents of `reads_ch`
@@ -679,9 +664,9 @@ The `fromFilePairs` channel factory will automatically group input files into a 
 ```default
 >>> nextflow run rnaseq.nf
 
-[gut, [/.../training/nf-training/data/ggal/gut_1.fq, /.../training/nf-training/data/ggal/gut_2.fq]]
-[liver, [/.../training/nf-training/data/ggal/liver_1.fq, /.../training/nf-training/data/ggal/liver_2.fq]]
-[lung, [/.../training/nf-training/data/ggal/lung_1.fq, /.../training/nf-training/data/ggal/lung_2.fq]]
+[gut, [/.../<TODO_nxfdata>/gut_1.fq, /.../<TODO_nxfdata>/gut_2.fq]]
+[liver, [/.../<TODO_nxfdata>/liver_1.fq, /.../<TODO_nxfdata>/liver_2.fq]]
+[lung, [/.../<TODO_nxfdata>/lung_1.fq, /.../<TODO_nxfdata>/lung_2.fq]]
 ```
 
 :::
@@ -716,7 +701,7 @@ In the script block, the `salmon quant` command saves the output of the tool as 
 Set the following as the execution container for `QUANTIFICATION`: 
 
 ```default
-/config/binaries/singularity/containers_devel/nextflow/depot.galaxyproject.org-singularity-salmon-1.10.1--h7e5ed60_0.img
+<TODO_cachedir>/depot.galaxyproject.org-singularity-salmon-1.10.1--h7e5ed60_0.img
 ```
 Assign `index_ch` and `reads_ch` as the inputs to this process, and emit the process outputs as `quant_ch`. View the contents of `quant_ch`
 
@@ -727,7 +712,7 @@ To assign a container to a process, the `container` directive can be used.
 
 ```default
 process QUANTIFICATION {
-    container "/config/binaries/singularity/containers_devel/nextflow/depot.galaxyproject.org-singularity-salmon-1.10.1--h7e5ed60_0.img"
+    container "<TODO_cachedir>/depot.galaxyproject.org-singularity-salmon-1.10.1--h7e5ed60_0.img"
 
     input:
     path salmon_index
@@ -783,7 +768,7 @@ fastqc -o fastqc_${sample_id}_logs -f fastq -q ${reads}
 Take `fastqc_${sample_id}_logs` as the output of the process, and assign it to the channel `fastqc_ch`. Finally, specify the process container to be the following:
 
 ```default
-/config/binaries/singularity/containers_devel/nextflow/depot.galaxyproject.org-singularity-fastqc-0.12.1--hdfd78af_0.img
+<TODO_cachedir>/depot.galaxyproject.org-singularity-fastqc-0.12.1--hdfd78af_0.img
 ```
 
 
@@ -794,7 +779,7 @@ The process `FASTQC` is created in `rnaseq.nf`. Since the input channel is a tup
 
 ```default
 process FASTQC {
-    container "/config/binaries/singularity/containers_devel/nextflow/depot.galaxyproject.org-singularity-fastqc-0.12.1--hdfd78af_0.img"
+    container "<TODO_cachedir>/depot.galaxyproject.org-singularity-fastqc-0.12.1--hdfd78af_0.img"
 
     input:
     tuple val(sample_id), path(reads)
@@ -840,7 +825,7 @@ Let's create a new `MULTIQC` process in our workflow that takes the outputs from
 ```default
 process MULTIQC {
     publishDir params.outdir, mode:'copy'
-    container "/config/binaries/singularity/containers_devel/nextflow/depot.galaxyproject.org-singularity-multiqc-1.21--pyhdfd78af_0.img"
+    container "<TODO_cachedir>/depot.galaxyproject.org-singularity-multiqc-1.21--pyhdfd78af_0.img"
 
     input:
     path quantification

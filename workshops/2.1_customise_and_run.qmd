@@ -7,20 +7,20 @@ output:
 from: markdown+emoji
 ---
 
-### **2.1.1. Pipeline setup**
+### **4.1.1. Pipeline setup**
 
-In this session we are using Singularity containers to manage software installation for all `nf-core/rnaseq` tools. Confirm the Singularity cache directory we set in the previous session using the `$NXF_SINGULARITY_CACHEDIR` [Nextflow environmental variable](https://www.nextflow.io/docs/latest/config.html#environment-variables): 
+In this session we are using <TODO_container> containers to manage software installation for all `nf-core/rnaseq` tools. Confirm the <TODO_container> cache directory we set in the previous session using the `$NXF_<TODO_container>_CACHEDIR` [Nextflow environmental variable](https://www.nextflow.io/docs/latest/config.html#environment-variables): 
 
 ```default
-echo $NXF_SINGULARITY_CACHEDIR
+echo $NXF_<TODO_container>_CACHEDIR
 ```
 :eyes: This should match the directory you set in the previous session:
 
 ```default
-/config/binaries/singularity/containers_devel/nextflow
+/config/binaries/<TODO_container>/containers_devel/nextflow
 ```
 
-### **2.1.2. Design your run command**
+### **4.1.2. Design your run command**
 
 As we learnt in [lesson 1.2.4](../workshops/1.2_intro_nf_core.qmd#viewing-parameters), all nf-core pipelines have a unique set of pipeline-specific parameters that can be used in conjunction with Nextflow parameters to configure the workflow. Generally, nf-core pipelines can be customised at a few different levels:
 
@@ -39,31 +39,44 @@ The following sections of the documentation can be used to understand what the p
 +------------------------------------------------------------+-------------------+---------------------+
 | Docs                                                       | Description       | Customisation level |
 +============================================================+===================+=====================+
-| [Introduction](https://nf-co.re/rnaseq/3.11.1)             |  Workflow summary | - workflow          |
+| [Introduction](https://nf-co.re/rnaseq/3.14.0)             |  Workflow summary | - workflow          |
 |                                                            |                   | - process           |
 +------------------------------------------------------------+-------------------+---------------------+
-| [Usage](https://nf-co.re/rnaseq/3.11.1/usage)              | Inputs and options| - workflow          |
+| [Usage](https://nf-co.re/rnaseq/3.14.0/usage)              | Inputs and options| - workflow          |
 |                                                            |                   | - process           |
 +------------------------------------------------------------+-------------------+---------------------+
-| [Parameters](https://nf-co.re/rnaseq/3.11.1/parameters)    | Available flags   | - workflow          |
+| [Parameters](https://nf-co.re/rnaseq/3.14.0/parameters)    | Available flags   | - workflow          |
 |                                                            |                   | - process           |
 |                                                            |                   | - compute resources |
 +------------------------------------------------------------+-------------------+---------------------+
-| [Output](https://nf-co.re/rnaseq/3.11.1/output)            | Files from all    | - workflow          |
+| [Output](https://nf-co.re/rnaseq/3.14.0/output)            | Files from all    | - workflow          |
 |                                                            | processes         | - process           |
 |                                                            | processes         | - tool              |
 +------------------------------------------------------------+-------------------+---------------------+
 
-
+::: callout-tip
 ### **Challenge**{.unlisted}
 
-View the parameters for the `nf-core/rnaseq` workflow using the command line for the specific version `3.11.1`
+View the parameters for the `nf-core/rnaseq` workflow using the command line for the specific version `3.14.0`
 
 :::
 
+::: {.callout-caution collapse="true"}
+
+### Solution
+
+The `nf-core/rnaseq` workflow parameters can be printed using the `run` command and the `--help` option:
+
+```default
+nextflow run nf-core/rnaseq -r 3.14.0 --help
+```
+
+:::
+
+
 #### **Pipeline structure**
 
-:eyes: Looking at the nf-core/rnaseq pipeline structure provided in the [introduction](https://nf-co.re/rnaseq/3.11.1), we can see that the developers have:
+:eyes: Looking at the nf-core/rnaseq pipeline structure provided in the [introduction](https://nf-co.re/rnaseq/3.14.0), we can see that the developers have:
 
 1. Organised the workflow into 5 stages based on the type of work that is being done
 2. Provided a choice of multiple methods and specified defaults
@@ -96,13 +109,13 @@ The correct answer is **b**. The nf-core/rnaseq pipeline allows users to choose 
 
 The number and type of default and optional parameters an nf-core pipeline accepts is at the discretion of it's developers. However, at a minimum, nf-core pipelines typically:
 
-* Require users to specify a [sample sheet](https://nf-co.re/rnaseq/3.11.1/usage#samplesheet-input)  (`--input`) detailing sample data and relevant metadata
+* Require users to specify a [sample sheet](https://nf-co.re/rnaseq/3.14.0/usage#samplesheet-input)  (`--input`) detailing sample data and relevant metadata
 * Autogenerate or acquire missing reference files from [iGenomes](https://github.com/nf-core/rnaseq/blob/master/conf/igenomes.config) ( using the `--genome`) if not provided by the user.
 
 You can see the recommended (typical) run command and all the parameters available for the nf-core/rnaseq pipeline by running:
 
 ```default
-nextflow run nf-core/rnaseq -r 3.11.1 --help 
+nextflow run nf-core/rnaseq -r 3.14.0 --help 
 ```
 
 The typical or recommended run command for this pipeline is provided at the top of the screen: 
@@ -127,14 +140,15 @@ Nextflow-specific parameters use one (`-`) hyphen, whereas pipeline-specific par
 Most of us will need to adjust the default run command for our experiments. Today we'll be adjusting the typical nf-core/rnaseq run command by: 
 
 1. Providing our own reference files
-2. Using the Singularity software management profile, instead of Docker 
+2. Using the <TODO_container> software management profile, instead of Docker 
 3. Customising the execution of some processes 
 4. Specifying the computing resource limitations of our instances (2 CPUs, 8 Gb RAM)
 
+<TODO_data where will the data be?>
 Our input fastq files (`fastq/`), reference data (`ref/`), and full sample sheet (`samplesheet.csv`) are already available on the cluster. Take a look at the files: 
 
 ```default
-ls -l /data/seqliner/test-data/rna-seq
+ls -l <TODO_testdata>
 ```
 
 ```default
@@ -147,7 +161,7 @@ drwxrwsr-x 2 jyu bioinf-core 8192 Sep 14 10:12 ref
 To make life easier store the path to our test data in a variable.
 
 ```default
-materials=/data/seqliner/test-data/rna-seq
+materials=<TODO_testdata>
 ```
 
 Given we are only testing the pipeline in this session, we only need to work with a couple of samples. Copy the first two samples from the full prepared sample sheet to a local version of the file:
@@ -168,10 +182,10 @@ HBR_Rep2_ERCC,fastq/HBR_Rep2_ERCC-Mix2_Build37-ErccTranscripts-chr22.read1.fastq
 
 #### **Required input: reference data**
 
-Many nf-core pipelines have a minimum requirement for reference data inputs. The input reference data requirements for this pipeline are provided in the [usage documentation](https://nf-co.re/rnaseq/3.11.1/usage#reference-genome-files). We can replace the `--genome` flag in the typical run command with our own files. To see what reference files we can specify using parameters, rerun the pipeline's help command to view all the available parameters: 
+Many nf-core pipelines have a minimum requirement for reference data inputs. The input reference data requirements for this pipeline are provided in the [usage documentation](https://nf-co.re/rnaseq/3.14.0/usage#reference-genome-files). We can replace the `--genome` flag in the typical run command with our own files. To see what reference files we can specify using parameters, rerun the pipeline's help command to view all the available parameters: 
 
 ```default
-nextflow run nf-core/rnaseq -r 3.11.1 --help
+nextflow run nf-core/rnaseq -r 3.14.0 --help
 ```
 
 From the **Reference genome options** parameters, we will provide our own files using: 
@@ -193,7 +207,7 @@ Keep in mind that both this help command and the nf-core parameters documentatio
 ::: callout-tip
 ### **Challenge**{.unlisted}
 
-Re-run the help command to output the parameters for the `nf-core/rnaseq` pipeline and including all hidden parameters for version `3.11.1`
+Re-run the help command to output the parameters for the `nf-core/rnaseq` pipeline and including all hidden parameters for version `3.14.0`
 
 :::
 
@@ -202,7 +216,7 @@ Re-run the help command to output the parameters for the `nf-core/rnaseq` pipeli
 
 Run the following: 
 ```default
-nextflow run nf-core/rnaseq -r 3.11.1 --help --show_hidden_params
+nextflow run nf-core/rnaseq -r 3.14.0 --help --show_hidden_params
 ```
 
 :::
@@ -211,13 +225,15 @@ nextflow run nf-core/rnaseq -r 3.11.1 --help --show_hidden_params
 
 Now that we have prepared our input and reference data, we will customise the typical run command by:
 
-1. Using Nextflow's `-profile` parameter to specify that we will be running the Singularity profile instead of the Docker profile
-2. Adding additional process-specific flags to [skip duplicate read marking](https://nf-co.re/rnaseq/3.11.1/parameters#skip_markduplicates), [save trimmed reads](https://nf-co.re/rnaseq/3.11.1/parameters#save_trimmed) and [save unaligned reads](https://nf-co.re/rnaseq/3.11.1/parameters#save_unaligned)
-3. Adding additional max resource flags to specify the [number of CPUs](https://nf-co.re/rnaseq/3.11.1/parameters#max_cpus) and [amount of memory](https://nf-co.re/rnaseq/3.11.1/parameters#max_memory) available to the pipeline. 
+1. Using Nextflow's `-profile` parameter to specify that we will be running the <TODO_container> profile instead of the Docker profile
+2. Adding additional process-specific flags to [skip duplicate read marking](https://nf-co.re/rnaseq/3.14.0/parameters#skip_markduplicates), [save trimmed reads](https://nf-co.re/rnaseq/3.14.0/parameters#save_trimmed) and [save unaligned reads](https://nf-co.re/rnaseq/3.14.0/parameters#save_unaligned)
+3. Adding additional max resource flags to specify the [number of CPUs](https://nf-co.re/rnaseq/3.14.0/parameters#max_cpus) and [amount of memory](https://nf-co.re/rnaseq/3.14.0/parameters#max_memory) available to the pipeline. 
 
 The parameters we will use are:
 
-* `-profile singularity`
+* `-profile <TODO_container>`
+* `--input samplesheet.csv`
+* `--outdir ./lesson2.1`
 * `--skip_markduplicates true`
 * `--save_trimmed true`
 * `--save_unaligned true`
@@ -229,7 +245,7 @@ You can see how we've customised the typical run command in the diagram below:
 ![](./media/2.1_custom-command.png)
 
 
-### **2.1.3. Run the pipeline**
+### **4.1.3. Run the pipeline**
 
 We will also create a separate output directory for this section. 
 ```default
@@ -239,12 +255,12 @@ cd /scratch/users/<your-username>/nfWorkshop; mkdir ./lesson2 && cd $_
 Now that we have prepared our data and chosen which parameters to apply, run the pipeline: 
 
 ```default
-nextflow run nf-core/rnaseq -r 3.11.1 \
+nextflow run nf-core/rnaseq -r 3.14.0 \
     --input samplesheet.csv \
     --outdir ./lesson2.1 \
     --fasta $materials/ref/chr22_with_ERCC92.fa \
     --gtf $materials/ref/chr22_with_ERCC92.gtf \
-    -profile singularity \
+    -profile <TODO_container> \
     --skip_markduplicates true \
     --save_trimmed true \
     --save_unaligned true \
@@ -280,8 +296,8 @@ Convert the parameter definitions into a YAML file, `workshop-params.yaml`, comp
 ::: {.callout-caution collapse="true"}
 ### Solution
 ```default
-gtf: "/data/seqliner/test-data/rna-seq/ref/chr22_with_ERCC92.gtf"
-fasta: "/data/seqliner/test-data/rna-seq/ref/chr22_with_ERCC92.fa"
+gtf: "<TODO_testdata>/ref/chr22_with_ERCC92.gtf"
+fasta: "<TODO_testdata>/ref/chr22_with_ERCC92.fa"
 skip_markduplicates: true
 save_trimmed: true
 save_unaligned: true
@@ -306,21 +322,21 @@ Nextflow's portability is achieved by separating **workflow implementation** (in
 :::  
 
 
-### **2.1.4. Default nf-core configuration**
+### **4.1.4. Default nf-core configuration**
 Together `nextflow.config` and `base.config`, define the default execution settings and parameters of an nf-core workflow. 
 
 Let's take a look at these two configuration files to gain an understanding of how defaults are applied.
-[conf/base.config](https://github.com/nf-core/rnaseq/blob/3.11.1/conf/base.config)
+[conf/base.config](https://github.com/nf-core/rnaseq/blob/3.14.0/conf/base.config)
 
 
 The generic `base.config` sets the default **compute resource settings** to be used by the processes in the nf-core workflow. It uses process labels to enable different sets of resources to be applied to groups of processes that require similar compute. These labels are specified within the `main.nf` file for a process. 
 
 <span style="color:#000080;"> We can over-ride these default compute resources using a custom configuration file.</span>
 
-Then take a few moments to look through [workflow/nextflow.config](https://github.com/nf-core/rnaseq/blob/3.11.1/nextflow.config)
+Then take a few moments to look through [workflow/nextflow.config](https://github.com/nf-core/rnaseq/blob/3.14.0/nextflow.config)
 
 
-The `nextflow.config` file is more **workflow-specific**, and sets the **defaults for the workflow parameters**, as well as defines profiles to change the default **software access** from `$PATH` to the specified access method, eg Singularity. 
+The `nextflow.config` file is more **workflow-specific**, and sets the **defaults for the workflow parameters**, as well as defines profiles to change the default **software access** from `$PATH` to the specified access method, eg <TODO_container>. 
 
 <span style="color:#000080;"> We can over-ride these parameters on the command line or with a parameters file, and over-ride the default behaviour of searching for tools on `$PATH` by specifying a `-profile`.</span>  
 
@@ -340,17 +356,17 @@ Within `workflow/conf/base.config`, the `check_max()` function over-rides the pr
 
 ::: {.callout-caution collapse="true"}
 ### Solution
-To uncover these answers, we need to understand what **process label** has been assigned to the `STAR_ALIGN` [module](https://github.com/nf-core/rnaseq/blob/3.11.1/modules/nf-core/star/align/main.nf). 
+To uncover these answers, we need to understand what **process label** has been assigned to the `STAR_ALIGN` [module](https://github.com/nf-core/rnaseq/blob/3.14.0/modules/nf-core/star/align/main.nf). 
 
 `STAR_ALIGN` has the label `process_high` which has the settings 12 CPUs, 72 GB mem, 16 hrs walltime applied by the default `base.config`. We have previosuly applied `--max_cpus 2` and `--max_memory 6.GB`, so the `check_max()` function would have reduced the resources given to the STAR alignment process to 2 CPUs and 6 GB RAM, while retaining the default max walltime. 
 :::
 
 
-### **2.1.5. When to use a custom config file**
+### **4.1.5. When to use a custom config file**
 
 In our runs so far, we have avoided the need for a custom resource configuration file by:
 
-- Over-riding the default tool access method of `$PATH` by specifying the `singularity` profile defined in `workflow/nextflow.config`
+- Over-riding the default tool access method of `$PATH` by specifying the `<TODO_container>` profile defined in `workflow/nextflow.config`
   - Without this, our runs for this workshop would fail because we do not have the workflow tools (eg STAR, salmon) installed locally on our VMs
 - Over-riding the default values for CPUs and memory set in `nextflow.config` with `--max_cpus 2` and `--max_memory 6.GB` to fit within our interactive sessions
   - Without these parameters, our runs would fail at the first process that requests more than this, because Nextflow workflows check that the requested resources are available before attempting to execute a workflow  
@@ -364,7 +380,7 @@ These are basic configurations. What if:
 - We wanted to customise outputs beyond what was possible with the nf-core workflow parameters?
  
 
-### **2.1.6. Custom resource configuration using process labels**
+### **4.1.6. Custom resource configuration using process labels**
 
 Capping workflow resources using the `max` parameters is a bit of a blunt instrument. 
 
@@ -391,7 +407,7 @@ The following exercise is trivial given the limitations of our interactive sessi
 
 
 ::: {.callout-note}
-- :bulb: View the file [conf/base.config](https://github.com/nf-core/rnaseq/blob/3.11.1/conf/base.config) for syntax example 
+- :bulb: View the file [conf/base.config](https://github.com/nf-core/rnaseq/blob/3.14.0/conf/base.config) for syntax example 
 - Add a `process` scope inside the `my_resources.config`
 - Use `withLabel: <label_name>` to set resources for each of the following labels:
   - `process_low`
@@ -418,7 +434,7 @@ process {
 
 Save the file then re-run the workflow with our custom configuration, setting `outdir` parameter to `lesson2.1.7`:
 
-### **2.1.7. Examine the outputs**
+### **4.1.7. Examine the outputs**
 
 Once your pipeline has completed, you should see this message printed to your terminal:
 
@@ -460,7 +476,7 @@ All final outputs will be presented in a directory specified by the `--outdir` f
 
 ::: callout-warning
 ### Before executing this run command
-If you haven't done so already, check that the run from lession 2.1.3 has completed successfully.
+If you haven't done so already, check that the run from lession 2.1.3<TODO_check> has completed successfully.
 
 You run should have a summary message similar to below:
 
@@ -480,8 +496,8 @@ fastqc  multiqc  pipeline_info  star_salmon  trimgalore
 ::: 
 
 ```default
-nextflow run nf-core/rnaseq -r 3.11.1 \
-  -profile singularity
+nextflow run nf-core/rnaseq -r 3.14.0 \
+  -profile <TODO_container>
   -c my_resources.config \
   -params-file workshop-params.yaml \
   --outdir lesson2.1.6 \
@@ -503,7 +519,7 @@ To avoid confusion, it is best not to name your custom configuration files `next
 ::: 
 
 
-### **2.1.8. Custom resource configuration using process names**
+### **4.1.8. Custom resource configuration using process names**
 
 This exercise will demonstrate how to adjust the resource configurations for a specific process using the `withName` process selector, using the STAR_ALIGN module as example. 
 
@@ -521,7 +537,7 @@ Identify the execution path for the STAR_ALIGN module:
 ::: {.callout-note}
 ### Finding the module execution path
 - The extended execution path is built from the pipeline, workflow, subworkflow, and module names
-- It can be tricky to evaluate the path used to execute a module. If you are unsure of how to build the path you can copy it from the  [view the modules.conf file on Github](https://github.com/nf-core/rnaseq/blob/3.11.1/conf/modules.config)
+- It can be tricky to evaluate the path used to execute a module. If you are unsure of how to build the path you can copy it from the  [view the modules.conf file on Github](https://github.com/nf-core/rnaseq/blob/3.14.0/conf/modules.config)
 :::
 
 ::: {.callout-note}
@@ -596,8 +612,8 @@ The inclusion of `ext.args` is currently best practice for all DSL2 nf-core modu
 Save the config then resume your run, setting `outdir` to `lesson2.1.8`, applying your custom resources from `my_resources.config`:
 
 ```default
-nextflow run nf-core/rnaseq -r 3.11.1 \
-  -profile singularity \
+nextflow run nf-core/rnaseq -r 3.14.0 \
+  -profile <TODO_container> \
   -c my_resources.config \
   -params-file workshop-params.yaml \
   --outdir lesson2.1.8 \
@@ -655,8 +671,8 @@ process {
 
 Run the pipeline
 ```default
-nextflow run nf-core/rnaseq -r 3.11.1 \
-  -profile singularity \
+nextflow run nf-core/rnaseq -r 3.14.0 \
+  -profile <TODO_container> \
   -c my_resources.config \
   -params-file workshop-params.yaml \
   --outdir lesson2.1.8 \

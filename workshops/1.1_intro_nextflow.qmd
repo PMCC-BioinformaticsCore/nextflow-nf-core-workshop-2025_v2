@@ -57,7 +57,7 @@ You will notice there are libraries and functions used in Nextflow workflows tha
 
 In Nextflow, **processes** and **channels** are the fundamental building blocks of a workflow.
 
-A **process** is a unit of execution that represents a single computational step in a workflow. It is defined as a block of code that typically performs a one specific task and specifies its input and outputs, as well as any directives and conditional statements required for its execution. Processes can be written in any language that can be executed from the command line, such as Bash, Python, or R.
+A **process** is a unit of execution that represents a single computational step in a workflow. It is defined as a block of code that typically performs a one specific task and specifies its input and outputs and any directives required for its execution. Processes can be written in any language that can be executed from the command line, such as Bash, Python, or R.
 
 ```default
 process sayHello {
@@ -112,6 +112,9 @@ Nextflow can be installed on your local computer using a few easy steps (provide
 2. Make the binary executable on your system by running `chmod +x nextflow`.
 3. Move the `nextflow` file to a directory accessible by your `$PATH` variable, e.g, `mv nextflow ~/bin/`
 
+
+::: {.callout-caution collapse="true"}
+
 #### **How to load Nextflow at Peter Mac's HPC**
 
 Nextflow has been pre-installed by the Research Computing Facility in our cluster as module. 
@@ -120,16 +123,24 @@ There are currently two versions installed (as of 20 Nov 2023):
 
 ``` default
 >>> module avail nextflow
-nextflow/21.04.3(default)   nextflow/23.04.1
+module avail nextflow
+-------------------------------------- /config/spack/prod/share/spack/lmod/linux-rhel9-x86_64/Core --------------------------------------
+nextflow/23.04.1-gcc-13.2.0  nextflow/23.10.1-gcc-13.2.0
+------------------------------------------------------- /config/spack/modulefiles -------------------------------------------------------
+nextflow/24.10.2  nextflow/24.10.5 (D)
 ```
 
-Make sure to always use version 23 and above, as we have encountered problems running nf-core workflows that with older versions. 
+Make sure to always use version 24 and above, as we have encountered problems running nf-core workflows with older versions. 
 
 ``` default
->> module load nextflow/23.04.1
+>> module load nextflow/<TODO_nextflowversion>
 ```
+:::
 
-
+::: {.callout-caution collapse="true"}
+### **How to load Nextflow at WEHI's HPC**
+<TODO_wehi>
+:::
 <br/>
 
 ### **1.1.6.Nextflow options and commands**
@@ -155,15 +166,15 @@ nextflow run -help
 
 You can use [environment variables](https://www.nextflow.io/docs/latest/config.html#environment-variables) to control the Nextflow runtime and the underlying Java virtual machine. These variables can be exported before running a workflow and will be interpreted by Nextflow. For most users, Nextflow will work without setting any environment variables. However, to improve reproducibility and to optimise your resources, you will benefit from establishing environmental variables.
 
-For example, as we are using a shared storage, we should consider including common shared paths to where software is stored. These variables can be accessed using the `NXF_SINGULARITY_CACHEDIR` or the `NXF_CONDA_CACHEDIR` environment variables. We currently set this to `/config/binaries/singularity/containers_devel/nextflow` for the singularity cache directory. 
+For example, as we are using a shared storage, we should consider including common shared paths to where software is stored. These variables can be accessed using the `NXF_APPTAINER_CACHEDIR`, `NXF_SINGULARITY_CACHEDIR` or the `NXF_CONDA_CACHEDIR` environment variables. We currently set this to `<TODO_cachedir>` for the apptainer cache directory. 
 
-You can set this folder as your cache directory for singularity images using the `NXF_SINGULARITY_CACHEDIR` environmental variable:
+You can set this folder as your cache directory for <TODO_container> images using the `NXF_<TODO_container>_CACHEDIR` environmental variable:
 
 ```default
-export NXF_SINGULARITY_CACHEDIR=/config/binaries/singularity/containers_devel/nextflow
+export NXF_<TODO_container>_CACHEDIR=<TODO_cachedir>
 ```
 
-Singularity images downloaded by workflow executions will now be stored in this directory.
+<TODO_container> images downloaded by workflow executions will now be stored in this directory.
 
 You may want to include these, or other environmental variables, in your `.bashrc` file (or alternate) that is loaded when you log in so you don’t need to export variables every session.
 
@@ -213,17 +224,20 @@ Hola world!
 Ciao world!
 ```
 
+::: {.callout-caution collapse="true"}
 #### **Should I be running Nextflow on login node? **{.unlisted}
 
-Short answer, no! Even though nextflow is not supposed to be doing any heavy computation, without the necessary execution config, all the processes within the workflow are being executed locally. 
+Short answer, no! Even though nextflow is not supposed to be doing any heavy computation, without the necessary execution config, all the processes within the workflow are being executed locally.
 
 For the next few sessions, we will run nextflow in a compute note on an interactive slurm job. 
 
 ``` default
 
 srun --pty -p prod_short --mem 8GB --mincpus 2 -t 0-2:00 bash
-
 ```
+
+:::
+
 
 #### **Challenge**{.unlisted}
 

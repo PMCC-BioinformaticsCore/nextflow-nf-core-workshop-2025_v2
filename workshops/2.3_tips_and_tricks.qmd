@@ -33,14 +33,14 @@ Adjusting the custom configuration file above, we can use the `withName {}` [pro
 process {
   executor = 'slurm'
 	
-  withName processONE {
+  withName: processONE {
     queue = 'prod_short'
     cpus = 1
     time = '2h'
     memory = '4.GB'
   }
 
-  withName processTWO {
+  withName: processTWO {
     queue = 'prod_med'
     cpus = 2
     time = '10h'
@@ -92,7 +92,7 @@ process.executor = 'slurm'
 
 Run the nfcore/rna-seq workflow again
 ```
-nextflow run nf-core/rnaseq -r 3.11.1 \
+nextflow run nf-core/rnaseq -r 3.14.0 \
     -params-file workshop-params.yaml
     -profile singularity \
     --max_memory '6.GB' \

@@ -116,7 +116,7 @@ Nextflow caching mechanism works by assigning a unique ID to each task. The task
 You can re-launch the previously executed `nf-core/rnaseq` workflow again, but with a `-resume` flag, and observe the progress. Notice the time it takes to complete the workflow. 
 
 ```default
-nextflow run nf-core/rnaseq -r 3.11.1 \
+nextflow run nf-core/rnaseq -r 3.14.0 \
     --input samplesheet.csv \
     --outdir ./my_results \
     --fasta $materials/ref/chr22_with_ERCC92.fa \
@@ -209,7 +209,7 @@ touch work/ff/21abfa87cc7cdec037ce4f36807d32/HBR_Rep1_ERCC_1.fastq.gz
 Execute the workflow again with the `-resume` command option:
 
 ```default
-nextflow run nf-core/rnaseq -r 3.11.1 \
+nextflow run nf-core/rnaseq -r 3.14.0 \
     --input samplesheet.csv \
     --outdir ./my_results \
     --fasta $materials/ref/chr22_with_ERCC92.fa \
@@ -378,7 +378,7 @@ salmon quant \
     -o HBR_Rep1_ERCC
 ```
 
-Looking at the nf-core/rnaseq Parameter documentation and Salmon documentation, we found that we can override this default using the `--salmon_quant_libtype A` [parameter](https://nf-co.re/rnaseq/3.11.1/parameters#salmon_quant_libtype) to indicate our data is unstranded and override `samplesheet.csv` input. 
+Looking at the nf-core/rnaseq Parameter documentation and Salmon documentation, we found that we can override this default using the `--salmon_quant_libtype A` [parameter](https://nf-co.re/rnaseq/3.14.0/parameters#salmon_quant_libtype) to indicate our data is unstranded and override `samplesheet.csv` input. 
 
 ::: callout-note
 
@@ -390,7 +390,7 @@ If we want to get rid of the warning message `Please check MultiQC report: 2/2 s
 
 ### **2.2.5. Write a parameter file**
 
-From the previous section we learn that Nextflow accepts either `yaml` or `json` formats for parameter files. Any of the pipeline-specific [parameters](https://nf-co.re/rnaseq/3.11.1/parameters) can be supplied to a Nextflow pipeline in this way. 
+From the previous section we learn that Nextflow accepts either `yaml` or `json` formats for parameter files. Any of the pipeline-specific [parameters](https://nf-co.re/rnaseq/3.14.0/parameters) can be supplied to a Nextflow pipeline in this way. 
 
 ::: callout-tip
 ### **Challenge**{.unlisted}
@@ -421,7 +421,7 @@ salmon_quant_libtype: "A"
 &#x27A4; Once your params file has been saved, run:
 
 ```default
-nextflow run nf-core/rnaseq -r 3.11.1 \
+nextflow run nf-core/rnaseq -r 3.14.0 \
     -params-file workshop-params.yaml
     -profile singularity \
     --max_memory '6.GB' \
