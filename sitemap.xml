@@ -2,7 +2,7 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://PMCC-BioinformaticsCore.github.io/nextflow-nf-core-workshop-2025_v2/sessions/2_nf_dev_intro.html</loc>
-    <lastmod>2025-05-05T21:18:34.989Z</lastmod>
+    <lastmod>2025-05-05T21:26:36.816Z</lastmod>
   </url>
   <url>
     <loc>https://PMCC-BioinformaticsCore.github.io/nextflow-nf-core-workshop-2025_v2/index.html</loc>
@@ -82,6 +82,6 @@
   </url>
   <url>
     <loc>https://PMCC-BioinformaticsCore.github.io/nextflow-nf-core-workshop-2025_v2/sessions/1_intro_run_nf.html</loc>
-    <lastmod>2025-05-04T10:40:17.537Z</lastmod>
+    <lastmod>2025-05-05T21:27:03.800Z</lastmod>
   </url>
 </urlset>
