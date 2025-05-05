@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.7.25">
+<meta name="generator" content="quarto-1.7.29">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -71,7 +71,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-fe31d7bd2deb2a321418d01dba375a64.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-0815c480559380816a4d1ea211a47e91.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="../site_libs/bootstrap/bootstrap-a14e3238c51140e99ccc48519b6ed9ce.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
@@ -244,23 +244,23 @@ Objectives
 <ul>
 <li>Learn about the benefits of a workflow manager.</li>
 <li>Learn Nextflow terminology.</li>
-<li>Learn basic commands and options to run a Nextflow workflow</li>
+<li>Learn the basic commands and options required to run a Nextflow workflow</li>
 </ul>
 </div>
 </div>
 <section id="what-is-a-workflow" class="level3">
 <h3 class="anchored" data-anchor-id="what-is-a-workflow"><strong>1.1.1. What is a Workflow?</strong></h3>
-<p>Workflow can be defined as sequence of steps or processes through which a piece of work passes <a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>. Steps may be dependent on other tasks to complete, or they can be run in parallel.</p>
+<p>A workflow is a sequence of steps or processes through which a piece of work passes <a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>. These steps may be dependent on other tasks to complete, or they can be run in parallel.</p>
 <p><img src="media/01_1_1_WorkflowMockUp.png" width="200"></p>
-<p>In bioinformatics workflows, each step would commonly comprises of a computation tool thats operate on some input files to produce output files. A workflow can be as simple as many command line tools chained together to facilitate complex data manipulations.</p>
+<p>In bioinformatics workflows, each step would commonly comprises of a computation tool that operates on some input files to produce output files. A workflow can be as simple as many command line tools chained together to facilitate complex data manipulations.</p>
 <p><img src="media/01_1_2_WorkflowExample.png" class="img-fluid"></p>
-<p>A simple script like this example above would probably be adequate to prototype a workflow for some once-off analysis. However, there are many other considerations to take into account to turn this into an efficient and scalable computational workflows. For example:</p>
+<p>A simple script like this example above would likely be adequate to prototype a workflow for a once-off analysis. However, there are many other considerations to take into account when turning this into an efficient and scalable computational workflow. For example:</p>
 <ul>
-<li>How do we remove intermediate files?</li>
-<li>How do we handle tools’ installations, versions, and dependencies?</li>
-<li>How do we submit each of these jobs into a job scheduler (e.g Slurm) in a HPC?</li>
+<li>How do we remove uneeded intermediate files?</li>
+<li>How do we handle tool installations, versions, and dependencies?</li>
+<li>How do we submit each of these jobs into a job scheduler (e.g Slurm) in a High Performance Computing (HPC) cluster?</li>
 <li>How do we resume a partially failed workflow, especially if some of the initial completed tasks take long to compute?</li>
-<li>How do we capture the logs from each tool?</li>
+<li>How do we capture the log outputs from each tool?</li>
 <li>How do we monitor how far the workflow has progressed?</li>
 <li>How do we share this workflow?</li>
 </ul>
@@ -268,20 +268,20 @@ Objectives
 </section>
 <section id="what-is-nextflow" class="level3">
 <h3 class="anchored" data-anchor-id="what-is-nextflow"><strong>1.1.2. What is Nextflow?</strong></h3>
-<p>Nextflow is one of the commonly used workflow systems to build scalable, portable, and reproducible computational workflows. It addresses the considerations that we discussed in the previous sections, providing features such as:</p>
+<p>Nextflow is a commonly used workflow system used to build scalable, portable, and reproducible computational workflows.</p>
+<p>It addresses the considerations that we discussed in the previous sections, providing features such as:</p>
 <ul>
 <li>Scalability, portability, and reproducibility</li>
 <li>Ease of workflow deployment and sharing</li>
 <li>Execution abstraction between workflow logic and execution system</li>
 </ul>
-<p>Nextflow implements its own <strong>domain-specific language (DSL)</strong>, which extends from the Groovy programming language (a derivation of Java).<br>
-You will notice there are libraries and functions used in Nextflow workflows that are still written in the native Groovy script.</p>
-<p><br></p>
+<p>Nextflow implements its own <strong>domain-specific language (DSL)</strong>, which extends from the Groovy programming language (a derivation of Java).</p>
+<p>You will notice there are libraries and functions used in Nextflow workflows that are still written in the native Groovy script.</p>
 </section>
 <section id="processes-and-channels" class="level3">
 <h3 class="anchored" data-anchor-id="processes-and-channels"><strong>1.1.3. Processes and Channels</strong></h3>
 <p>In Nextflow, <strong>processes</strong> and <strong>channels</strong> are the fundamental building blocks of a workflow.</p>
-<p>A <strong>process</strong> is a unit of execution that represents a single computational step in a workflow. It is defined as a block of code that typically performs a one specific task and specifies its input and outputs, as well as any directives and conditional statements required for its execution. Processes can be written in any language that can be executed from the command line, such as Bash, Python, or R.</p>
+<p>A <strong>process</strong> is a unit of execution that represents a single computational step in a workflow. It typically performs one specific task, and specifies its input and outputs and any directives required for its execution. Processe scripts can be written in any language that can be executed from the command line, such as Bash, Python, or R.</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>process sayHello {</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  input: </span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    val x</span>
@@ -292,132 +292,219 @@ You will notice there are libraries and functions used in Nextflow workflows tha
 <span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    echo '$x world!'</span>
 <span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    """</span>
 <span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>Processes in are executed independently (i.e., they do not share a common writable state) as <strong>tasks</strong> and can run in parallel, allowing for efficient utilization of computing resources. Nextflow automatically manages the data dependencies between processes, ensuring that each process is executed only when its input data is available and all of its dependencies have been satisfied.</p>
-<p>A <strong>channel</strong> is an asynchronous first-in, first-out (FIFO) queue that is used to join processes together. Channels allow data to passed between processes and can be used to manage data, parallelize tasks, and structure workflows. Any process can define one or more channels as an input and output. Ultimately the workflow execution flow itself, is implicitly defined by these declarations.</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>Channel.of('Bonjour', 'Ciao', 'Hello', 'Hola') | sayHello</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>Importantly, processes can be <strong>parameterized</strong> to allow for flexibility in their behavior and to enable their reuse in and between workflows.</p>
+<p>In the above example, the process called <code>sayHello</code> takes one input variable <code>x</code>, prints the value that is input into the process with <code>world!</code>, and outputs the standard output <code>stdout</code>. In this example, Bash is used inside the <code>script</code> block. This is the default <code>script</code> language used in Nextflow.</p>
+<p>Processes can also be <strong>parameterized</strong>, allowing for flexibility in their behaviour and to enable their reuse in the same workflow, and between different workflows. Processes are executed independently (i.e., they do not share a common writable state) as <strong>tasks</strong> and can run in parallel, allowing for efficient utilization of computing resources. Nextflow automatically manages the data dependencies between processes, ensuring that each process is executed only when its input data is available and all of its dependencies have been satisfied.</p>
+<p>A <strong>channel</strong> is an asynchronous first-in, first-out (FIFO) queue that is used to join processes together.</p>
 <p><img src="media/01_1_3_Channel_Process.png" class="img-fluid"></p>
-<p><br></p>
+<p>Channels allow data to be passed between processes, and can be used to manage data, parallelize tasks, and structure workflows. A process can define one or more channels as an input and output. Ultimately, the workflow execution itself is implicitly defined by these declarations.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>Channel.of('Bonjour', 'Ciao', 'Hello', 'Hola') </span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    .set { ch_input }</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>ch_output = sayHello(ch_input)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>In this example, four strings <code>Bonjour</code>, <code>Ciao</code>, <code>Hello</code>, <code>Hola</code> are assiged to a channel <code>ch_input</code>. This channel is then input to the <code>sayHello</code> process, where each element in the channel creates separate tasks that are executed in parallel. The output of the process is assigned to a channel <code>ch_output</code>.</p>
 </section>
 <section id="execution-abstraction" class="level3">
 <h3 class="anchored" data-anchor-id="execution-abstraction"><strong>1.1.4. Execution abstraction</strong></h3>
 <p>While a process defines what command or script is executed, the <strong>executor</strong> determines how and where the script is executed.</p>
-<p>Nextflow provides an <strong>abstraction</strong> between the workflow’s functional logic and the underlying execution system. This abstraction allows users to define a workflow once and execute it on different computing platforms without having to modify the workflow definition. Nextflow provides a variety of built-in execution options, such as local execution, HPC cluster execution, and cloud-based execution, and allows users to easily switch between these options using command-line arguments.</p>
+<p>Nextflow provides an <strong>abstraction</strong> between the workflow’s functional logic and the underlying execution system. This allows users to define a workflow once and execute it on different computing platforms without having to modify the workflow. Nextflow provides a variety of built-in execution options (eg. locally, HPC cluster, and cloud-based), and allows users to easily switch between these options using command-line arguments.</p>
 <p><img src="media/01_1_4_AbstractionExec.png" class="img-fluid"></p>
-<p>If not specified, processes are executed on your local computer. The local executor is useful for workflow development and testing purposes. However, for real-world computational workflows, a high-performance computing (HPC) or cloud platform is often required.</p>
+<p>If not specified, processes are executed on your local computer, which is useful for workflow development and testing purposes. However, for real-world computational workflows, an HPC or cloud-based platform is often required.</p>
 <p>You can find a full list of supported executors as well as how to configure them <a href="https://www.nextflow.io/docs/latest/executor.html">here</a>.</p>
 </section>
 <section id="nextflow-cli" class="level3">
 <h3 class="anchored" data-anchor-id="nextflow-cli"><strong>1.1.5. Nextflow CLI</strong></h3>
-<p>Nextflow provides a robust command line interface for the management and execution of workflows. Nextflow can be used on any POSIX compatible system (Linux, OS X, etc). It requires Bash 3.2 (or later) and Java 11 (or later, up to 18) to be installed.</p>
+<p>Nextflow provides a robust command line interface for the management and execution of workflows. Nextflow can be used on any POSIX compatible system (Linux, OS X, etc), and requires Bash 3.2 (or later) and Java 11 (or later, up to 18) to be installed.</p>
+<p>Nextflow has been pre-installed in our cluster. To load nextflow, ….</p>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Important
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>TO DO</strong> Add how to load nextflow</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<strong>How to install Nextflow</strong>
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-3" class="callout-3-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
 <p>Nextflow is distributed as a self-installing package and does not require any special installation procedure.</p>
-<section id="how-to-install-nextflow" class="level4">
-<h4 class="anchored" data-anchor-id="how-to-install-nextflow"><strong>How to install Nextflow</strong></h4>
-<p>Nextflow can be installed on your local computer using a few easy steps (provided it is running in Linux-like environment, e.g WSL for Windows user):</p>
 <ol type="1">
 <li>Download the executable package using either <code>wget -qO- https://get.nextflow.io | bash</code> or <code>curl -s https://get.nextflow.io | bash</code></li>
 <li>Make the binary executable on your system by running <code>chmod +x nextflow</code>.</li>
 <li>Move the <code>nextflow</code> file to a directory accessible by your <code>$PATH</code> variable, e.g, <code>mv nextflow ~/bin/</code></li>
 </ol>
-</section>
-<section id="how-to-load-nextflow-at-peter-macs-hpc" class="level4">
-<h4 class="anchored" data-anchor-id="how-to-load-nextflow-at-peter-macs-hpc"><strong>How to load Nextflow at Peter Mac’s HPC</strong></h4>
-<p>Nextflow has been pre-installed by the Research Computing Facility in our cluster as module.</p>
-<p>There are currently two versions installed (as of 20 Nov 2023):</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>&gt;&gt;&gt; module avail nextflow</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>nextflow/21.04.3(default)   nextflow/23.04.1</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>Make sure to always use version 23 and above, as we have encountered problems running nf-core workflows that with older versions.</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>&gt;&gt; module load nextflow/23.04.1</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p><br></p>
-</section>
+</div>
+</div>
+</div>
 </section>
 <section id="nextflow-options-and-commands" class="level3">
 <h3 class="anchored" data-anchor-id="nextflow-options-and-commands"><strong>1.1.6.Nextflow options and commands</strong></h3>
 <p>Nextflow provides a robust command line interface for the management and execution of workflows. The top-level interface consists of options and commands.</p>
 <p>You can list Nextflow options and commands with the <code>-h</code> option:</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>nextflow -h</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>Options for a commands can also be viewed by appending the <code>-help</code> option to a Nextflow command.</p>
-<p>For example, options for the the <code>run</code> command can be viewed:</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>nextflow run -help</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>nextflow -h</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>Usage: nextflow [options] COMMAND [arg...]</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>Options:</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  -C</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>     Use the specified configuration file(s) overriding any defaults</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  -D</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>     Set JVM properties</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  -bg</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>     Execute nextflow in background</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>  -c, -config</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>     Add the specified file to configuration set</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>  -config-ignore-includes</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>     Disable the parsing of config includes</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>  -h</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>     Print this help</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>  -log</span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>     Set nextflow log file path</span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>  -q, -quiet</span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>     Do not print information messages</span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>  -remote-debug</span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>     Enable JVM interactive remote debugging (experimental)</span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>  -syslog</span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>     Send logs to syslog server (eg. localhost:514)</span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>  -trace</span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>     Enable trace level logging for the specified package name - multiple packages can be provided separating them with a comma e.g. '-trace nextflow,io.seqera'</span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>  -v, -version</span>
+<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a>     Print the program version</span>
+<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a>Commands:</span>
+<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a>  clean         Clean up project cache and work directories</span>
+<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a>  clone         Clone a project into a folder</span>
+<span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a>  config        Print a project configuration</span>
+<span id="cb4-33"><a href="#cb4-33" aria-hidden="true" tabindex="-1"></a>  console       Launch Nextflow interactive console</span>
+<span id="cb4-34"><a href="#cb4-34" aria-hidden="true" tabindex="-1"></a>  drop          Delete the local copy of a project</span>
+<span id="cb4-35"><a href="#cb4-35" aria-hidden="true" tabindex="-1"></a>  help          Print the usage help for a command</span>
+<span id="cb4-36"><a href="#cb4-36" aria-hidden="true" tabindex="-1"></a>  info          Print project and system runtime information</span>
+<span id="cb4-37"><a href="#cb4-37" aria-hidden="true" tabindex="-1"></a>  inspect       Inspect process settings in a pipeline project</span>
+<span id="cb4-38"><a href="#cb4-38" aria-hidden="true" tabindex="-1"></a>  kuberun       Execute a workflow in a Kubernetes cluster (experimental)</span>
+<span id="cb4-39"><a href="#cb4-39" aria-hidden="true" tabindex="-1"></a>  list          List all downloaded projects</span>
+<span id="cb4-40"><a href="#cb4-40" aria-hidden="true" tabindex="-1"></a>  log           Print executions log and runtime info</span>
+<span id="cb4-41"><a href="#cb4-41" aria-hidden="true" tabindex="-1"></a>  plugin        Execute plugin-specific commands</span>
+<span id="cb4-42"><a href="#cb4-42" aria-hidden="true" tabindex="-1"></a>  pull          Download or update a project</span>
+<span id="cb4-43"><a href="#cb4-43" aria-hidden="true" tabindex="-1"></a>  run           Execute a pipeline project</span>
+<span id="cb4-44"><a href="#cb4-44" aria-hidden="true" tabindex="-1"></a>  secrets       Manage pipeline secrets</span>
+<span id="cb4-45"><a href="#cb4-45" aria-hidden="true" tabindex="-1"></a>  self-update   Update nextflow runtime to the latest available version</span>
+<span id="cb4-46"><a href="#cb4-46" aria-hidden="true" tabindex="-1"></a>  view          View project script file(s)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Options for each Nextflow command can also be viewed by appending the <code>-help</code> option. Note that there is only <strong>one</strong> dash in the <code>-help</code> option.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>nextflow run -help</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
 <section id="managing-your-environment" class="level3">
 <h3 class="anchored" data-anchor-id="managing-your-environment"><strong>1.1.7. Managing your environment</strong></h3>
-<p>You can use <a href="https://www.nextflow.io/docs/latest/config.html#environment-variables">environment variables</a> to control the Nextflow runtime and the underlying Java virtual machine. These variables can be exported before running a workflow and will be interpreted by Nextflow. For most users, Nextflow will work without setting any environment variables. However, to improve reproducibility and to optimise your resources, you will benefit from establishing environmental variables.</p>
-<p>For example, as we are using a shared storage, we should consider including common shared paths to where software is stored. These variables can be accessed using the <code>NXF_SINGULARITY_CACHEDIR</code> or the <code>NXF_CONDA_CACHEDIR</code> environment variables. We currently set this to <code>/config/binaries/singularity/containers_devel/nextflow</code> for the singularity cache directory.</p>
-<p>You can set this folder as your cache directory for singularity images using the <code>NXF_SINGULARITY_CACHEDIR</code> environmental variable:</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>export NXF_SINGULARITY_CACHEDIR=/config/binaries/singularity/containers_devel/nextflow</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>Singularity images downloaded by workflow executions will now be stored in this directory.</p>
-<p>You may want to include these, or other environmental variables, in your <code>.bashrc</code> file (or alternate) that is loaded when you log in so you don’t need to export variables every session.</p>
-<p>A complete list of environmental variables can be found <a href="https://www.nextflow.io/docs/latest/config.html#environment-variables">here</a>.</p>
-<p><br></p>
-</section>
-<section id="executing-a-workflow" class="level3">
-<h3 class="anchored" data-anchor-id="executing-a-workflow"><strong>1.1.8. Executing a workflow</strong></h3>
-<p>Nextflow seamlessly integrates with code repositories such as <a href="https://github.com/">GitHub</a>. This feature allows you to manage your project code and use public Nextflow workflows quickly, consistently, and transparently.</p>
-<p>If you are running a workflow hosted in a remote code repository, you can specify its qualified name or the repository URL. The qualified name is formed by two parts - the owner name and the repository name separated by a <code>/</code> character. For example, if a Nextflow project <code>bar</code> is hosted in a GitHub repository <code>foo</code> at the address <code>http://github.com/foo/bar</code>, it could be run using:</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>nextflow run foo/bar</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>If you <code>run</code> a workflow, it will look for a local file with the workflow name you’ve specified. If that file does not exist, it will look for a public repository with the same name on GitHub (unless otherwise specified). If it is found, Nextflow will automatically <code>pull</code> the workflow to your global cache and execute it.</p>
-<p>Be aware of what is already in your current working directory where you launch your workflow, if there are other workflows (or configuration files) you may encounter unexpected results.</p>
-<p>As our first exercise, we will execute the <code>hello</code> workflow directly from <code>nextflow-io</code> <a href="https://github.com/nextflow-io/hello">GitHub</a> repository.</p>
-<p>Start by creating a new directory for the first section and move into it</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>mkdir ./lesson1.1 &amp;&amp; cd $_</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>Use the <code>run</code> command to execute the <a href="https://github.com/nextflow-io/hello">nextflow-io/hello</a> workflow:</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>nextflow run nextflow-io/hello</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="sourceCode" id="cb11"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>N E X T F L O W  ~  version 23.04.1</span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>Launching `https://github.com/nextflow-io/hello` [deadly_hoover] DSL2 - revision: 1d71f857bb [master]</span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>executor &gt;  local (4)</span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>[a2/9c17c8] process &gt; sayHello (2) [100%] 4 of 4 ✔</span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>Hello world!</span>
-<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>Bonjour world!</span>
-<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>Hola world!</span>
-<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>Ciao world!</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<section id="should-i-be-running-nextflow-on-login-node" class="level4 unlisted">
-<h4 class="unlisted anchored" data-anchor-id="should-i-be-running-nextflow-on-login-node"><strong>Should I be running Nextflow on login node? </strong></h4>
-<p>Short answer, no! Even though nextflow is not supposed to be doing any heavy computation, without the necessary execution config, all the processes within the workflow are being executed locally.</p>
-<p>For the next few sessions, we will run nextflow in a compute note on an interactive slurm job.</p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>srun --pty -p prod_short --mem 8GB --mincpus 2 -t 0-2:00 bash</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</section>
-<section id="challenge" class="level4 unlisted">
-<h4 class="unlisted anchored" data-anchor-id="challenge"><strong>Challenge</strong></h4>
-<p>Execute a simple workflow from <a href="https://github.com/rlupat/simple_wf">rlupat GitHub</a> repository.</p>
-<div class="callout callout-style-default callout-caution callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
+<p>You can also use <a href="https://www.nextflow.io/docs/latest/config.html#environment-variables">environment variables</a> to control the Nextflow runtime and the underlying Java virtual machine. These variables can be exported before running a workflow and will be interpreted by Nextflow.</p>
+<p>Since we are using shared storage, we should consider storing shared software in a location that is accessible by all users in the cluster. The key Nextflow environment variables to do this is <code>NXF_APPTAINER_CACHEDIR</code> for Apptainer, <code>NXF_SINGULARITY_CACHEDIR</code> for Singularity, and <code>NXF_CONDA_CACHEDIR</code> for Conda environment managers.</p>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-Solution
+Important
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>TO DO</strong> Add what we’re using</p>
+</div>
+</div>
+<p>Today, we will use …</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>export ...</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Important
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>TO DO</strong> Add what cache directory we are using</p>
+</div>
+</div>
+<p>Images downloaded by workflow executions will now be stored in this directory.</p>
+</section>
+<section id="executing-a-workflow" class="level3">
+<h3 class="anchored" data-anchor-id="executing-a-workflow"><strong>1.1.8. Executing a workflow</strong></h3>
+<p>Nextflow also enables users to run workflows hosted in a remote code repository such as <a href="https://github.com/">GitHub</a>, by specifying the repository URL or its qualified name. For example, if a Nextflow project <code>bar</code> is hosted in a GitHub repository <code>foo</code> at the address <code>http://github.com/foo/bar</code>, it could be run using either:</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>nextflow run foo/bar</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>nextflow run http://github.com/foo/bar</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>As our first exercise, we will execute the <code>hello</code> workflow directly from <code>nextflow-io</code> <a href="https://github.com/nextflow-io/hello">GitHub</a> repository. Start by creating a directory <code>lesson1.1</code> and change into it move into it.</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>mkdir ./lesson1.1 &amp;&amp; cd $_</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><strong>Exercise</strong>: Use the <code>nextflow run</code> command to run the pipeline using the qualified name.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-6-contents" aria-controls="callout-6" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<strong>Solution</strong>
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-2" class="callout-2-contents callout-collapse collapse">
+<div id="callout-6" class="callout-6-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<p>Use the <code>run</code> command to execute the <a href="https://github.com/rlupat/simple_wf">rlupat/simple_wf</a> workflow:</p>
-<div class="sourceCode" id="cb13"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>nextflow run rlupat/simple_wf</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="sourceCode" id="cb14"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>N E X T F L O W  ~  version 23.04.1</span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>Pulling rlupat/simple_wf ...</span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a> downloaded from https://github.com/rlupat/simple_wf.git</span>
-<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>Launching `https://github.com/rlupat/simple_wf` [irreverent_bhabha] DSL2 - revision: 96780b2956 [main]</span>
-<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>executor &gt;  local (8)</span>
-<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>[aa/890b8b] process &gt; sayHello (4)        [100%] 4 of 4 ✔</span>
-<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>[c1/60ecc0] process &gt; countCharacters (4) [100%] 4 of 4 ✔</span>
-<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>12 Ciao.txt</span>
-<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>15 Bonjour.txt</span>
-<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>13 Hello.txt</span>
-<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>12 Hola.txt</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>nextflow run nextflow-io/hello</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>N E X T F L O W  ~  version 23.04.1</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>Launching `https://github.com/nextflow-io/hello` [deadly_hoover] DSL2 - revision: 1d71f857bb [master]</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>executor &gt;  local (4)</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>[a2/9c17c8] process &gt; sayHello (2) [100%] 4 of 4 ✔</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>Hello world!</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>Bonjour world!</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>Hola world!</span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>Ciao world!</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 </div>
-<p>More information about the Nextflow <code>run</code> command can be found <a href="https://www.nextflow.io/docs/latest/cli.html#run">here</a>.</p>
-<p><br></p>
-<div class="callout callout-style-default callout-note callout-titled">
+<p>If you <code>run</code> a workflow, it will look for a local file with the workflow name you’ve specified. If that file does not exist, it will look for a public repository with the same name on GitHub (unless otherwise specified). If it is found, Nextflow will automatically <code>pull</code> the workflow to your global cache and execute it.</p>
+<p>Be aware of what is already in your current working directory where you launch your workflow, if there are other workflows (or configuration files) you may encounter unexpected results.</p>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Important
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>TO DO</strong> Change srun partition command</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-caution callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<strong>Should I be running Nextflow on login node? </strong>
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Short answer, no! Even though nextflow is not performing any heavy computation, without the necessary execution configurations, all the processes within the workflow will be executed locally.</p>
+<p>For the remaining sessions, we will run Nextflow in a compute node on an interactive Slurm job.</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>srun --pty -p &lt;PARTITION&gt; --mem 8GB --mincpus 2 -t 0-5:00 bash</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
@@ -429,8 +516,8 @@ Solution
 <div class="callout-body-container callout-body">
 <ul>
 <li>Nextflow is a workflow system that provide features that enable a workflow to be scalable, portable and reproducible</li>
-<li>Environment variables can be used to control your Nextflow runtime (especially to set your shared singularity container location)</li>
-<li>Use <code>nextflow run</code> to execute a workflow</li>
+<li>Environment variables can be used to control your Nextflow runtime (especially to set your shared software location)</li>
+<li>The command <code>nextflow run</code> can be used to execute a workflow</li>
 </ul>
 </div>
 </div>
@@ -438,7 +525,6 @@ Solution
 <p><sup><em>These materials are adapted from <a href="https://sydney-informatics-hub.github.io/customising-nfcore-workshop/notebooks/1.2_nfcore.html">Customising Nf-Core Workshop</a> by Sydney Informatics Hub</em></sup></p>
 
 
-</section>
 </section>
 
 
@@ -520,7 +606,7 @@ Solution
     }
       var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
       var mailtoRegex = new RegExp(/^mailto:/);
-        var filterRegex = new RegExp("https:\/\/PMCC-BioinformaticsCore\.github\.io\/nextflow-nf-core-workshop-2025\/");
+        var filterRegex = new RegExp("https:\/\/PMCC-BioinformaticsCore\.github\.io\/nextflow-nf-core-workshop-2025_v2\/");
       var isInternal = (href) => {
           return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
       }

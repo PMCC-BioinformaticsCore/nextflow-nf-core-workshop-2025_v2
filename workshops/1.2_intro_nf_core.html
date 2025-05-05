@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.7.25">
+<meta name="generator" content="quarto-1.7.29">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -71,7 +71,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-fe31d7bd2deb2a321418d01dba375a64.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-0815c480559380816a4d1ea211a47e91.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="../site_libs/bootstrap/bootstrap-a14e3238c51140e99ccc48519b6ed9ce.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
@@ -242,15 +242,15 @@ Objectives
 </div>
 <div class="callout-body-container callout-body">
 <ul>
-<li>Learn about the core features of nf-core.</li>
-<li>Learn the terminology used by nf-core.</li>
+<li>Learn the core features of nf-core.</li>
+<li>Learn nf-core terminology.</li>
 <li>Use Nextflow to pull and run the <code>nf-core/testpipeline</code> workflow</li>
 </ul>
 </div>
 </div>
 <p>Introduction to nf-core: Introduce nf-core features and concepts, structures, tools, and example nf-core pipelines</p>
 <section id="what-is-nf-core" class="level3">
-<h3 class="anchored" data-anchor-id="what-is-nf-core"><strong>1.2.1. What is nf-core?</strong></h3>
+<h3 class="anchored" data-anchor-id="what-is-nf-core"><strong>3.2.1. What is nf-core?</strong></h3>
 <p>nf-core is a <strong>community</strong> effort to collect a curated set of <strong>analysis workflows</strong> built using Nextflow.</p>
 <p>nf-core provides a standardized set of <strong>best practices</strong>, <strong>guidelines</strong>, and <strong>templates</strong> for building and sharing bioinformatics workflows. These workflows are designed to be <strong>modular</strong>, <strong>scalable</strong>, and <strong>portable</strong>, allowing researchers to easily adapt and execute them using their own data and compute resources.</p>
 <p>The community is a diverse group of bioinformaticians, developers, and researchers from around the world who collaborate on <strong>developing</strong> and <strong>maintaining</strong> a growing collection of high-quality workflows. These workflows cover a range of applications, including transcriptomics, proteomics, and metagenomics.</p>
@@ -281,153 +281,156 @@ Objectives
 </ul>
 </section>
 <section id="executing-an-nf-core-workflow" class="level3">
-<h3 class="anchored" data-anchor-id="executing-an-nf-core-workflow"><strong>1.2.2. Executing an nf-core workflow</strong></h3>
-<p>The <a href="https://nf-co.re/">nf-core website</a> has a full list of workflows and asssociated documentation tno be explored.</p>
+<h3 class="anchored" data-anchor-id="executing-an-nf-core-workflow"><strong>3.2.2. Executing an nf-core workflow</strong></h3>
+<p>The <a href="https://nf-co.re/">nf-core website</a> has a full list of workflows and asssociated documentation to be explored.</p>
 <p>Each workflow has a dedicated page that includes expansive documentation that is split into 7 sections:</p>
 <ul>
-<li><strong>Introduction</strong>
-<ul>
-<li>An introduction and overview of the workflow</li>
-</ul></li>
-<li><strong>Results</strong>
-<ul>
-<li>Example output files generated from the full test dataset</li>
-</ul></li>
-<li><strong>Usage docs</strong>
-<ul>
-<li>Descriptions of how to execute the workflow</li>
-</ul></li>
-<li><strong>Parameters</strong>
-<ul>
-<li>Grouped workflow parameters with descriptions</li>
-</ul></li>
-<li><strong>Output docs</strong>
-<ul>
-<li>Descriptions and examples of the expected output files</li>
-</ul></li>
-<li><strong>Releases &amp; Statistics</strong>
-<ul>
-<li>Workflow version history and statistics</li>
-</ul></li>
+<li><strong>Introduction</strong>: an introduction and overview of the workflow</li>
+<li><strong>Results</strong>: Example output files generated from the full test dataset</li>
+<li><strong>Usage docs</strong>: Descriptions of how to execute the workflow</li>
+<li><strong>Parameters</strong>: Grouped workflow parameters with descriptions</li>
+<li><strong>Output docs</strong>: Descriptions and examples of the expected output files</li>
+<li><strong>Releases &amp; Statistics</strong>: Workflow version history and statistics</li>
 </ul>
-<p>As nf-core is a community development project the code for a pipeline can be changed at any time. To ensure that you have locked in a specific version of a pipeline you can use Nextflow’s built-in functionality to <code>pull</code> a workflow. The Nextflow <code>pull</code> command can download and cache workflows from <a href="https://github.com/nf-core/">GitHub</a> repositories:</p>
+<p>Since nf-core is a community development project, the code for a pipeline can change at any time. To ensure that you are using a specific version of a pipeline, you can use Nextflow’s built-in functionality to <code>pull</code> a workflow. The following command can be used to download and cache workflows from <a href="https://github.com/nf-core/">GitHub</a> repositories:</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>nextflow pull nf-core/&lt;pipeline&gt;</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Nextflow <code>run</code> will also automatically <code>pull</code> the workflow if it was not already available locally:</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>nextflow run nf-core/&lt;pipeline&gt;</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Nextflow will <code>pull</code> the default git branch if a workflow version is not specified. This will be the master branch for nf-core workflows with a stable release. nf-core workflows use GitHub releases to tag stable versions of the code and software. You will always be able to execute a previous version of a workflow once it is released using the <code>-revision</code> or <code>-r</code> flag.</p>
-<p>For this section of the workshop we will be using the <code>nf-core/testpipeline</code> as an example.</p>
-<p>As we will be running some bioinformatics tools, we will need to make sure of the following:</p>
-<ul>
-<li>We are not running on login node</li>
-<li>singularity module is loaded (<code>module load singularity/3.7.3</code>)</li>
-</ul>
-<div class="callout callout-style-default callout-tip callout-titled">
-<div class="callout-header d-flex align-content-center">
+<p>For this section of the workshop we will be using the <code>nf-core/testpipeline</code> as an example. We will also create a separate directory for this section.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>mkdir ./nf_testpipeline &amp;&amp; cd $_</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><strong>Exercise</strong>: Pull the <code>nf-core/testpipeline</code> pipeline</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<strong>Setup an interactive session</strong>
+<strong>Solution</strong>
 </div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
+<div id="callout-2" class="callout-2-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<div class="sourceCode" id="cb3"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>srun --pty -p prod_short --mem 20GB --cpus-per-task 2 -t 0-2:00 /bin/bash</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<section id="ensure-the-required-modules-are-loaded" class="level3 unlisted.">
-<h3 class="unlisted. anchored" data-anchor-id="ensure-the-required-modules-are-loaded"><strong>Ensure the required modules are loaded</strong></h3>
-<div class="sourceCode" id="cb4"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>module list</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="sourceCode" id="cb5"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>Currently Loaded Modulefiles:</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  1) java/jdk-17.0.6      2) nextflow/23.04.1     3) squashfs-tools/4.5   4) singularity/3.7.3</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</section>
+<div class="sourceCode" id="cb4"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>nextflow pull nf-core/testpipeline</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-</div>
-<p>We will also create a separate output directory for this section.</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>cd /scratch/users/&lt;your-username&gt;/nfWorkshop; mkdir ./lesson1.2 &amp;&amp; cd $_</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>The base command we will be using for this section is:</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>nextflow run nf-core/testpipeline -profile test,singularity --outdir my_results</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</section>
-<section id="workflow-structure" class="level3">
-<h3 class="anchored" data-anchor-id="workflow-structure"><strong>1.2.3. Workflow structure</strong></h3>
-<p>nf-core workflows start from a <strong>common template</strong> and follow the same structure. Although you won’t need to edit code in the workflow project directory, having a basic understanding of the project structure and some core terminology will help you understand how to configure its execution.</p>
-<p>Let’s take a look at the code for the <a href="https://nf-co.re/rnaseq/3.11.1">nf-core/rnaseq</a> pipeline.</p>
-<p>Nextflow DSL2 <strong>workflows</strong> are built up of <strong>subworkflows</strong> and <strong>modules</strong> that are stored as separate <code>.nf</code> files.</p>
-<p>Most nf-core workflows consist of a single <strong>workflow</strong> file (there are a few exceptions). This is the main <code>&lt;workflow&gt;.nf</code> file that is used to bring everything else together. Instead of having one large monolithic script, it is broken up into a combination of <strong>subworkflows</strong> and <strong>modules</strong>.</p>
-<p>A <strong>subworkflow</strong> is a groups of modules that are used in combination with each other and have a common purpose. Subworkflows improve workflow readability and help with the reuse of modules within a workflow. The nf-core community also shares subworkflows in the <a href="https://github.com/nf-core/modules/tree/master/subworkflows/nf-core">nf-core subworkflows GitHub repository</a>. Local subworkflows are workflow specific that are not shared in the nf-core subworkflows repository.</p>
-<p>Let’s take a look at the <a href="https://github.com/nf-core/rnaseq/tree/3.11.1/subworkflows/nf-core/bam_stats_samtools"><code>BAM_STATS_SAMTOOLS</code></a> subworkflow.</p>
-<p>This subworkflow is comprised of the following modules: - <a href="https://github.com/nf-core/modules/blob/master/modules/nf-core/samtools/stats/main.nf"><code>SAMTOOLS_STATS</code></a> - <a href="https://github.com/nf-core/modules/blob/master/modules/nf-core/samtools/faidx/main.nf"><code>SAMTOOLS_IDXSTATS</code></a>, and - <a href="https://github.com/nf-core/modules/blob/master/modules/nf-core/samtools/flagstat/main.nf"><code>SAMTOOLS_FLAGSTAT</code></a></p>
-<p>A <strong>module</strong> is a wrapper for a process, most modules will execute a single tool and contain the following definitions: - <a href="https://www.nextflow.io/docs/latest/process.html#inputs">inputs</a> - <a href="https://www.nextflow.io/docs/latest/process.html#outputs">outputs</a>, and - <a href="https://www.nextflow.io/docs/latest/process.html#script">script</a> block.</p>
-<p>Like subworkflows, modules can also be shared in the <a href="https://github.com/nf-core/modules/tree/master/modules/nf-core">nf-core modules GitHub repository</a> or stored as a local module. All modules from the nf-core repository are version controlled and tested to ensure reproducibility. Local modules are workflow specific that are not shared in the nf-core modules repository.</p>
-</section>
-<section id="viewing-parameters" class="level3">
-<h3 class="anchored" data-anchor-id="viewing-parameters"><strong>1.2.4. Viewing parameters</strong></h3>
-<p>Every nf-core workflow has a full list of <strong>parameters</strong> on the nf-core website. When viewing these parameters online, you will also be shown a description and the type of the parameter. Some parameters will have additional text to help you understand when and how a parameter should be used.</p>
-<p><a href="https://nf-co.re/rnaseq/3.11.1/parameters"><img src="./media/1.3_params.excalidraw.png" class="img-fluid"></a></p>
-<p>Parameters and their descriptions can also be viewed in the command line using the <code>run</code> command with the <code>--help</code> parameter:</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>nextflow run nf-core/&lt;workflow&gt; --help</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="callout callout-style-default callout-tip callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-<strong>Challenge</strong>
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>View the parameters for the <code>nf-core/testpipeline</code> workflow using the command line:</p>
 </div>
 </div>
 <div class="callout callout-style-default callout-caution callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<strong>Running on your institutional compute</strong>
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-3" class="callout-3-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>When running on your institutional compute remember to follow the requirements of your HPC, such as:</p>
+<ol type="1">
+<li>Not running on the login node of the HPC</li>
+<li>Loading your required software (i.e.&nbsp;nextflow/singularity/apptainer)</li>
+</ol>
+</div>
+</div>
+</div>
+</section>
+<section id="workflow-structure" class="level3">
+<h3 class="anchored" data-anchor-id="workflow-structure"><strong>3.2.3. Workflow structure</strong></h3>
+<p>nf-core workflows start from a <strong>common template</strong> and follow the same structure. Although you won’t need to edit code in the workflow project directory, having a basic understanding of the project structure and some core terminology will help you understand how to configure its execution.</p>
+<p>Let’s take a look at the code for the <a href="https://nf-co.re/rnaseq/3.14.0">nf-core/rnaseq</a> pipeline.</p>
+<p><img src="./media/5.0_rnaseq_github.png" class="img-fluid"></p>
+<p>Notice that the typical nf-core workflow doesn’t contain just one <code>.nf</code> file, but instead contains multiple folders that categorise different elements of the workflow. Nf-core workflows typically consists of a main workflow file, <a href="https://github.com/nf-core/rnaseq/blob/master/main.nf"><code>main.nf</code></a>, which launches the analysis workflow file <a href="https://github.com/nf-core/rnaseq/blob/master/workflows/rnaseq/main.nf"><code>workflows/&lt;workflow&gt;.nf</code></a> that invokes the modules and subworkflows.</p>
+</section>
+<section id="modules" class="level3">
+<h3 class="anchored" data-anchor-id="modules"><strong>3.2.4. Modules</strong></h3>
+<p>The <code>modules</code> folder contain both local and nf-core processes, each contained within their own tool folder inside a script called <code>main.nf</code>.</p>
+<p><img src="./media/3.2_modules_folder.png" class="img-fluid" style="width:40.0%"></p>
+<p>Look through the contents of <a href="https://github.com/nf-core/rnaseq/blob/master/modules/nf-core/bedtools/genomecov/main.nf"><code>modules/nf-core/bedtools/genomecov/main.nf</code></a>. Notice that it only consists of a single process that will execute a single tool.</p>
+<p>Recall the following components of a process:</p>
+<ul>
+<li><a href="https://www.nextflow.io/docs/latest/process.html#inputs">inputs</a>: declares any inputs to the process, along with the variable qualifier</li>
+<li><a href="https://www.nextflow.io/docs/latest/process.html#outputs">outputs</a>: declares any outputs of the process, along with the variable qualifier</li>
+<li><a href="https://www.nextflow.io/docs/latest/process.html#script">script</a>: executes commands</li>
+</ul>
+<p>Custom processes that are specific to a particular pipeline are stored inside the <code>local</code> folder. Nf-core modules that have already been tested and developed by the nf-core community are stored inside a separate <code>nf-core</code> folder. A full list of available modules can be seen <a href="https://nf-co.re/modules/">here</a> or on the <a href="https://github.com/nf-core/modules/tree/master/modules/nf-core">nf-core modules GitHub repository</a>.</p>
+<p>These processes/modules can then be imported into an overarching analysis workflow file that chains each step together.</p>
+<p><strong>Exercise</strong>: How many modules are in <a href="https://github.com/nf-core/testpipeline/tree/main"><code>nf-core/testpipeline</code></a>? Are they local to the pipeline or are they stored in the nf-core modules GitHub repository? What are the names of the modules?</p>
+<div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-Solution
+<strong>Solution</strong>
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
 <div id="callout-4" class="callout-4-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<p>The <code>nf-core/testpipeline</code> workflow parameters can be printed using the <code>run</code> command and the <code>--help</code> option:</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>nextflow run nf-core/testpipeline --help</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>There are two modules in <code>nf-core/testpipeline</code>, <code>fastqc</code> and <code>multiqc</code>. Since the modules are stored inside the folder <a href="https://github.com/nf-core/testpipeline/tree/main/modules/nf-core"><code>nf-core</code></a>, they can are available on the nf-core modules GitHub repository.</p>
 </div>
 </div>
 </div>
 </section>
-<section id="parameters-in-the-command-line" class="level3">
-<h3 class="anchored" data-anchor-id="parameters-in-the-command-line"><strong>1.2.5. Parameters in the command line</strong></h3>
-<p>Parameters can be customized using the command line. Any parameter can be configured on the command line by prefixing the parameter name with a double dash (<code>--</code>):</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>nextflow run nf-core/&lt;workflow&gt; --&lt;parameter&gt;</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="callout callout-style-default callout-tip callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Tip
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>Nextflow options are prefixed with a single dash (<code>-</code>) and workflow parameters are prefixed with a double dash (<code>--</code>).</p>
-</div>
-</div>
-<p>Depending on the parameter type, you may be required to add additional information after your parameter flag. For example, for a string parameter, you would add the string after the parameter flag:</p>
-<div class="sourceCode" id="cb11"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>nextflow run nf-core/&lt;workflow&gt; --&lt;parameter&gt; string</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="callout callout-style-default callout-tip callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-<strong>Challenge</strong>
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>Give the MultiQC report for the <code>nf-core/testpipeline</code> workflow the name of your <strong>favorite animal</strong> using the <a href="https://github.com/nf-core/testpipeline/blob/master/nextflow.config#L27"><code>multiqc_title</code></a> parameter using a command line flag:</p>
-</div>
-</div>
-<div class="callout callout-style-default callout-caution callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-7-contents" aria-controls="callout-7" aria-expanded="false" aria-label="Toggle callout">
+<section id="subworkflows" class="level3">
+<h3 class="anchored" data-anchor-id="subworkflows"><strong>3.2.4. Subworkflows</strong></h3>
+<p>A <strong>subworkflow</strong> contains groups of modules that are used in combination with each other and have a common purpose. Subworkflows improve workflow readability and help with the reuse of modules within a workflow. The nf-core community also shares subworkflows in the <a href="https://github.com/nf-core/modules/tree/master/subworkflows/nf-core">nf-core subworkflows GitHub repository</a>. Local subworkflows are workflow specific, and are not shared in the nf-core subworkflows repository.</p>
+<p>Let’s take a look at the <a href="https://github.com/nf-core/rnaseq/tree/3.11.1/subworkflows/nf-core/bam_stats_samtools/main.nf">BAM_STATS_SAMTOOLS</a> subworkflow:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>//</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>// Run SAMtools stats, flagstat and idxstats</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>//</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>include { SAMTOOLS_STATS    } from '../../../modules/nf-core/samtools/stats/main'</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>include { SAMTOOLS_IDXSTATS } from '../../../modules/nf-core/samtools/idxstats/main'</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>include { SAMTOOLS_FLAGSTAT } from '../../../modules/nf-core/samtools/flagstat/main'</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>workflow BAM_STATS_SAMTOOLS {</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>    take:</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>    ch_bam_bai // channel: [ val(meta), path(bam), path(bai) ]</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>    ch_fasta   // channel: [ path(fasta) ]</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>    main:</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>    ch_versions = Channel.empty()</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>    SAMTOOLS_STATS ( ch_bam_bai, ch_fasta )</span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>    ch_versions = ch_versions.mix(SAMTOOLS_STATS.out.versions)</span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>    SAMTOOLS_FLAGSTAT ( ch_bam_bai )</span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>    ch_versions = ch_versions.mix(SAMTOOLS_FLAGSTAT.out.versions)</span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>    SAMTOOLS_IDXSTATS ( ch_bam_bai )</span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>    ch_versions = ch_versions.mix(SAMTOOLS_IDXSTATS.out.versions)</span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>    emit:</span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a>    stats    = SAMTOOLS_STATS.out.stats       // channel: [ val(meta), path(stats) ]</span>
+<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a>    flagstat = SAMTOOLS_FLAGSTAT.out.flagstat // channel: [ val(meta), path(flagstat) ]</span>
+<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a>    idxstats = SAMTOOLS_IDXSTATS.out.idxstats // channel: [ val(meta), path(idxstats) ]</span>
+<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a>    versions = ch_versions                    // channel: [ path(versions.yml) ]</span>
+<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>This subworkflow is comprised of the following modules:</p>
+<ol type="1">
+<li><a href="https://github.com/nf-core/modules/blob/master/modules/nf-core/samtools/stats/main.nf">SAMTOOLS_STATS</a></li>
+<li><a href="https://github.com/nf-core/modules/blob/master/modules/nf-core/samtools/faidx/main.nf">SAMTOOLS_IDXSTATS</a></li>
+<li><a href="https://github.com/nf-core/modules/blob/master/modules/nf-core/samtools/flagstat/main.nf">SAMTOOLS_FLAGSTAT</a></li>
+</ol>
+<p>These modules are imported using <code>include</code>, which specifies the name of the process to import, and the path to the module file.</p>
+<p>The first input to this subworkflow (as indicated by <code>take</code>) is a tuple consisting of three elements – sample metadata, BAM file, BAM index file. The second input is a single fasta file. In this subworkflow, all processes are executed independently. <code>SAMTOOLS_STATS</code>, <code>SAMTOOLS_FLAGSTAT</code>, and <code>SAMTOOLS_IDXSTATS</code> can all be ran in parallel, since no process input is dependant on the output of a process output.</p>
+<p>Also note that while we have a <code>process</code> and <code>workflow</code> scope definition, there is <strong>no</strong> <code>subworkflow</code> definition – it is simply defined using <code>workflow</code>.</p>
+</section>
+<section id="viewing-workflow-parameters" class="level3">
+<h3 class="anchored" data-anchor-id="viewing-workflow-parameters"><strong>3.2.5. Viewing workflow parameters</strong></h3>
+<p>Every nf-core workflow has a full list of <strong>parameters</strong> on the nf-core website, in the <a href="https://nf-co.re/rnaseq/3.18.0/parameters">Parameters tab</a>. When viewing these parameters online, you will also be shown a description and the parameter type. Some parameters will have additional text to help you understand when and how a parameter should be used.</p>
+<p><a href="https://nf-co.re/rnaseq/3.14.0/parameters"><img src="./media/1.3_params.excalidraw.png" class="img-fluid"></a></p>
+<p>Pipeline parameters and their descriptions can also be viewed on the command line using the <code>run</code> command with the <code>--help</code>:</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>nextflow run -r 3.18.0 nf-core/rnaseq --help</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>In the example above, the parameters for <code>rnaseq</code> pipeline version <code>3.18.0</code> is being viewed.</p>
+<p><strong>Exercise</strong>: View the parameters for version <code>2.0</code> of the <code>nf-core/testpipeline</code> workflow using the command line</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -436,115 +439,58 @@ Solution
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-7" class="callout-7-contents callout-collapse collapse">
+<div id="callout-5" class="callout-5-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<p>Add the <code>--multiqc_title</code> flag to your command and execute it. Use the <code>-resume</code> option to save time:</p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>nextflow run nf-core/testpipeline -profile test,singularity --multiqc_title koala --outdir my_results -resume</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-</div>
-</div>
-<p>In this example, you can check your parameter has been applied by listing the files created in the results folder (<code>my_results</code>):</p>
-<div class="sourceCode" id="cb13"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>ls my_results/multiqc/</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</section>
-<section id="configuration-files" class="level3">
-<h3 class="anchored" data-anchor-id="configuration-files"><strong>1.2.6. Configuration files</strong></h3>
-<p>Configuration files are <code>.config</code> files that can contain various workflow properties. Custom paths passed in the command-line using the <code>-c</code> option:</p>
-<div class="sourceCode" id="cb14"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>nextflow run nf-core/&lt;workflow&gt; -profile test,docker -c &lt;path/to/custom.config&gt;</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>Multiple custom <code>.config</code> files can be included at execution by separating them with a comma (<code>,</code>).</p>
-<p>Custom configuration files follow the same structure as the configuration file included in the workflow directory. Configuration properties are organized into <a href="https://www.nextflow.io/docs/latest/config.html#config-scopes">scopes</a> by grouping the properties in the same scope using the curly brackets notation. For example:</p>
-<div class="sourceCode" id="cb15"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>alpha {</span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>     x = 1</span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>     y = 'string value..'</span>
-<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>Scopes allow you to quickly configure settings required to deploy a workflow on different infrastructure using different software management. For example, the <code>executor</code> scope can be used to provide settings for the deployment of a workflow on a HPC cluster. Similarly, the <code>singularity</code> scope controls how Singularity containers are executed by Nextflow. Multiple scopes can be included in the same <code>.config</code> file using a mix of dot prefixes and curly brackets. A full list of scopes is described in detail <a href="https://www.nextflow.io/docs/latest/config.html#config-scopes">here</a>.</p>
-<div class="callout callout-style-default callout-tip callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-<strong>Challenge</strong>
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>Give the MultiQC report for the <code>nf-core/testpipeline</code> workflow the name of your favorite color using the <a href="https://github.com/nf-core/testpipeline/blob/master/nextflow.config#L27"><code>multiqc_title</code></a> parameter in a custom <code>my_custom.config</code> file:</p>
-</div>
-</div>
-<div class="callout callout-style-default callout-caution callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-9-contents" aria-controls="callout-9" aria-expanded="false" aria-label="Toggle callout">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Solution
-</div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
-</div>
-<div id="callout-9" class="callout-9-contents callout-collapse collapse">
-<div class="callout-body-container callout-body">
-<p>Create a custom <code>my_custom.config</code> file that contains your favourite colour, e.g., blue:</p>
-<div class="sourceCode" id="cb16"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>params {</span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>    multiqc_title = "blue"</span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>Include the custom <code>.config</code> file in your execution command with the <code>-c</code> option:</p>
-<div class="sourceCode" id="cb17"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>nextflow run nf-core/testpipeline --outdir my_results -profile test,singularity -resume -c my_custom.config</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>Check that it has been applied:</p>
-<div class="sourceCode" id="cb18"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>ls my_results/multiqc/</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p><strong>Why did this fail?</strong></p>
-<p>You <strong>can not</strong> use the <code>params</code> scope in custom configuration files. Parameters can only be configured using the <code>-params-file</code> option and the command line. While parameter is listed as a parameter on the <code>STDOUT</code>, it <strong>was not</strong> applied to the executed command.</p>
-<p>We will revisit this at the end of the module</p>
+<p>The <code>nf-core/testpipeline</code> workflow parameters for version <code>2.0</code>can be printed using the <code>nextflow run</code> command along with the <code>--help</code> option:</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>nextflow run -r 2.0 nf-core/testpipeline --help</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a> N E X T F L O W   ~  version 24.10.5</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>Launching `https://github.com/nf-core/testpipeline` [angry_aryabhata] DSL2 - revision: 28e764e281 [2.0]</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>------------------------------------------------------</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>                                        ,--./,-.</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>        ___     __   __   __   ___     /,-._.--~'</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>  |\ | |__  __ /  ` /  \ |__) |__         }  {</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>  | \| |       \__, \__/ |  \ |___     \`-._,-`-,</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>                                        `._,._,'</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>  nf-core/testpipeline v2.0-g28e764e</span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>------------------------------------------------------</span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>Typical pipeline command:</span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>  nextflow run nf-core/testpipeline --input samplesheet.csv --genome GRCh37 -profile docker</span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>Input/output options</span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>  --input                            [string]  Path to comma-separated file containing information about the samples in the experiment.</span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>  --outdir                           [string]  The output directory where the results will be saved. You have to use absolute paths to storage on Cloud </span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>                                               infrastructure. </span>
+<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>  --email                            [string]  Email address for completion summary.</span>
+<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a>  --multiqc_title                    [string]  MultiQC report title. Printed as page header, used for filename if not otherwise specified.</span>
+<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a>Reference genome options</span>
+<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a>  --genome                           [string]  Name of iGenomes reference.</span>
+<span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a>  --fasta                            [string]  Path to FASTA genome file.</span>
+<span id="cb8-29"><a href="#cb8-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-30"><a href="#cb8-30" aria-hidden="true" tabindex="-1"></a>Generic options</span>
+<span id="cb8-31"><a href="#cb8-31" aria-hidden="true" tabindex="-1"></a>  --multiqc_methods_description      [string]  Custom MultiQC yaml file containing HTML including a methods description.</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 </div>
 </section>
-<section id="parameter-files" class="level3">
-<h3 class="anchored" data-anchor-id="parameter-files"><strong>1.2.7 Parameter files</strong></h3>
-<p>Parameter files are used to define <code>params</code> options for a pipeline, generally written in the YAML format. They are added to a pipeline with the flag <code>--params-file</code></p>
-<p>Example YAML:</p>
-<div class="sourceCode" id="cb19"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>"&lt;parameter1_name&gt;": 1,</span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>"&lt;parameter2_name&gt;": "&lt;string&gt;",</span>
-<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>"&lt;parameter3_name&gt;": true</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="callout callout-style-default callout-tip callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-<strong>Challenge</strong>
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>Based on the failed application of the parameter <code>multiqc_title</code> create a <code>my_params.yml</code> setting <code>multiqc_title</code> to your favourite colour. Then re-run the pipeline with the your <code>my_params.yml</code></p>
-</div>
-</div>
-<div class="callout callout-style-default callout-caution callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-11-contents" aria-controls="callout-11" aria-expanded="false" aria-label="Toggle callout">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Solution
-</div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
-</div>
-<div id="callout-11" class="callout-11-contents callout-collapse collapse">
-<div class="callout-body-container callout-body">
-<p>Set up <code>my_params.yml</code></p>
-<div class="sourceCode" id="cb20"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>multiqc_title: "black"</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="sourceCode" id="cb21"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>nextflow run nf-core/testpipeline -profile test,singularity --params-file my_params.yml --outdir Lesson1_2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-</div>
-</div>
-</section>
-<section id="default-configuration-files" class="level3">
-<h3 class="anchored" data-anchor-id="default-configuration-files"><strong>1.2.8. Default configuration files</strong></h3>
-<p>All parameters will have a default setting that is defined using the <code>nextflow.config</code> file in the workflow project directory. By default, most parameters are set to <code>null</code> or <code>false</code> and are only activated by a profile or configuration file.</p>
-<p>There are also several <code>includeConfig</code> statements in the <code>nextflow.config</code> file that are used to load additional <code>.config</code> files from the <code>conf/</code> folder. Each additional <code>.config</code> file contains categorized configuration information for your workflow execution, some of which can be optionally included:</p>
+<section id="default-parameters-and-configuration-fiiles" class="level3">
+<h3 class="anchored" data-anchor-id="default-parameters-and-configuration-fiiles"><strong>3.2.9. Default parameters and configuration fiiles</strong></h3>
+<p>Most parameters in a Nextflow pipeline will have a default setting that is defined inside the <code>nextflow.config</code> file in the workflow project directory. By default, most parameters are set to <code>null</code> or <code>false</code> and are only activated by a profile or configuration file.</p>
+<p>Look inside the <a href="https://github.com/nf-core/rnaseq/blob/3.18.0/nextflow.config"><code>nextflow.config</code></a> file for <code>rnaseq</code>. Note that default params are defined inside the <code>params { }</code> scope.</p>
+<p>There are also several <code>includeConfig</code> statements in the <code>nextflow.config</code> file that are used to load additional <code>.config</code> files from the <code>conf/</code> folder. For example:</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>// Load base.config by default for all pipelines</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>includeConfig 'conf/base.config'</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Each additional <code>.config</code> file contains categorized configuration information for your workflow execution, some of which can be optionally included:</p>
 <ul>
 <li><code>base.config</code>
 <ul>
 <li>Included by the workflow by default.</li>
-<li>Generous resource allocations using labels.</li>
+<li>Generates resource allocations such as CPU and memory using process labels.</li>
 <li>Does not specify any method for software management and expects software to be available (or specified elsewhere).</li>
 </ul></li>
 <li><code>igenomes.config</code>
@@ -558,8 +504,21 @@ Solution
 <li>Module-specific configuration options (both mandatory and optional).</li>
 </ul></li>
 </ul>
-<p>Notably, configuration files can also contain the definition of one or more profiles. A profile is a set of configuration attributes that can be activated when launching a workflow by using the <code>-profile</code> command option:</p>
-<div class="sourceCode" id="cb22"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>nextflow run nf-core/&lt;workflow&gt; -profile &lt;profile&gt;</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Notably, the <code>nextflow.config</code> file can also contain the definition of one or more profiles, via the <code>profiles { }</code> scope. A profile is a set of configuration attributes that can be activated when launching a workflow by using the Nextflow <code>-profile</code> command option. For example, to use the <code>singularity</code> profile, the following command can be used:</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>nextflow run nf-core/&lt;pipeline&gt; -profile singularity</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>By specifying <code>singularity</code> as the Nextflow profile, the following options will be enabled:</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>profiles {</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  singularity {</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>      singularity.enabled     = true</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>      singularity.autoMounts  = true</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>      conda.enabled           = false</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>      docker.enabled          = false</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>      podman.enabled          = false</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>      shifter.enabled         = false</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>      charliecloud.enabled    = false</span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>      apptainer.enabled       = false</span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Profiles used by nf-core workflows include:</p>
 <ul>
 <li><strong>Software management profiles</strong>
@@ -568,12 +527,12 @@ Solution
 </ul></li>
 <li><strong>Test profiles</strong>
 <ul>
-<li>Profiles to execute the workflow with a standardized set of test data and parameters, e.g., <code>test</code> and <code>test_full</code>.</li>
+<li>Profiles to execute a workflow with a standardized set of test data and parameters, e.g., <code>test</code> and <code>test_full</code>.</li>
 </ul></li>
 </ul>
 <p>Multiple profiles can be specified in a comma-separated (<code>,</code>) list when you execute your command. The order of profiles is important as they will be read from left to right:</p>
-<div class="sourceCode" id="cb23"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>nextflow run nf-core/&lt;workflow&gt; -profile test,singularity</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>nf-core workflows are required to define <strong>software containers</strong> and <strong>conda environments</strong> that can be activated using profiles.</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>nextflow run nf-core/&lt;pipeline&gt; test,singularity</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>The use of either <strong>software containers</strong> (Docker, Apptainer, or Singularity), or <strong>Conda environments</strong> can be activated using Nextflow profiles.</p>
 <div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -584,7 +543,229 @@ Tip
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>If you’re computer has internet access and one of Conda, Singularity, or Docker installed, you should be able to run any nf-core workflow with the <code>test</code> profile and the respective software management profile ‘out of the box’. The <code>test</code> data profile will pull small test files directly from the <code>nf-core/test-data</code> GitHub repository and run it on your local system. The <code>test</code> profile is an important control to check the workflow is working as expected and is a great way to trial a workflow. Some workflows have multiple test <code>profiles</code> for you to test.</p>
+<p>If your computer has internet access and one of Conda, Singularity, Apptainer, or Docker installed, you should be able to run any nf-core workflow with the <code>test</code> profile and the respective software management profile ‘out of the box’. The <code>test</code> data profile will pull small test files directly from the <code>nf-core/test-datasets</code> <a href="https://github.com/nf-core/test-datasets">GitHub repository</a> and run it on your local system. The <code>test</code> profile is an important control to check the workflow is working as expected and is a great way to trial a workflow. Some workflows have multiple test <code>profiles</code> for you to test.</p>
+</div>
+</div>
+</section>
+<section id="parameters-in-the-command-line" class="level3">
+<h3 class="anchored" data-anchor-id="parameters-in-the-command-line"><strong>3.2.6. Parameters in the command line</strong></h3>
+<p>Parameters can be customized using the command line. Any parameter can be configured on the command line by prefixing the parameter name with a double dash (<code>--</code>):</p>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Important
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>TO DO</strong> change to singularity/apptainer/etc</p>
+</div>
+</div>
+<div class="sourceCode" id="cb13"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>nextflow run -r 2.0 nf-core/testpipeline -resume -profile test,&lt;SOFTWARE&gt; --outdir 'output_testpipeline'</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>In the above example, the Nextflow option <code>-resume</code> is used to cache any previously completed processes, allowing the pipeline to be resumed from the last incompleted process. For any previosuly successfully completed processes, they will not need to be re-executed. Another Nextflow option, <code>-profile</code>, is used to specify the <code>test</code> and software proiles to use when executing the pipeline. Finally, the output directory name is set as <code>output_testpipeline</code> using the workflow parameter <code>--outdir</code>.</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Tip
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Nextflow options are prefixed with a single dash (<code>-</code>) and workflow parameters are prefixed with a double dash (<code>--</code>).</p>
+</div>
+</div>
+<p><strong>Exercise</strong>: Use the command line to set the <a href="https://github.com/nf-core/testpipeline/blob/master/nextflow.config#L23">MultiQC report tile</a> as your <strong>favourite animal</strong>.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-9-contents" aria-controls="callout-9" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Hint
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-9" class="callout-9-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>To change the MultiQC report title, the <code>--multiqc_title</code> parameter can be used.</p>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Important
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>TO DO</strong> change to singularity/apptainer/etc</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-11-contents" aria-controls="callout-11" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Solution
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-11" class="callout-11-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Add the <code>--multiqc_title</code> flag to your command and execute it. Use the <code>-resume</code> option to save time:</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>nextflow run -r 2.0 nf-core/testpipeline -resume -profile test,&lt;SOFTWARE&gt; --outdir 'output_testpipeline' --multiqc_title 'koala'</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+</div>
+<p>You can check your parameter has been applied by listing the files created in the output folder (<code>output_testpipeline</code>):</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>ls output_testpipeline/multiqc/</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="custom-configuration-files" class="level3">
+<h3 class="anchored" data-anchor-id="custom-configuration-files"><strong>3.2.7. Custom configuration files</strong></h3>
+<p>Configuration <code>.config</code> files contain various workflow properties that can also be specified in the command-line, via the <code>-c</code> option:</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>nextflow run nf-core/&lt;pipeline&gt; -c &lt;path/to/custom.config&gt;</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Multiple custom <code>.config</code> files can be included at execution by separating them with a comma (<code>,</code>).</p>
+<p>Custom configuration files follow the same structure as the configuration file included in the workflow directory. Configuration properties are organized into <a href="https://www.nextflow.io/docs/latest/config.html#config-scopes">scopes</a> by grouping the properties in the same scope using the curly brackets notation. Scopes allow you to quickly configure settings required to deploy a workflow on different infrastructures, using different software management.</p>
+<p>For example, the <code>executor</code> scope can be used to provide settings for the deployment of a workflow on a HPC cluster. This example sets the maximum number of parallel tasks to be 100.</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>executor {</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>  queueSize         = 100</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Important
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>TO DO</strong> change to singularity/apptainer/etc</p>
+</div>
+</div>
+<p>Similarly, the <code>&lt;CONTAINER&gt;</code> scope controls how <container> containers are executed by Nextflow. In this example, the <container> container software management has been enabled.</container></container></p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>&lt;CONTAINER&gt; {</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>    enabled = true</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Multiple scopes can be included in the same <code>.config</code> file using a mix of dot prefixes and curly brackets. A full list of scopes is described in detail <a href="https://www.nextflow.io/docs/latest/config.html#config-scopes">here</a>.</p>
+<p><strong>Exercise</strong>: Set the <a href="https://github.com/nf-core/testpipeline/blob/master/nextflow.config#L23">MultiQC report tile</a> as your <strong>favourite colour</strong>, using a custom <code>custom.config</code> file.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-13-contents" aria-controls="callout-13" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Hint
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-13" class="callout-13-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>To change set a parameter inside your <code>custom.config</code> file, a <code>params { }</code> scope has to be used.</p>
+<p>Note that you are no longer required to specify the <code>multiqc_title</code> via the command line.</p>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Important
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>TO DO</strong> change to singularity/apptainer/etc</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-15-contents" aria-controls="callout-15" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Solution
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-15" class="callout-15-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Create a custom <code>custom.config</code> file that contains your favourite colour, e.g., blue:</p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>params {</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>    multiqc_title = "blue"</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Include the custom <code>.config</code> file in your execution command with the <code>-c</code> option:</p>
+<div class="sourceCode" id="cb20"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>nextflow run -r 2.0 nf-core/testpipeline -resume -profile test,&lt;SOFTWARE&gt; --outdir 'output_testpipeline' -c custom.config</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+</div>
+<p>Check if it has been applied:</p>
+<div class="sourceCode" id="cb21"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>ls output_testpipeline/multiqc/</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-16-contents" aria-controls="callout-16" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Warning
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-16" class="callout-16-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p><strong>Why did this fail?</strong></p>
+<p>You <strong>can not</strong> use the <code>params</code> scope in custom configuration files. Parameters can only be configured using the <code>-params-file</code> option and the command line. While the parameter is listed as a parameter on the <code>STDOUT</code>, it <strong>was not</strong> applied to the executed command.</p>
+<p>We will revisit this at the end of the module</p>
+</div>
+</div>
+</div>
+</section>
+<section id="parameter-files" class="level3">
+<h3 class="anchored" data-anchor-id="parameter-files"><strong>3.2.8 Parameter files</strong></h3>
+<p>Parameter files are used to define the <code>params</code> options for a pipeline, generally written in the YAML format. They are added to a pipeline with the flag <code>-params-file</code></p>
+<p>Example YAML:</p>
+<div class="sourceCode" id="cb22"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>"number": 1</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>"greeting": "hello"</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>"mark_duplicates": true</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><strong>Exercise</strong>: Since the <code>multiqc_title</code> parameter could not be set using the <code>custom.config</code> file, create a <code>custom_params.yml</code> file that sets <code>multiqc_title</code> to your favourite colour. Then, rerun the pipeline specifying your parameter file.</p>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Important
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>TO DO</strong> change to singularity/apptainer/etc</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-18-contents" aria-controls="callout-18" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Solution
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-18" class="callout-18-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Set up <code>my_params.yml</code>:</p>
+<div class="sourceCode" id="cb23"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>multiqc_title: "black"</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb24"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>nextflow run -r 2.0 nf-core/testpipeline -resume -profile test,&lt;SOFTWARE&gt; --outdir 'output_testpipeline' -params-file my_params.yml </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 </div>
 </div>
 <div class="callout callout-style-default callout-note callout-titled">
@@ -599,9 +780,9 @@ Tip
 <div class="callout-body-container callout-body">
 <ul>
 <li>nf-core is a community effort to collect a curated set of analysis workflows built using Nextflow.</li>
-<li>Nextflow can be used to <code>pull</code> nf-core workflows.</li>
-<li>nf-core workflows follow similar structures</li>
-<li>nf-core workflows are configured using parameters and profiles</li>
+<li>Nextflow can be used to <code>pull</code> nf-core workflows, or <code>run</code> nf-core workflows.</li>
+<li>nf-core workflows follow similar template structures</li>
+<li>nf-core workflows can be configured using parameters and profiles</li>
 </ul>
 </div>
 </div>
@@ -684,7 +865,7 @@ Tip
     }
       var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
       var mailtoRegex = new RegExp(/^mailto:/);
-        var filterRegex = new RegExp("https:\/\/PMCC-BioinformaticsCore\.github\.io\/nextflow-nf-core-workshop-2025\/");
+        var filterRegex = new RegExp("https:\/\/PMCC-BioinformaticsCore\.github\.io\/nextflow-nf-core-workshop-2025_v2\/");
       var isInternal = (href) => {
           return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
       }

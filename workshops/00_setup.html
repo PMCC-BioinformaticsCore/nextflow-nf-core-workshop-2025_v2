@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.7.25">
+<meta name="generator" content="quarto-1.7.29">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -71,7 +71,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-fe31d7bd2deb2a321418d01dba375a64.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-0815c480559380816a4d1ea211a47e91.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="../site_libs/bootstrap/bootstrap-a14e3238c51140e99ccc48519b6ed9ce.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
@@ -231,15 +231,29 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<p>In this workshop, we will be using Peter Mac’s HPC to run nextflow and nf-core workflows.</p>
+<p>In this workshop, we will be using an HPC system to run nextflow and nf-core workflows.</p>
 <p>Before joining the workshop, please complete the following checklist:</p>
 <ul>
-<li>Install Visual Studio Code (recommended) or Terminal application</li>
-<li>Install the Nextflow and Remote-SSH VSC extensions (below) for VSCode user</li>
-<li>Test your remote connection to Peter Mac HPC; and create a directory <code>/scratch/users/&lt;your-username&gt;/nfWorkshop</code> in your scratch space. This will be our working directory</li>
+<li>Install Visual Studio Code (recommended) or other text editor</li>
+<li>Install the Nextflow and Remote-SSH VSC extensions (below) for VSCode users</li>
+<li>Test your remote connection to the HPC and create a directory <code>/scratch/users/&lt;your-username&gt;/nfWorkshop</code> in your scratch space. This will be our working directory</li>
 </ul>
-<section id="option-1-install-and-set-up-visual-studio-code" class="level2">
-<h2 class="anchored" data-anchor-id="option-1-install-and-set-up-visual-studio-code">Option 1: Install and set up Visual Studio Code</h2>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Important
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>TO DO</strong></p>
+<p>Change to scratch dir path</p>
+</div>
+</div>
+<section id="install-and-set-up-visual-studio-code" class="level2">
+<h2 class="anchored" data-anchor-id="install-and-set-up-visual-studio-code">Install and set up Visual Studio Code</h2>
 <p>We recommend Visual Studio Code as a source code editor because it is lightweight and has rich support for extensions and syntax highlighting available across various popular operating system.</p>
 <p>Download <a href="https://code.visualstudio.com/download">Visual Studio Code</a> on your computer and follow the instructions for your specific Operating System as required:</p>
 <ul>
@@ -269,6 +283,19 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li>Select Remote-SSH: Open SSH configuration file and select your .ssh config file</li>
 <li>Add a new entry with your details to login to cluster, and save your .ssh config file:</li>
 </ol>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Important
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>TO DO</strong> Change host name + user</p>
+</div>
+</div>
 <div class="sourceCode" id="cb1"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>Host pmac-cluster</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    HostName kvmpr-res-lnode1.unix.petermac.org.au</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    User &lt;your-cluster-user-name&gt;</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -282,20 +309,31 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>To set up your VS Code window for the workshop:</p>
 <ol type="1">
 <li>Open a new folder in the file explorer panel on the left side of the screen by typing Ctrl + K, Ctrl + O if you’re running Windows or Cmd+K+ Cmd + O for MacOS</li>
+</ol>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Important
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>TO DO</strong> Change scratch path</p>
+</div>
+</div>
+<ol start="2" type="1">
 <li>Select <code>/scratch/users/&lt;your-username&gt;/nfWorkshop</code> to open our working directory. If you encountered an error that the directory does not exist, you would need to ssh in to the cluster and create that directory first before attempting this step.</li>
 <li>When prompted, select the box for Trust the authors of all files in the parent folder ‘home’ then click Yes, I trust the authors</li>
 <li>You can dismiss the warning message saying our cluster’s git version is outdated</li>
 <li>To open a terminal, type Ctrl+J if you’re on a Windows machine or Cmd+J on MacOS</li>
 </ol>
-</section>
-</section>
-<section id="option-2-terminal" class="level2">
-<h2 class="anchored" data-anchor-id="option-2-terminal">Option 2: Terminal</h2>
-<p>No additional setup required. SSH to cluster as usual, and we assume you are already familiar with command line if you decided to go with this option. <span class="emoji" data-emoji="smile">😄</span></p>
 <hr>
 <p><sup><em>This setup instruction is adapted from <a href="https://sydney-informatics-hub.github.io/customising-nfcore-workshop/setup.html">Customising Nf-Core Workshop</a> materials from Sydney Informatics Hub</em></sup></p>
 
 
+</section>
 </section>
 
 </main> <!-- /main -->
@@ -371,7 +409,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     }
       var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
       var mailtoRegex = new RegExp(/^mailto:/);
-        var filterRegex = new RegExp("https:\/\/PMCC-BioinformaticsCore\.github\.io\/nextflow-nf-core-workshop-2025\/");
+        var filterRegex = new RegExp("https:\/\/PMCC-BioinformaticsCore\.github\.io\/nextflow-nf-core-workshop-2025_v2\/");
       var isInternal = (href) => {
           return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
       }

@@ -1,67 +1,87 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://PMCC-BioinformaticsCore.github.io/nextflow-nf-core-workshop-2025/sessions/2_nf_dev_intro.html</loc>
-    <lastmod>2025-04-17T04:49:57.670Z</lastmod>
+    <loc>https://PMCC-BioinformaticsCore.github.io/nextflow-nf-core-workshop-2025_v2/sessions/2_nf_dev_intro.html</loc>
+    <lastmod>2025-05-05T21:18:34.989Z</lastmod>
   </url>
   <url>
-    <loc>https://PMCC-BioinformaticsCore.github.io/nextflow-nf-core-workshop-2025/index.html</loc>
-    <lastmod>2025-04-17T04:49:57.668Z</lastmod>
+    <loc>https://PMCC-BioinformaticsCore.github.io/nextflow-nf-core-workshop-2025_v2/index.html</loc>
+    <lastmod>2025-05-02T01:12:07.387Z</lastmod>
   </url>
   <url>
-    <loc>https://PMCC-BioinformaticsCore.github.io/nextflow-nf-core-workshop-2025/workshops/2.3_tips_and_tricks.html</loc>
-    <lastmod>2025-04-17T04:49:57.674Z</lastmod>
+    <loc>https://PMCC-BioinformaticsCore.github.io/nextflow-nf-core-workshop-2025_v2/workshops/2.1_customise_and_run.html</loc>
+    <lastmod>2025-05-04T09:57:56.162Z</lastmod>
   </url>
   <url>
-    <loc>https://PMCC-BioinformaticsCore.github.io/nextflow-nf-core-workshop-2025/workshops/7.1_metadata_propagation.html</loc>
-    <lastmod>2025-04-17T04:49:57.678Z</lastmod>
+    <loc>https://PMCC-BioinformaticsCore.github.io/nextflow-nf-core-workshop-2025_v2/workshops/5.3_metadata_propagation.html</loc>
+    <lastmod>2025-05-05T20:57:12.874Z</lastmod>
   </url>
   <url>
-    <loc>https://PMCC-BioinformaticsCore.github.io/nextflow-nf-core-workshop-2025/workshops/1.2_intro_nf_core.html</loc>
-    <lastmod>2025-04-17T04:49:57.672Z</lastmod>
+    <loc>https://PMCC-BioinformaticsCore.github.io/nextflow-nf-core-workshop-2025_v2/workshops/6.1_operators.html</loc>
+    <lastmod>2025-05-02T01:12:07.390Z</lastmod>
   </url>
   <url>
-    <loc>https://PMCC-BioinformaticsCore.github.io/nextflow-nf-core-workshop-2025/workshops/4.1_modules.html</loc>
-    <lastmod>2025-04-17T04:49:57.676Z</lastmod>
+    <loc>https://PMCC-BioinformaticsCore.github.io/nextflow-nf-core-workshop-2025_v2/workshops/8.1_scatter_gather_output.html</loc>
+    <lastmod>2025-05-02T01:12:07.390Z</lastmod>
   </url>
   <url>
-    <loc>https://PMCC-BioinformaticsCore.github.io/nextflow-nf-core-workshop-2025/workshops/4.1_draft_future_sess.html</loc>
-    <lastmod>2025-04-17T04:49:57.675Z</lastmod>
+    <loc>https://PMCC-BioinformaticsCore.github.io/nextflow-nf-core-workshop-2025_v2/workshops/4.1_modules.html</loc>
+    <lastmod>2025-05-02T01:12:07.389Z</lastmod>
   </url>
   <url>
-    <loc>https://PMCC-BioinformaticsCore.github.io/nextflow-nf-core-workshop-2025/workshops/1.1_intro_nextflow.html</loc>
-    <lastmod>2025-04-17T04:49:57.671Z</lastmod>
+    <loc>https://PMCC-BioinformaticsCore.github.io/nextflow-nf-core-workshop-2025_v2/workshops/5.3_metadata_propagation_CP.html</loc>
+    <lastmod>2025-05-05T16:01:09.054Z</lastmod>
   </url>
   <url>
-    <loc>https://PMCC-BioinformaticsCore.github.io/nextflow-nf-core-workshop-2025/workshops/3.1_creating_a_workflow.html</loc>
-    <lastmod>2025-04-17T04:49:57.675Z</lastmod>
+    <loc>https://PMCC-BioinformaticsCore.github.io/nextflow-nf-core-workshop-2025_v2/workshops/5.1_nf_core_template.html</loc>
+    <lastmod>2025-05-05T16:20:17.232Z</lastmod>
   </url>
   <url>
-    <loc>https://PMCC-BioinformaticsCore.github.io/nextflow-nf-core-workshop-2025/workshops/5.1_nf_core_template.html</loc>
-    <lastmod>2025-04-17T04:49:57.677Z</lastmod>
+    <loc>https://PMCC-BioinformaticsCore.github.io/nextflow-nf-core-workshop-2025_v2/workshops/1.1_intro_nextflow.html</loc>
+    <lastmod>2025-05-03T03:27:59.409Z</lastmod>
   </url>
   <url>
-    <loc>https://PMCC-BioinformaticsCore.github.io/nextflow-nf-core-workshop-2025/workshops/2.2_troubleshooting.html</loc>
-    <lastmod>2025-04-17T04:49:57.673Z</lastmod>
+    <loc>https://PMCC-BioinformaticsCore.github.io/nextflow-nf-core-workshop-2025_v2/workshops/1.3_processes_and_channels.html</loc>
+    <lastmod>2025-05-03T05:36:49.651Z</lastmod>
   </url>
   <url>
-    <loc>https://PMCC-BioinformaticsCore.github.io/nextflow-nf-core-workshop-2025/workshops/8.1_scatter_gather_output.html</loc>
-    <lastmod>2025-04-17T04:49:57.679Z</lastmod>
+    <loc>https://PMCC-BioinformaticsCore.github.io/nextflow-nf-core-workshop-2025_v2/workshops/3.1_creating_a_workflow.html</loc>
+    <lastmod>2025-05-04T23:13:43.288Z</lastmod>
   </url>
   <url>
-    <loc>https://PMCC-BioinformaticsCore.github.io/nextflow-nf-core-workshop-2025/workshops/6.1_operators.html</loc>
-    <lastmod>2025-04-17T04:49:57.677Z</lastmod>
+    <loc>https://PMCC-BioinformaticsCore.github.io/nextflow-nf-core-workshop-2025_v2/workshops/5.2_nf_core_modules.html</loc>
+    <lastmod>2025-05-05T13:39:51.986Z</lastmod>
   </url>
   <url>
-    <loc>https://PMCC-BioinformaticsCore.github.io/nextflow-nf-core-workshop-2025/workshops/00_setup.html</loc>
-    <lastmod>2025-04-17T04:49:57.671Z</lastmod>
+    <loc>https://PMCC-BioinformaticsCore.github.io/nextflow-nf-core-workshop-2025_v2/workshops/4.1_draft_future_sess.html</loc>
+    <lastmod>2025-05-02T01:12:07.389Z</lastmod>
   </url>
   <url>
-    <loc>https://PMCC-BioinformaticsCore.github.io/nextflow-nf-core-workshop-2025/workshops/2.1_customise_and_run.html</loc>
-    <lastmod>2025-04-17T04:49:57.673Z</lastmod>
+    <loc>https://PMCC-BioinformaticsCore.github.io/nextflow-nf-core-workshop-2025_v2/workshops/2.2_troubleshooting.html</loc>
+    <lastmod>2025-05-04T07:37:20.515Z</lastmod>
   </url>
   <url>
-    <loc>https://PMCC-BioinformaticsCore.github.io/nextflow-nf-core-workshop-2025/sessions/1_intro_run_nf.html</loc>
-    <lastmod>2025-04-17T04:49:57.669Z</lastmod>
+    <loc>https://PMCC-BioinformaticsCore.github.io/nextflow-nf-core-workshop-2025_v2/workshops/5.4_pipeline_testing.html</loc>
+    <lastmod>2025-05-05T21:18:10.794Z</lastmod>
+  </url>
+  <url>
+    <loc>https://PMCC-BioinformaticsCore.github.io/nextflow-nf-core-workshop-2025_v2/workshops/1.2_intro_nf_core.html</loc>
+    <lastmod>2025-05-03T08:23:32.832Z</lastmod>
+  </url>
+  <url>
+    <loc>https://PMCC-BioinformaticsCore.github.io/nextflow-nf-core-workshop-2025_v2/workshops/00_setup.html</loc>
+    <lastmod>2025-05-03T01:37:13.697Z</lastmod>
+  </url>
+  <url>
+    <loc>https://PMCC-BioinformaticsCore.github.io/nextflow-nf-core-workshop-2025_v2/workshops/2.3_tips_and_tricks.html</loc>
+    <lastmod>2025-05-04T10:38:57.429Z</lastmod>
+  </url>
+  <url>
+    <loc>https://PMCC-BioinformaticsCore.github.io/nextflow-nf-core-workshop-2025_v2/workshops/5.2_nf_core_modules_CP.html</loc>
+    <lastmod>2025-05-05T13:01:49.328Z</lastmod>
+  </url>
+  <url>
+    <loc>https://PMCC-BioinformaticsCore.github.io/nextflow-nf-core-workshop-2025_v2/sessions/1_intro_run_nf.html</loc>
+    <lastmod>2025-05-04T10:40:17.537Z</lastmod>
   </url>
 </urlset>

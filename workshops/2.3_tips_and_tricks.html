@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.7.25">
+<meta name="generator" content="quarto-1.7.29">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -71,7 +71,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-fe31d7bd2deb2a321418d01dba375a64.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-0815c480559380816a4d1ea211a47e91.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="../site_libs/bootstrap/bootstrap-a14e3238c51140e99ccc48519b6ed9ce.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
@@ -233,122 +233,181 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <section id="running-nextflow-pipelines-on-a-hpc" class="level3">
 <h3 class="anchored" data-anchor-id="running-nextflow-pipelines-on-a-hpc"><strong>2.3.1. Running Nextflow Pipelines on a HPC </strong></h3>
-<p>Nextflow, by default, spawns parallel task executions wherever it is running. You can use <a href="https://www.nextflow.io/docs/latest/executor.html">Nextflow’s executors</a> feature to run these tasks using an HPC job schedulers such as <a href="https://www.nextflow.io/docs/latest/executor.html#slurm">SLURM</a> and <a href="https://www.nextflow.io/docs/latest/executor.html#pbs-pro">PBS Pro</a>. Use a custom configuration file to send all processes to the job scheduler as separate jobs and define essential resource requests like <code>cpus</code>, <code>time</code>, <code>memory</code>, and <code>queue</code> inside a <code>process {}</code> <a href="https://www.nextflow.io/docs/latest/process.html#processes">scope</a>.</p>
-<section id="run-all-workflow-tasks-as-separate-jobs-on-hpc" class="level4">
-<h4 class="anchored" data-anchor-id="run-all-workflow-tasks-as-separate-jobs-on-hpc"><strong>Run all workflow tasks as separate jobs on HPC</strong></h4>
-<p>In this custom configuration file we have sent all tasks that a workflow is running to a PBS Pro job scheduler and specified jobs to be run on the normal queue, each running for a max time of 3 hours with 1 cpu and 4 Gb of memory:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>process {</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  executor = 'slurm'</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  queue = 'prod_short'</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  cpus = 1</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  time = '2h'</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  memory = '4.GB'</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</section>
-<section id="run-processes-with-different-resource-profiles-as-hpc-jobs" class="level4">
-<h4 class="anchored" data-anchor-id="run-processes-with-different-resource-profiles-as-hpc-jobs"><strong>Run processes with different resource profiles as HPC jobs</strong></h4>
-<p>Adjusting the custom configuration file above, we can use the <code>withName {}</code> <a href="https://www.nextflow.io/docs/latest/config.html?highlight=withname#process-selectors">process selector</a> to specify process-specific resource requirements:</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>process {</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  executor = 'slurm'</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  withName processONE {</span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    queue = 'prod_short'</span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    cpus = 1</span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    time = '2h'</span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    memory = '4.GB'</span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>  withName processTWO {</span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>    queue = 'prod_med'</span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>    cpus = 2</span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>    time = '10h'</span>
-<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>    memory = '50.GB'</span>
-<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</section>
-<section id="specify-infrastructure-specific-directives-for-your-jobs" class="level4">
-<h4 class="anchored" data-anchor-id="specify-infrastructure-specific-directives-for-your-jobs"><strong>Specify infrastructure-specific directives for your jobs</strong></h4>
-<p>Adjusting the custom configuration file above, we can define any native configuration options using the <a href="https://www.nextflow.io/docs/latest/process.html#process-clusteroptions">clusterOptions</a> directive. We can use this to specify non-standard resources. Below we have specified which HPC project code to bill for all process jobs:</p>
-<p>You can also setup a config to tailor specific to Peter Mac’s HPC partitions setup.</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>executor {</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    queueSize         = 100</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    queueStatInterval = '1 min'</span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    pollInterval      = '1 min'</span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    submitRateLimit   = '20 min'</span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>process {</span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    executor = 'slurm'</span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>    cache    = 'lenient'</span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>    beforeScript = 'module load singularity'</span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>    stageInMode = 'symlink'</span>
-<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>    queue = { task.time &lt; 2.h ? 'prod_short' : task.time &lt; 24.h ? 'prod_med' : 'prod' } </span>
-<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="callout callout-style-default callout-tip callout-titled">
+<p>Nextflow, by default, launches mulitple parallel tasks that can be ran concurrently. Recall previously that we used the <code>process</code> and <code>executor</code> scope to run these tasks using an HPC job scheduler <a href="https://www.nextflow.io/docs/latest/executor.html#slurm">SLURM</a>, submitting a maximum number of 4 concurrent jobs.</p>
+<div class="callout callout-style-default callout-important callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<strong>Challenge</strong>
+Important
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Run the previous nf-core/rnaseq workflow using the <code>process</code> and <code>executor</code> scope above (in a config file), and send each task to slurm.</p>
+<p><strong>TO DO</strong> Change EXECUTOR + PARTITION</p>
 </div>
 </div>
-<div class="callout callout-style-default callout-caution callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
+<div class="sourceCode" id="cb1"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>process {</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    executor = 'slurm'</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    queue = 'PARTITION'</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>executor {</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    queueSize = 4</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>By specifying the executor as <code>slurm</code>, Nexflow will submit each process as a separate job using the <code>sbatch</code> command. All jobs will be submittd to the <code>PARTITION</code> partition.</p>
+<p>Inside the <code>process { }</code> <a href="https://www.nextflow.io/docs/latest/process.html#processes">scope</a>, we can also define resources such as <code>cpus</code>, <code>time</code>, <code>memory</code>, and <code>queue</code>.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>process {</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    executor = 'slurm'</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    queue = 'PARTITION'</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    cpus = 1</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    time = '2h'</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    memory = '4.GB'</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>executor {</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>    queueSize = 4</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Now each individual job will be executed using 1 CPU, 4GB of memory, and a maximum time limit of 2 hours. Since we didn’t specify a process label or a process name, this setting will apply for all processes within the pipeline.</p>
+<section id="run-processes-on-different-partitions" class="level4">
+<h4 class="anchored" data-anchor-id="run-processes-on-different-partitions"><strong>Run processes on different partitions</strong></h4>
+<p>Previously, we used the <code>withLabel</code> and <code>withName</code> <a href="https://www.nextflow.io/docs/latest/config.html?highlight=withname#process-selectors">process selectors</a> to specify the <code>cpus</code>, <code>time</code>, <code>memory</code> for a group of processes, or a particular process. We can also use those process selectors to change what partition the job will be submitted to.</p>
+<p>For example, suppose we have one process that requires the use of GPUs. If we change the <code>queue</code> to our GPU partition <code>gpu_partition</code>, this means all process jobs, even ones that don’t require GPU, will be ran on that partition.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>process {</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    executor = 'slurm'</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    queue = 'gpu_partition'</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    cpus = 1</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    time = '2h'</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    memory = '4.GB'</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>executor {</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>    queueSize = 4</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Instead, we can use the <code>withName</code> process selector to send the job execution for that process to a GPU-speicifc partition. This means we won’t unnecessarily use GPU partition resources.</p>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-Solution
+Important
 </div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-2" class="callout-2-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<p>Create a nextflow.config file</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>process.executor = 'slurm'</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>Run the nfcore/rna-seq workflow again</p>
-<pre><code>nextflow run nf-core/rnaseq -r 3.11.1 \
-    -params-file workshop-params.yaml
-    -profile singularity \
-    --max_memory '6.GB' \
-    --max_cpus 2 \
-    -resume </code></pre>
-<p>Did you get the following error?</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>sbatch: error: Batch job submission failed: Access/permission denied</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>Try running the same workflow on login-node and observe the difference</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>&gt;&gt;&gt; squeue -u rlupat -i 5</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>          17429286      prod nf-NFCOR   rlupat  R       0:03      1 papr-res-compute01</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><strong>TO DO</strong> Change EXECUTOR + PARTITION</p>
 </div>
 </div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>process {</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    executor = 'slurm'</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    queue = 'PARTITION'</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    cpus = 1</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    time = '2h'</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    memory = '4.GB'</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>    withName: 'GPU_PROCESS' {</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>      queue = 'gpu_queue'</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>executor {</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>    queueSize = 4</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="specify-infrastructure-specific-directives-for-your-jobs" class="level4">
+<h4 class="anchored" data-anchor-id="specify-infrastructure-specific-directives-for-your-jobs"><strong>Specify infrastructure-specific directives for your jobs</strong></h4>
+<p>Adjusting the custom configuration file above, we can define any native configuration options using the <a href="https://www.nextflow.io/docs/latest/process.html#process-clusteroptions">clusterOptions</a> process directive, used to specify resources not already available in Nextflow.</p>
+<p>For example, if you are running your pipeline on an HPC system that is billed, you have the option to specify what project the resource usage is billed to.</p>
+<p>For example if you typically submit a job using the following command, where <code>--account</code> is used to specify the project number resource usage is billed to:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>sbatch --acount=PROJECT1 script.sh</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>By default, this <code>account</code> option is not a supported directive in Nextflow. Therefore, we <strong>cannot</strong> use the following config:</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>process {</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    executor = 'slurm'</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    queue = 'PARTITION'</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    account = 'PROJECT1</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    cpus = 1</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>    time = '2h'</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>    memory = '4.GB'</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>    withName: 'GPU_PROCESS' {</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>      queue = 'gpu_queue'</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>executor {</span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>    queueSize = 4</span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Instead, this can be specified using <code>clusterOptions</code>, as below:</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>process {</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    executor = 'slurm'</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    queue = 'PARTITION'</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    clusterOptions = "--account=PROJECT1"</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    cpus = 1</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    time = '2h'</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    memory = '4.GB'</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>    withName: 'GPU_PROCESS' {</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>      queue = 'gpu_queue'</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>executor {</span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>    queueSize = 4</span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="callout callout-style-default callout-caution callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
 </div>
-<p><br></p>
+<div class="callout-title-container flex-fill">
+Caution
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>On certain HPC systems, you may not be able to submit new jobs from another job (such as an interactive session). In this case, you may get the following error:</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>sbatch: error: Batch job submission failed: Access/permission denied</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>To overcome this, use login-node (and exit your interactive session) when running your workflow.</p>
+</div>
+</div>
 </section>
 </section>
 <section id="clean-your-work-directory" class="level3">
 <h3 class="anchored" data-anchor-id="clean-your-work-directory"><strong>2.3.3. Clean your work directory</strong></h3>
-<p>Your work directory can get very big very quickly (especially if you are using full sized datasets). It is good practise to <code>clean</code> your work directory regularly. Rather than removing the <code>work</code> folder with all of it’s contents, the Nextflow <code>clean</code> function allows you to selectively remove data associated with specific runs.</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>nextflow clean -help</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Your work directory can get very big, very quickly (especially if you are using full sized datasets). It is good practise to <code>clean</code> your work directory regularly. Rather than removing the <code>work</code> folder with all of it’s contents, the Nextflow <code>clean</code> function allows you to selectively remove data associated with specific runs.</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>nextflow clean -help</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>Clean up project cache and work directories</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>Usage: clean [options] </span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  Options:</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    -after</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>       Clean up runs executed after the specified one</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>    -before</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>       Clean up runs executed before the specified one</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>    -but</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>       Clean up all runs except the specified one</span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>    -n, -dry-run</span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>       Print names of file to be removed without deleting them</span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>       Default: false</span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>    -f, -force</span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>       Force clean command</span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>       Default: false</span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>    -h, -help</span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a>       Print the command usage</span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a>       Default: false</span>
+<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a>    -k, -keep-logs</span>
+<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a>       Removes only temporary files but retains execution log entries and</span>
+<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a>       metadata</span>
+<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a>       Default: false</span>
+<span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a>    -q, -quiet</span>
+<span id="cb10-24"><a href="#cb10-24" aria-hidden="true" tabindex="-1"></a>       Do not print names of files removed</span>
+<span id="cb10-25"><a href="#cb10-25" aria-hidden="true" tabindex="-1"></a>       Default: false</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>The <code>-after</code>, <code>-before</code>, and <code>-but</code> options are all very useful to select specific runs to <code>clean</code>. The <code>-dry-run</code> option is also very useful to see which files will be removed if you were to <code>-force</code> the <code>clean</code> command.</p>
-<div class="callout callout-style-default callout-tip callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-<strong>Challenge</strong>
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>You Nextflow to <code>clean</code> your work <code>work</code> directory of staged files but <strong>keep</strong> your execution logs.</p>
-</div>
-</div>
-<div class="callout callout-style-default callout-caution callout-titled">
+<p><strong>Exercise</strong>: Use Nextflow to <code>clean</code> your <code>work</code> directory of all staged files, but <strong>keep</strong> your execution logs.</p>
+<div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
@@ -361,36 +420,36 @@ Solution
 <div id="callout-4" class="callout-4-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>Use the Nextflow <code>clean</code> command with the <code>-k</code> and <code>-f</code> options:</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>nextflow clean -k -f</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb11"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>nextflow clean -k -f</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 </div>
-<p><br></p>
 </section>
-<section id="change-default-nextflow-cache-strategy" class="level3">
-<h3 class="anchored" data-anchor-id="change-default-nextflow-cache-strategy"><strong>2.3.4. Change default Nextflow cache strategy</strong></h3>
-<p>Workflow execution is <a href="https://training.nextflow.io/basic_training/cache_and_resume/#resume-troubleshootingl">sometimes not resumed as expected</a>. The <a href="https://www.nextflow.io/docs/latest/process.html#cache">default behaviour of Nextflow cache keys</a> is to index the input files meta-data information. Reducing the cache stringency to <code>lenient</code> means the files cache keys are based only on filesize and path, and can help to avoid unexpectedly re-running certain processes when <code>-resume</code> is in use.</p>
-<p>To apply lenient cache strategy to all of your runs, you could add to a custom configuration file:</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>process {</span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>    cache = 'lenient'</span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>You can specify different cache stategies for different processes by using <code>withName</code> or <code>withLabel</code>. You can specify a particular cache strategy be applied to certain <code>profiles</code> within your institutional config, or to apply to all profiles described within that config by placing the above <code>process</code> code block outside the <code>profiles</code> scope.</p>
+<section id="change-the-default-nextflow-cache-strategy" class="level3">
+<h3 class="anchored" data-anchor-id="change-the-default-nextflow-cache-strategy"><strong>2.3.4. Change the default Nextflow cache strategy</strong></h3>
+<p>Sometimes, a wrkflow execution is <a href="https://training.nextflow.io/basic_training/cache_and_resume/#resume-troubleshootingl">not resumed as expected</a>. The <a href="https://www.nextflow.io/docs/latest/process.html#cache">default behaviour of Nextflow cache keys</a> is to <strong>index</strong> the input file meta-data information. Reducing the cache stringency to <code>lenient</code> means the file cache keys are based only on <strong>filesize</strong> and <strong>path</strong>, and can help to avoid unexpectedly re-running certain processes when <code>-resume</code> is in use.</p>
+<p>To apply lenient cache strategy to all of your runs, you could add the following to a custom configuration file:</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>process {</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>    cache = 'lenient'</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Again, you can specify different cache stategies for different processes by using <code>withName</code> or <code>withLabel</code>.</p>
 </section>
 <section id="access-private-github-repositories" class="level3">
 <h3 class="anchored" data-anchor-id="access-private-github-repositories"><strong>2.3.5. Access private GitHub repositories</strong></h3>
 <p>To interact with private repositories on GitHub, you can provide Nextflow with <a href="https://www.nextflow.io/docs/latest/sharing.html#github-credentials">access to GitHub</a> by specifying your GitHub user name and a <a href="https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token">Personal Access Token</a> in the <a href="https://www.nextflow.io/docs/latest/sharing.html#scm-configuration-file"><code>scm</code> configuration file</a> inside your specified <code>.nextflow/</code> directory:</p>
-<div class="sourceCode" id="cb11"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>providers {</span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  github {</span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>    user = 'rlupat'</span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>    password = 'my-personal-access-token'</span>
-<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb13"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>providers {</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  github {</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>    user = 'rlupat'</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>    password = 'my-personal-access-token'</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Replace <code>'my-personal-access-token'</code> with your personal access token.</p>
 </section>
 <section id="additional-resources" class="level3">
 <h3 class="anchored" data-anchor-id="additional-resources"><strong>2.3.7. Additional resources </strong></h3>
-<p>Here are some useful resources to help you get started with running nf-core pipelines and developing Nextflow pipelines:</p>
+<p>Here are some useful resources to help you get started with running and developing nf-core pipelines:</p>
 <ul>
 <li><a href="https://nf-co.re/docs/usage/nextflow">Nextflow tutorials</a></li>
 <li><a href="https://nf-co.re/usage/usage_tutorials">nf-core pipeline tutorials</a></li>
@@ -478,7 +537,7 @@ Solution
     }
       var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
       var mailtoRegex = new RegExp(/^mailto:/);
-        var filterRegex = new RegExp("https:\/\/PMCC-BioinformaticsCore\.github\.io\/nextflow-nf-core-workshop-2025\/");
+        var filterRegex = new RegExp("https:\/\/PMCC-BioinformaticsCore\.github\.io\/nextflow-nf-core-workshop-2025_v2\/");
       var isInternal = (href) => {
           return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
       }

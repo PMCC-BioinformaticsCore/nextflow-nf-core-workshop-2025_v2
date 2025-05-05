@@ -1,1 +1,1 @@
-Sitemap: https://PMCC-BioinformaticsCore.github.io/nextflow-nf-core-workshop-2025/sitemap.xml
+Sitemap: https://PMCC-BioinformaticsCore.github.io/nextflow-nf-core-workshop-2025_v2/sitemap.xml

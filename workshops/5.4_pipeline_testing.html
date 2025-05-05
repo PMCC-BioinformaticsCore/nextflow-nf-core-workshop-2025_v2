@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Developing bioinformatics workflows with Nextflow – Peter Mac Nextflow Workshop</title>
+<title>Nextflow Development - Developing Modularised Workflows – Peter Mac Nextflow Workshop</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -19,6 +19,41 @@ ul.task-list li input[type="checkbox"] {
   width: 0.8em;
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 </style>
 
@@ -179,7 +214,7 @@ ul.task-list li input[type="checkbox"] {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Developing bioinformatics workflows with Nextflow</h1>
+<h1 class="title"><strong>Nextflow Development - Developing Modularised Workflows</strong></h1>
 </div>
 
 
@@ -196,101 +231,93 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<p>This workshop is designed to provide participants with a fundamental understanding of developing bioinformatics pipelines using nf-core templates.</p>
-<p>TO DO</p>
-<section id="course-presenters" class="level3">
-<h3 class="anchored" data-anchor-id="course-presenters">Course Presenters</h3>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Objectives
+</div>
+</div>
+<div class="callout-body-container callout-body">
 <ul>
-<li>Song Li, Bioinformatics Core Facility, Peter Mac</li>
-<li>Richard Lupat, Bioinformatics Core Facility, Peter Mac</li>
+<li>Gain an understanding of how version control is utilised throughout the pipeline</li>
+<li>Use <code>nf-core lint</code> to lint the pipeline</li>
 </ul>
+</div>
+</div>
+<section id="version-control" class="level2">
+<h2 class="anchored" data-anchor-id="version-control"><strong>7.1 Version control</strong></h2>
+<p>In every nf-core module, a <code>versions.yml</code> file has been emitted as output. Let’s collect all these files together into one channel <code>ch_versions</code>, which will contain the versions used for every tool in the pipeline.</p>
+<p>For the <code>SALMON_INDEX</code> process, this can be done by using the <code>.out</code> attribute, along with <code>versions</code>. This file is then added to the list of files already present in <code>ch_versions</code>, using the <code>.mix</code> operator.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>    SALMON_INDEX ( </span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>        ch_genome_fasta,</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>        ch_transcript_fasta</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    ch_versions = ch_versions.mix(SALMON_INDEX.out.versions)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><strong>Exercise</strong>: Add the versions for SALMON_QUANT to <code>ch_versions</code></p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Solution
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-2" class="callout-2-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>To add the version file for <code>SALMON_QUANT</code> to <code>ch_versions</code>, the <code>.out.versions</code> attribute can be used. This is then added to <code>ch_versions</code> using the <code>.mix</code> operator:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>    ch_versions = ch_versions.mix(SALMON_QUANT.out.versions)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+</div>
+<p>In nf-core, the existing <code>softwareVersionsToYAML</code> function will take all <code>.yml</code> files inside <code>ch_versions</code>, creating one large file that traks all software versions.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>    //</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    // Collate and save software versions</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    //</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    softwareVersionsToYAML(ch_versions)</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>        .collectFile(</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>            storeDir: "${params.outdir}/pipeline_info",</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>            name: 'nf_core_'  +  'customrnaseq_software_'  + 'mqc_'  + 'versions.yml',</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>            sort: true,</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>            newLine: true</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>        ).set { ch_collated_versions }</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>This file is saved in the <code>pipeline_info</code> folder of the output directory:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>output/pipeline_info/nf_core_customrnaseq_software_mqc_versions.yml</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>In addition to tool versions used, the Nextflow version, and pipeline version is also recorded</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>FASTQC:</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  fastqc: 0.12.1</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>SALMON_INDEX:</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  salmon: 1.10.3</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>SALMON_QUANT:</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  salmon: 1.10.3</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>Workflow:</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    nf-core/customrnaseq: v1.0.0dev</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>    Nextflow: 24.10.5</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
-<section id="course-helpers" class="level3">
-<h3 class="anchored" data-anchor-id="course-helpers">Course Helpers</h3>
-<p>TBC</p>
-<p>TO DO</p>
+<section id="other-resources" class="level2">
+<h2 class="anchored" data-anchor-id="other-resources">8.1 Other resources</h2>
+<section id="pipeline-linting" class="level3">
+<h3 class="anchored" data-anchor-id="pipeline-linting"><strong>8.1.1 Pipeline linting</strong></h3>
+<p>The <code>nf-core pipelines lint</code> command can be used to check that a given pipeline follow all nf-core community guidelines. This is the same test that is used on the automated continuous integration tests, and is important if you would like to contribute to <code>nf-core</code>.</p>
+<p>To contribute your pipeline to nf-core, <a href="https://nf-co.re/docs/tutorials/adding_a_pipeline/creating_a_pipeline">full documentation</a> is available.</p>
 </section>
-<section id="prerequisites" class="level3">
-<h3 class="anchored" data-anchor-id="prerequisites">Prerequisites</h3>
-<ul>
-<li>Experience with command line interface and cluster/slurm</li>
-<li>Familiarity with the basic concept of workflows</li>
-<li>Attendance in the <a href="../sessions/1_intro_run_nf.html">‘Introduction to Nextflow and Running nf-core Workflows’</a> workshop, or an understanding of the Nextflow concepts outlined in the workshop material</li>
-</ul>
+<section id="pipeline-test-profiles" class="level3">
+<h3 class="anchored" data-anchor-id="pipeline-test-profiles"><strong>8.1.2 Pipeline test profiles</strong></h3>
+<p>Another important feature of nf-core pipelines are their <code>test</code> profiles. Pipeline level tests can facilitate more reliable and reproducible pipelines by ensuring identical results are produced at every run. More documentation from nf-core is available <a href="https://nf-co.re/docs/guidelines/pipelines/recommendations/testing">here</a> and <a href="https://nf-co.re/docs/guidelines/components/test_data">here</a></p>
 </section>
-<section id="learning-objectives" class="level3">
-<h3 class="anchored" data-anchor-id="learning-objectives">Learning Objectives:</h3>
-<p>By the end of this workshop, participants should be able to:</p>
-<ul>
-<li>Develop a basic Nextflow workflow using nf-core templates</li>
-<li>Create processes that consist of multiple scripting languages</li>
-</ul>
-<p>TO DO :</p>
-<ul>
-<li>Read data of different types into a Nextflow workflow</li>
-<li>Output Nextflow process results to a predefined directory</li>
-<li>Re-use and import processes, modules, and sub-workflows into a Nextflow workflow</li>
-</ul>
-</section>
-<section id="set-up-requirements" class="level3">
-<h3 class="anchored" data-anchor-id="set-up-requirements">Set up requirements</h3>
-<p>Please complete the <a href="../workshops/00_setup.html">Setup Instructions</a> before the course.</p>
-<p>If you have any trouble, please get in contact with us ASAP via Slack.</p>
-</section>
-<section id="workshop-schedule" class="level3">
-<h3 class="anchored" data-anchor-id="workshop-schedule">Workshop schedule</h3>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th>Lesson</th>
-<th>Overview</th>
-<th>Time</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>Session kick off</td>
-<td>Session kick off: Discuss learning outcomes and finalise <a href="../workshops/00_setup.html">setup</a></td>
-<td>10.00 - 10.10</td>
-</tr>
-<tr class="even">
-<td><a href="../workshops/5.1_nf_core_template.html">Creating workflows using nf-core templates</a></td>
-<td>Introduction to nf-core pipeline template structure and workflow syntax</td>
-<td>10.10 - 10.50</td>
-</tr>
-<tr class="odd">
-<td>Break</td>
-<td>Break</td>
-<td>10:50 - 11:00</td>
-</tr>
-<tr class="even">
-<td><a href="../workshops/5.2_nf_core_modules.html">nf-core modules and subworkflows</a></td>
-<td>Installing and creating nf-core modules</td>
-<td>11.00 - 12.15</td>
-</tr>
-<tr class="odd">
-<td>Lunch Break</td>
-<td>Break</td>
-<td>12:15 - 13:00</td>
-</tr>
-<tr class="even">
-<td><a href="../workshops/5.3_metadata_propagation.html">Metadata propagation</a></td>
-<td>Working with Nextflow-Schema &amp; Metadata</td>
-<td>13.00 - 13.40</td>
-</tr>
-<tr class="odd">
-<td><a href="../workshops/5.4_pipeline_testing.html">Pipeline testing and Q&amp;A</a></td>
-<td>Pipeline development best practice</td>
-<td>13.45 - 14:00</td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="credits-and-acknowledgement" class="level3">
-<h3 class="anchored" data-anchor-id="credits-and-acknowledgement">Credits and acknowledgement</h3>
-<p>This workshop is adapted from <a href="https://training.nextflow.io/basic_training/">Fundamentals Training</a>, <a href="https://training.nextflow.io/advanced/">Advanced Training</a>, <a href="https://nf-co.re/docs/contributing/tutorials/creating_with_nf_core#creating-a-pipeline">Developer Tutorials</a>, and <a href="https://nextflow-io.github.io/patterns/">Nextflow Patterns</a> materials from Nextflow and nf-core.</p>
+<section id="pushing-to-github" class="level3">
+<h3 class="anchored" data-anchor-id="pushing-to-github"><strong>8.1.2 Pushing to GitHub</strong></h3>
+<p>Currently, we have developed our pipeline locally. However, creating a remote repository can further improve the continuous integration process and streamline work if multiple people are working on the same pipeline. See documentation available <a href="https://nf-co.re/docs/tutorials/adding_a_pipeline/creating_a_pipeline">here</a>.</p>
+<hr>
+<p><sup><em>This workshop is adapted from <a href="https://training.nextflow.io/basic_training/">Fundamentals Training</a>, <a href="https://training.nextflow.io/advanced/">Advanced Training</a>, <a href="https://nf-co.re/docs/contributing/tutorials/creating_with_nf_core#creating-a-pipeline">Developer Tutorials</a>, <a href="https://nextflow-io.github.io/patterns/">Nextflow Patterns</a> materials from Nextflow, nf-core <a href="https://nf-co.re/docs/nf-core-tools">nf-core tools documentation</a> and <a href="https://nextflow-io.github.io/nf-validation/">nf-validation</a></em></sup> –&gt;</p>
 
 
+</section>
 </section>
 
 </main> <!-- /main -->
