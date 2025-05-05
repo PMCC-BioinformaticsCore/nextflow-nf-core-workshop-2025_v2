@@ -4,16 +4,12 @@ title: "Developing bioinformatics workflows with Nextflow"
 
 This workshop is designed to provide participants with a fundamental understanding of developing bioinformatics pipelines using nf-core templates. 
 
-TO DO
-
 ### Course Presenters
 
 - Song Li, Bioinformatics Core Facility, Peter Mac
 - Richard Lupat, Bioinformatics Core Facility, Peter Mac
 
 ### Course Helpers
-
-TBC
 
 TO DO
 
@@ -26,14 +22,12 @@ TO DO
 ### Learning Objectives:
 By the end of this workshop, participants should be able to:
 
+- Learn the structure of nf-core templates
 - Develop a basic Nextflow workflow using nf-core templates 
-- Create processes that consist of multiple scripting languages
-
-TO DO :
-
-- Read data of different types into a Nextflow workflow
-- Output Nextflow process results to a predefined directory
 - Re-use and import processes, modules, and sub-workflows into a Nextflow workflow
+- Create custom modules using nf-core tools
+- Define workflow logic within a workflow script
+- Gain an understanding of pipeline version control
 
 ### Set up requirements
 Please complete the [Setup Instructions](../workshops/00_setup.html) before the course.
@@ -50,7 +44,7 @@ If you have any trouble, please get in contact with us ASAP via Slack.
 | [nf-core modules and subworkflows](../workshops/5.2_nf_core_modules.qmd) | Installing and creating nf-core modules | 11.00 - 12.15 |
 | Lunch Break | Break | 12:15 - 13:00 |
 | [Metadata propagation](../workshops/5.3_metadata_propagation.qmd) | Working with Nextflow-Schema & Metadata | 13.00 - 13.40 | 
-| [Pipeline testing and Q&A](../workshops/5.4_pipeline_testing.qmd)| Pipeline development best practice | 13.45 - 14:00 | 
+| [Pipeline version control and additional resources](../workshops/5.4_pipeline_testing.qmd)| Pipeline development version control | 13.45 - 14:00 | 
 
 
 ### Credits and acknowledgement
