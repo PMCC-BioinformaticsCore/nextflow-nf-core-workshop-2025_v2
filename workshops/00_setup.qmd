@@ -7,15 +7,22 @@ output:
 from: markdown+emoji
 ---
 
-In this workshop, we will be using Peter Mac's HPC to run nextflow and nf-core workflows. 
+In this workshop, we will be using an HPC system to run nextflow and nf-core workflows. 
 
 Before joining the workshop, please complete the following checklist:
 
-- Install Visual Studio Code (recommended) or Terminal application
-- Install the Nextflow and Remote-SSH VSC extensions (below) for VSCode user
-- Test your remote connection to Peter Mac HPC; and create a directory `/scratch/users/<your-username>/nfWorkshop` in your scratch space. This will be our working directory
+- Install Visual Studio Code (recommended) or other text editor
+- Install the Nextflow and Remote-SSH VSC extensions (below) for VSCode users
+- Test your remote connection to the HPC and create a directory `/scratch/users/<your-username>/nfWorkshop` in your scratch space. This will be our working directory
 
-## Option 1: Install and set up Visual Studio Code
+::: {.callout-important}
+**TO DO**
+
+Change to scratch dir path
+:::
+
+
+## Install and set up Visual Studio Code
 
 We recommend Visual Studio Code as a source code editor because it is lightweight and has rich support for extensions and syntax highlighting available across various popular operating system. 
 
@@ -55,6 +62,12 @@ Connect to your instance with VS code by adding the host details to your .ssh co
 2. Select Remote-SSH: Open SSH configuration file and select your .ssh config file
 3. Add a new entry with your details to login to cluster, and save your .ssh config file:
 
+::: {.callout-important}
+**TO DO**
+Change host name + user
+:::
+
+
 ```default 
 Host pmac-cluster
 	HostName kvmpr-res-lnode1.unix.petermac.org.au
@@ -72,15 +85,17 @@ Having successfully logged in, you should see a small blue or green box in the b
 To set up your VS Code window for the workshop:
 
 1. Open a new folder in the file explorer panel on the left side of the screen by typing Ctrl + K, Ctrl + O if you’re running Windows or Cmd+K+ Cmd + O for MacOS
+
+::: {.callout-important}
+**TO DO**
+Change scratch path
+:::
+
 2. Select `/scratch/users/<your-username>/nfWorkshop` to open our working directory. If you encountered an error that the directory does not exist, you would need to ssh in to the cluster and create that directory first before attempting this step. 
 3. When prompted, select the box for Trust the authors of all files in the parent folder ‘home’ then click Yes, I trust the authors
 4. You can dismiss the warning message saying our cluster's git version is outdated
 5. To open a terminal, type Ctrl+J if you’re on a Windows machine or Cmd+J on MacOS
 
-## Option 2: Terminal
-
-No additional setup required. 
-SSH to cluster as usual, and we assume you are already familiar with command line if you decided to go with this option. :smile:
 
 
 ---

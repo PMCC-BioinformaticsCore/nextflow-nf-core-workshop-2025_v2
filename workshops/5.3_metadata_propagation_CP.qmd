@@ -9,38 +9,212 @@ from: markdown+emoji
 
 ::: callout-tip
 ### Objectives{.unlisted}
-- Gain and understanding of how to manipulate and proprogate metadata
+- Gain an understanding of how to use nf-core modules in a workflow script
+- Manipulate and proprogate sample metadata throughout the workflow
+- Create a custom nf-core module
 :::
 
-## **Environment Setup**
 
-Set up an interactive shell to run our Nextflow workflow: 
+## **6.1 Samplesheet parsing**
 
-``` default
-srun --pty -p prod_short --mem 8GB --mincpus 2 -t 0-2:00 bash
-```
-
-Load the required modules to run Nextflow:
-
-``` default
-module load nextflow/23.04.1
-module load singularity/3.7.3
-```
-
-Set the singularity cache environment variable:
+In the `./nf-core-customrnaseq/main.nf` script, the `PIPELINE_INITIALISATION` subworkflow created by default from the nf-core template will output a channel that contains the parsed `--input` samplesheet. This channel is then input into `NFCORE_CUSTOMRNASEQ`, which launches our analysis workflow containing the newly included modules `salmon/quant` and `salmon/quant`. 
 
 ```default
-export NXF_SINGULARITY_CACHEDIR=/config/binaries/singularity/containers_devel/nextflow
+...
+
+include { PIPELINE_INITIALISATION } from './subworkflows/local/utils_nfcore_customrnaseq_pipeline'
+
+...
+
+workflow {
+
+    main:
+
+    ...
+
+    //
+    // WORKFLOW: Run main workflow
+    //
+    NFCORE_CUSTOMRNASEQ (
+        PIPELINE_INITIALISATION.out.samplesheet
+    )
+
+    ...
+
+}
 ```
 
-Singularity images downloaded by workflow executions will now be stored in this directory.
+How does the `PIPELINE_INITIALISATION` parse the samplesheet?
 
-You may want to include these, or other environmental variables, in your `.bashrc` file (or alternate) that is loaded when you log in so you don’t need to export variables every session. A complete list of environment variables can be found [here](https://www.nextflow.io/docs/latest/config.html#environment-variables).
-
-The training data can be cloned from:
+::: {.callout-note collapse="true"}
+### `./nf-core-customrnaseq/subworkflows/local/utils_nfcore_customrnaseq_pipeline/main.nf`
 ```default
-git clone https://github.com/nextflow-io/training.git
+//
+// Create channel from input file provided through params.input
+//
+workflow PIPELINE_INITIALISATION {
+
+    take:
+    version           // boolean: Display version and exit
+    validate_params   // boolean: Boolean whether to validate parameters against the schema at runtime
+    monochrome_logs   // boolean: Do not use coloured log outputs
+    nextflow_cli_args //   array: List of positional nextflow CLI args
+    outdir            //  string: The output directory where the results will be saved
+    input             //  string: Path to input samplesheet
+
+    main:
+
+    ...
+
+    Channel
+        .fromList(samplesheetToList(params.input, "${projectDir}/assets/schema_input.json"))
+        .map {
+            meta, fastq_1, fastq_2 ->
+                if (!fastq_2) {
+                    return [ meta.id, meta + [ single_end:true ], [ fastq_1 ] ]
+                } else {
+                    return [ meta.id, meta + [ single_end:false ], [ fastq_1, fastq_2 ] ]
+                }
+        }
+        .groupTuple()
+        .map { samplesheet ->
+            validateInputSamplesheet(samplesheet)
+        }
+        .map {
+            meta, fastqs ->
+                return [ meta, fastqs.flatten() ]
+        }
+        .set { ch_samplesheet }
+
+    emit:
+    samplesheet = ch_samplesheet
+    versions    = ch_versions
+}
+
 ```
+:::
+
+The important pieces of information that we will explore further in this section are:
+
+1. The use of a `schema_input.json` to validate the samplesheet metadata
+2. The use of `.map { }` and `.groupTuple()` functions to manipulate sample metadata
+
+### **6.1.1 Default samplesheet channel**
+
+The samplesheet is automatically parsed, resulting in a channel that contains all relevant datta specified in the `--input`. What does this channel contain?
+
+Open the analysis workflow file `workflows/customrnaseq.nf`. Use the `.view()` function inside the `workflow` scope to view the `ch_samplesheet` that has been input to the pipeline:
+
+```default
+workflow CUSTOMRNASEQ {
+
+    take:
+    ch_samplesheet // channel: samplesheet read in from --input
+    main:
+
+    ch_samplesheet.view()
+
+    ch_versions = Channel.empty()
+    ch_multiqc_files = Channel.empty()
+
+    ...
+}
+```
+
+Now, rerun the pipeline, ensuring `-resume` is specified in the `nextflow run` command. **Note** ebsure you are no longer inside your pipeline folder. 
+
+::: {.callout-important}
+**TO DO**
+
+Change CONTAINER
+:::
+
+```default
+nextflow run ./nf-core-customrnaseq/main.nf -resume -profile CONTAINER --input ./samplesheet.csv --outdir output
+```
+
+The channel should have the following structure:
+
+```default
+[[id:gut, single_end:false], [/.../data/gut_1.fastq.gz, /.../data/gut_2.fastq.gz]]
+[[id:liver, single_end:false], [/.../data/liver_1.fastq.gz, /.../data/liver_2.fastq.gz]]
+[[id:lung, single_end:false], [/.../data/lung_1.fastq.gz, /.../data/lung_2.fastq.gz]]
+```
+
+This channel contains three elements, one for each sample type. The first element is a tuple, where the first element is a `list` that represents the sample metadata. This metadata contains the sample name, stored as `id`, and if the sample is single-ded, stored as `single_end`. The second element in this tuple contain the paths to the input FASTQ files. 
+
+Let's see how this relates to our samplesheet:
+
+```default
+sample,fastq_1,fastq_2
+gut,/.../data/gut_1.fastq.gz,/.../data/gut_2.fastq.gz
+liver,/.../data/liver_1.fastq.gz,/.../data/liver_2.fastq.gz
+lung,/.../data/lung_1.fastq.gz,/s.../data/lung_2.fastq.gz
+```
+
+Notice that the value under the `sample` column has been assigned as `id` in the channel metadata. File paths in the `fastq_1` and `fastq_2` have been added as the second element in the tuple, which represents the read paths. 
+
+This is defined inside the `assets/schema_input.json` file. In this file, each "property" represents a column that can be present inside the `--input` samplesheet. Any required columns are also specified, as the `"required"` item. 
+
+:::{.callout-note collapse="true"}
+## assets/schema_input.json
+```default
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://raw.githubusercontent.com/nf-core/customrnaseq/main/assets/schema_input.json",
+    "title": "nf-core/customrnaseq pipeline - params.input schema",
+    "description": "Schema for the file provided with params.input",
+    "type": "array",
+    "items": {
+        "type": "object",
+        "properties": {
+            "sample": {
+                "type": "string",
+                "pattern": "^\\S+$",
+                "errorMessage": "Sample name must be provided and cannot contain spaces",
+                "meta": ["id"]
+            },
+            "fastq_1": {
+                "type": "string",
+                "format": "file-path",
+                "exists": true,
+                "pattern": "^\\S+\\.f(ast)?q\\.gz$",
+                "errorMessage": "FastQ file for reads 1 must be provided, cannot contain spaces and must have extension '.fq.gz' or '.fastq.gz'"
+            },
+            "fastq_2": {
+                "type": "string",
+                "format": "file-path",
+                "exists": true,
+                "pattern": "^\\S+\\.f(ast)?q\\.gz$",
+                "errorMessage": "FastQ file for reads 2 cannot contain spaces and must have extension '.fq.gz' or '.fastq.gz'"
+            }
+        },
+        "required": ["sample", "fastq_1"]
+    }
+}
+```
+:::
+
+Inside the `"sample"` property, the `"meta"` has been set to `["id"]`. This is the value in the channel metadata that the sample name will be assigned to. For example, if the following was specified: `"meta": ["name"]`
+
+The parsed channel would have the following structure, where `id` is replaced with `name`:
+
+```default
+[[name:gut, single_end:false], [/.../data/gut_1.fastq.gz, /.../data/gut_2.fastq.gz]]
+[[name:liver, single_end:false], [/.../data/liver_1.fastq.gz, /.../data/liver_2.fastq.gz]]
+[[name:lung, single_end:false], [/.../data/lung_1.fastq.gz, /.../data/lung_2.fastq.gz]]
+```
+
+Therefore, if you wish to specify an additional column in the sampleshet (ie. adding sample metadata), the `schema_input.json` should also be changed to allow for this. We will investigate this later in the session. 
+
+:::{.callout-tip}
+Many existing nf-core nodules rely on the input metadata having **at least** the `id` value -- it is not recommended to change this name from the default. 
+:::
+
+
+### **6.1.2 Input channels to an nf-core module**
+
+
 
 ## 7.1 **Metadata Parsing**
 We have covered a few different methods of metadata parsing.

@@ -10,8 +10,8 @@ from: markdown+emoji
 
 ### Objectives{.unlisted}
 
-- Learn about the core features of nf-core.
-- Learn the terminology used by nf-core.
+- Learn the core features of nf-core.
+- Learn nf-core terminology.
 - Use Nextflow to pull and run the `nf-core/testpipeline` workflow
 
 :::
@@ -49,24 +49,18 @@ nf-core is published in Nature Biotechnology: [Nat Biotechnol 38, 276–278 (202
 
 ### **3.2.2. Executing an nf-core workflow**
 
-The [nf-core website](https://nf-co.re/) has a full list of workflows and asssociated documentation tno be explored.
+The [nf-core website](https://nf-co.re/) has a full list of workflows and asssociated documentation to be explored.
 
 Each workflow has a dedicated page that includes expansive documentation that is split into 7 sections:
 
-- **Introduction**
-  - An introduction and overview of the workflow
-- **Results**
-  - Example output files generated from the full test dataset
-- **Usage docs**
-  - Descriptions of how to execute the workflow
-- **Parameters**
-  - Grouped workflow parameters with descriptions
-- **Output docs**
-  - Descriptions and examples of the expected output files
-- **Releases & Statistics**
-  - Workflow version history and statistics
+- **Introduction**: an introduction and overview of the workflow
+- **Results**: Example output files generated from the full test dataset
+- **Usage docs**: Descriptions of how to execute the workflow
+- **Parameters**: Grouped workflow parameters with descriptions
+- **Output docs**: Descriptions and examples of the expected output files
+- **Releases & Statistics**: Workflow version history and statistics
 
-As nf-core is a community development project the code for a pipeline can be changed at any time. To ensure that you have locked in a specific version of a pipeline you can use Nextflow’s built-in functionality to `pull` a workflow. The Nextflow `pull` command can download and cache workflows from [GitHub](https://github.com/nf-core/) repositories:
+Since nf-core is a community development project, the code for a pipeline can change at any time. To ensure that you are using a specific version of a pipeline, you can use Nextflow’s built-in functionality to `pull` a workflow. The following command can be used to download and cache workflows from [GitHub](https://github.com/nf-core/) repositories:
 
 ```default
 nextflow pull nf-core/<pipeline>
@@ -79,25 +73,30 @@ nextflow run nf-core/<pipeline>
 ```
 
 Nextflow will `pull` the default git branch if a workflow version is not specified. This will be the master branch for nf-core workflows with a stable release. nf-core workflows use GitHub releases to tag stable versions of the code and software. You will always be able to execute a previous version of a workflow once it is released using the `-revision` or `-r` flag.
- For this section of the workshop we will be using the `nf-core/testpipeline` as an example
+
+For this section of the workshop we will be using the `nf-core/testpipeline` as an example. We will also create a separate directory for this section.
+
+```default
+mkdir ./nf_testpipeline && cd $_
+```
+
+**Exercise**: Pull the `nf-core/testpipeline` pipeline
+
+::: {.callout-note collapse="true"}
+### **Solution**
+
+```default
+nextflow pull nf-core/testpipeline
+```
+:::
 
 ::: {.callout-caution collapse="true"}
 ### **Running on your institutional compute**
-When running on your institutional compute remember to follow the requirements of your HPC. Such as:
+When running on your institutional compute remember to follow the requirements of your HPC, such as:
 
 1. Not running on the login node of the HPC
-2. Remember to `module load` your required modules (i.e. nextflow/singularity/apptainer) 
+2. Loading your required software (i.e. nextflow/singularity/apptainer) 
 :::
-
-We will also create a separate output directory for this section. 
-```default
-mkdir ./lesson1.2 && cd $_
-```
-
-The base command we will be using for this section is:
-```default
-nextflow run nf-core/testpipeline -profile test,<TODO_container> --outdir my_results
-```
 
 ### **3.2.3. Workflow structure**
 
@@ -105,69 +104,233 @@ nf-core workflows start from a **common template** and follow the same structure
 
 Let's take a look at the code for the [nf-core/rnaseq](https://nf-co.re/rnaseq/3.14.0) pipeline.
 
-Nextflow DSL2 **workflows** are built up of **subworkflows** and **modules** that are stored as separate `.nf` files.
+![](./media/5.0_rnaseq_github.png)
 
-Most nf-core workflows consist of a single **workflow** file (there are a few exceptions). This is the main `workflows/<workflow>.nf` file that is used to bring everything else together. Instead of having one large monolithic script, it is broken up into a combination of **subworkflows** and **modules**.
+Notice that the typical nf-core workflow doesn't contain just one `.nf` file, but instead contains multiple folders that categorise different elements of the workflow. Nf-core workflows typically consists of a main workflow file, [`main.nf`](https://github.com/nf-core/rnaseq/blob/master/main.nf), which launches the analysis workflow file [`workflows/<workflow>.nf`](https://github.com/nf-core/rnaseq/blob/master/workflows/rnaseq/main.nf) that invokes the modules and subworkflows.
+
+### **3.2.4. Modules**
+
+The `modules` folder contain both local and nf-core processes, each contained within their own tool folder inside a script called `main.nf`. 
+
+![](./media/3.2_modules_folder.png){width=40%}
+
+Look through the contents of [`modules/nf-core/bedtools/genomecov/main.nf`](https://github.com/nf-core/rnaseq/blob/master/modules/nf-core/bedtools/genomecov/main.nf). Notice that it only consists of a single process that will execute a single tool. 
+
+Recall the following components of a process:
+
+- [inputs](https://www.nextflow.io/docs/latest/process.html#inputs): declares any inputs to the process, along with the variable qualifier
+- [outputs](https://www.nextflow.io/docs/latest/process.html#outputs): declares any outputs of the process, along with the variable qualifier
+- [script](https://www.nextflow.io/docs/latest/process.html#script): executes commands 
+
+Custom processes that are specific to a particular pipeline are stored inside the `local` folder. Nf-core modules that have already been tested and developed by the nf-core community are stored inside a separate `nf-core` folder. A full list of available modules can be seen [here](https://nf-co.re/modules/) or on the [nf-core modules GitHub repository](https://github.com/nf-core/modules/tree/master/modules/nf-core). 
+
+These processes/modules can then be imported into an overarching analysis workflow file that chains each step together. 
+
+**Exercise**: How many modules are in [`nf-core/testpipeline`](https://github.com/nf-core/testpipeline/tree/main)? Are they local to the pipeline or are they stored in the nf-core modules GitHub repository? What are the names of the modules?
+
+::: {.callout-note collapse="true"}
+### **Solution**
+
+There are two modules in `nf-core/testpipeline`, `fastqc` and `multiqc`. Since the modules are stored inside the folder [`nf-core`](https://github.com/nf-core/testpipeline/tree/main/modules/nf-core), they can are available on the nf-core modules GitHub repository. 
+:::
+
 
 ### **3.2.4. Subworkflows**
-A **subworkflow** is a groups of modules that are used in combination with each other and have a common purpose. Subworkflows improve workflow readability and help with the reuse of modules within a workflow. The nf-core community also shares subworkflows in the [nf-core subworkflows GitHub repository](https://github.com/nf-core/modules/tree/master/subworkflows/nf-core). Local subworkflows are workflow specific that are not shared in the nf-core subworkflows repository.
+A **subworkflow** contains groups of modules that are used in combination with each other and have a common purpose. Subworkflows improve workflow readability and help with the reuse of modules within a workflow. The nf-core community also shares subworkflows in the [nf-core subworkflows GitHub repository](https://github.com/nf-core/modules/tree/master/subworkflows/nf-core). Local subworkflows are workflow specific, and are not shared in the nf-core subworkflows repository.
 
+Let's take a look at the [BAM_STATS_SAMTOOLS](https://github.com/nf-core/rnaseq/tree/3.11.1/subworkflows/nf-core/bam_stats_samtools/main.nf) subworkflow:
 
-Let's take a look at the [BAM_STATS_SAMTOOLS](https://github.com/nf-core/rnaseq/tree/3.11.1/subworkflows/nf-core/bam_stats_samtools) subworkflow.
+```default
+//
+// Run SAMtools stats, flagstat and idxstats
+//
+
+include { SAMTOOLS_STATS    } from '../../../modules/nf-core/samtools/stats/main'
+include { SAMTOOLS_IDXSTATS } from '../../../modules/nf-core/samtools/idxstats/main'
+include { SAMTOOLS_FLAGSTAT } from '../../../modules/nf-core/samtools/flagstat/main'
+
+workflow BAM_STATS_SAMTOOLS {
+    take:
+    ch_bam_bai // channel: [ val(meta), path(bam), path(bai) ]
+    ch_fasta   // channel: [ path(fasta) ]
+
+    main:
+    ch_versions = Channel.empty()
+
+    SAMTOOLS_STATS ( ch_bam_bai, ch_fasta )
+    ch_versions = ch_versions.mix(SAMTOOLS_STATS.out.versions)
+
+    SAMTOOLS_FLAGSTAT ( ch_bam_bai )
+    ch_versions = ch_versions.mix(SAMTOOLS_FLAGSTAT.out.versions)
+
+    SAMTOOLS_IDXSTATS ( ch_bam_bai )
+    ch_versions = ch_versions.mix(SAMTOOLS_IDXSTATS.out.versions)
+
+    emit:
+    stats    = SAMTOOLS_STATS.out.stats       // channel: [ val(meta), path(stats) ]
+    flagstat = SAMTOOLS_FLAGSTAT.out.flagstat // channel: [ val(meta), path(flagstat) ]
+    idxstats = SAMTOOLS_IDXSTATS.out.idxstats // channel: [ val(meta), path(idxstats) ]
+
+    versions = ch_versions                    // channel: [ path(versions.yml) ]
+}
+```
 
 This subworkflow is comprised of the following modules:
 
-  - [SAMTOOLS_STATS](https://github.com/nf-core/modules/blob/master/modules/nf-core/samtools/stats/main.nf)
-  - [SAMTOOLS_IDXSTATS](https://github.com/nf-core/modules/blob/master/modules/nf-core/samtools/faidx/main.nf)
-  - [SAMTOOLS_FLAGSTAT](https://github.com/nf-core/modules/blob/master/modules/nf-core/samtools/flagstat/main.nf)
+1. [SAMTOOLS_STATS](https://github.com/nf-core/modules/blob/master/modules/nf-core/samtools/stats/main.nf)
+2. [SAMTOOLS_IDXSTATS](https://github.com/nf-core/modules/blob/master/modules/nf-core/samtools/faidx/main.nf)
+3. [SAMTOOLS_FLAGSTAT](https://github.com/nf-core/modules/blob/master/modules/nf-core/samtools/flagstat/main.nf)
 
-A **module** is a wrapper for a process, most modules will execute a single tool and contain the following definitions:
+These modules are imported using `include`, which specifies the name of the process to import, and the path to the module file. 
 
-  - [inputs](https://www.nextflow.io/docs/latest/process.html#inputs)
-  - [outputs](https://www.nextflow.io/docs/latest/process.html#outputs)
-  - [script](https://www.nextflow.io/docs/latest/process.html#script)
+The first input to this subworkflow (as indicated by `take`) is a tuple consisting of three elements -- sample metadata, BAM file, BAM index file. The second input is a single fasta file. In this subworkflow, all processes are executed independently. `SAMTOOLS_STATS`, `SAMTOOLS_FLAGSTAT`, and `SAMTOOLS_IDXSTATS` can all be ran in parallel, since no process input is dependant on the output of a process output. 
 
-Like subworkflows, modules can also be shared in the [nf-core modules GitHub repository](https://github.com/nf-core/modules/tree/master/modules/nf-core) or stored as a local module. All modules from the nf-core repository are version controlled and tested to ensure reproducibility. Local modules are workflow specific that are not shared in the nf-core modules repository.
+Also note that while we have a `process` and `workflow` scope definition, there is **no** `subworkflow` definition -- it is simply defined using `workflow`.
 
-### **3.2.5. Viewing parameters**
+### **3.2.5. Viewing workflow parameters**
 
-Every nf-core workflow has a full list of **parameters** on the nf-core website. When viewing these parameters online, you will also be shown a description and the type of the parameter. Some parameters will have additional text to help you understand when and how a parameter should be used.
+Every nf-core workflow has a full list of **parameters** on the nf-core website, in the [Parameters tab](https://nf-co.re/rnaseq/3.18.0/parameters). When viewing these parameters online, you will also be shown a description and the parameter type. Some parameters will have additional text to help you understand when and how a parameter should be used.
 
 [![](./media/1.3_params.excalidraw.png)](https://nf-co.re/rnaseq/3.14.0/parameters)
 
-Parameters and their descriptions can also be viewed in the command line using the `run` command with the `--help` parameter:
+Pipeline parameters and their descriptions can also be viewed on the command line using the `run` command with the `--help`:
 
 ```default
-nextflow run nf-core/<workflow> --help
+nextflow run -r 3.18.0 nf-core/rnaseq --help
 ``` 
+
+In the example above, the parameters for `rnaseq` pipeline version `3.18.0` is being viewed. 
+
+**Exercise**: View the parameters for version `2.0` of the `nf-core/testpipeline` workflow using the command line
+
+::: {.callout-note collapse="true"}
+### Solution
+
+The `nf-core/testpipeline` workflow parameters for version `2.0`can be printed using the `nextflow run` command along with the `--help` option:
+
+```default
+nextflow run -r 2.0 nf-core/testpipeline --help
+```
+
+```default
+ N E X T F L O W   ~  version 24.10.5
+
+Launching `https://github.com/nf-core/testpipeline` [angry_aryabhata] DSL2 - revision: 28e764e281 [2.0]
+
+
+
+------------------------------------------------------
+                                        ,--./,-.
+        ___     __   __   __   ___     /,-._.--~'
+  |\ | |__  __ /  ` /  \ |__) |__         }  {
+  | \| |       \__, \__/ |  \ |___     \`-._,-`-,
+                                        `._,._,'
+  nf-core/testpipeline v2.0-g28e764e
+------------------------------------------------------
+Typical pipeline command:
+
+  nextflow run nf-core/testpipeline --input samplesheet.csv --genome GRCh37 -profile docker
+
+Input/output options
+  --input                            [string]  Path to comma-separated file containing information about the samples in the experiment.
+  --outdir                           [string]  The output directory where the results will be saved. You have to use absolute paths to storage on Cloud 
+                                               infrastructure. 
+  --email                            [string]  Email address for completion summary.
+  --multiqc_title                    [string]  MultiQC report title. Printed as page header, used for filename if not otherwise specified.
+
+Reference genome options
+  --genome                           [string]  Name of iGenomes reference.
+  --fasta                            [string]  Path to FASTA genome file.
+
+Generic options
+  --multiqc_methods_description      [string]  Custom MultiQC yaml file containing HTML including a methods description.
+```
+:::
+
+### **3.2.9. Default parameters and configuration fiiles**
+
+Most parameters in a Nextflow pipeline will have a default setting that is defined inside the `nextflow.config` file in the workflow project directory. By default, most parameters are set to `null` or `false` and are only activated by a profile or configuration file.
+
+Look inside the [`nextflow.config`](https://github.com/nf-core/rnaseq/blob/3.18.0/nextflow.config) file for `rnaseq`. Note that default params are defined inside the `params { }` scope. 
+
+There are also several `includeConfig` statements in the `nextflow.config` file that are used to load additional `.config` files from the `conf/` folder. For example:
+
+```default
+// Load base.config by default for all pipelines
+includeConfig 'conf/base.config'
+```
+
+Each additional `.config` file contains categorized configuration information for your workflow execution, some of which can be optionally included:
+
+- `base.config`
+  - Included by the workflow by default.
+  - Generates resource allocations such as CPU and memory using process labels.
+  - Does not specify any method for software management and expects software to be available (or specified elsewhere).
+- `igenomes.config`
+  - Included by the workflow by default.
+  - Default configuration to access reference files stored on [AWS iGenomes](https://ewels.github.io/AWS-iGenomes/).
+- `modules.config`
+  - Included by the workflow by default.
+  - Module-specific configuration options (both mandatory and optional).
+
+Notably, the `nextflow.config` file can also contain the definition of one or more profiles, via the `profiles { }` scope. A profile is a set of configuration attributes that can be activated when launching a workflow by using the Nextflow `-profile` command option. For example, to use the `singularity` profile, the following command can be used:
+
+```default
+nextflow run nf-core/<pipeline> -profile singularity
+```
+
+By specifying `singularity` as the Nextflow profile, the following options will be enabled:
+
+```default
+profiles {
+  singularity {
+      singularity.enabled     = true
+      singularity.autoMounts  = true
+      conda.enabled           = false
+      docker.enabled          = false
+      podman.enabled          = false
+      shifter.enabled         = false
+      charliecloud.enabled    = false
+      apptainer.enabled       = false
+  }
+}
+```
+
+Profiles used by nf-core workflows include:
+
+- **Software management profiles**
+  - Profiles for the management of software using software management tools, e.g., `docker`, `singularity`, and `conda`.
+- **Test profiles**
+  - Profiles to execute a workflow with a standardized set of test data and parameters, e.g., `test` and `test_full`.
+
+Multiple profiles can be specified in a comma-separated (`,`) list when you execute your command. The order of profiles is important as they will be read from left to right:
+
+```default
+nextflow run nf-core/<pipeline> test,singularity
+```
+
+The use of either **software containers** (Docker, Apptainer, or Singularity), or **Conda environments** can be activated using Nextflow profiles. 
 
 ::: callout-tip
 
-### **Challenge**{.unlisted}
-
-View the parameters for the `nf-core/testpipeline` workflow using the command line:
-
+If your computer has internet access and one of Conda, Singularity, Apptainer, or Docker installed, you should be able to run any nf-core workflow with the `test` profile and the respective software management profile 'out of the box'. The `test` data profile will pull small test files directly from the `nf-core/test-datasets` [GitHub repository](https://github.com/nf-core/test-datasets) and run it on your local system. The `test` profile is an important control to check the workflow is working as expected and is a great way to trial a workflow. Some workflows have multiple test `profiles` for you to test.
 :::
 
-::: {.callout-caution collapse="true"}
-
-### Solution
-
-The `nf-core/testpipeline` workflow parameters can be printed using the `run` command and the `--help` option:
-
-```default
-nextflow run nf-core/testpipeline --help
-```
-
-:::
 
 ### **3.2.6. Parameters in the command line**
 
 Parameters can be customized using the command line. Any parameter can be configured on the command line by prefixing the parameter name with a double dash (`--`):
 
+::: {.callout-important}
+**TO DO**
+change to singularity/apptainer/etc
+:::
+
 ```default
-nextflow run nf-core/example --markdups -resume
+nextflow run -r 2.0 nf-core/testpipeline -resume -profile test,<SOFTWARE> --outdir 'output_testpipeline'
 ```
+
+In the above example, the Nextflow option `-resume` is used to cache any previously completed processes, allowing the pipeline to be resumed from the last incompleted process. For any previosuly successfully completed processes, they will not need to be re-executed. Another Nextflow option, `-profile`, is used to specify the `test` and software proiles to use when executing the pipeline. Finally, the output directory name is set as `output_testpipeline` using the workflow parameter `--outdir`.
 
 ::: callout-tip
 
@@ -175,71 +338,91 @@ Nextflow options are prefixed with a single dash (`-`) and workflow parameters a
 
 :::
 
-Depending on the parameter type, you may be required to add additional information after your parameter flag. For example, for a string parameter, you would add the string after the parameter flag:
+**Exercise**: Use the command line to set the [MultiQC report tile](https://github.com/nf-core/testpipeline/blob/master/nextflow.config#L23) as your **favourite animal**. 
 
-```default
-nextflow run nf-core/example --colour "blue"
-```
+::: {.callout-note collapse="true"}
+### Hint
 
-::: callout-tip
-
-### **Challenge**{.unlisted}
-
-Give the MultiQC report for the `nf-core/testpipeline` workflow the name of your **favorite animal** using the [`multiqc_title`](https://github.com/nf-core/testpipeline/blob/master/nextflow.config#L27) parameter using a command line flag
+To change the MultiQC report title, the `--multiqc_title` parameter can be used.
 
 :::
 
-::: {.callout-caution collapse="true"}
+::: {.callout-important}
+**TO DO**
+change to singularity/apptainer/etc
+:::
 
+::: {.callout-note collapse="true"}
 ### Solution
 
 Add the `--multiqc_title` flag to your command and execute it. Use the `-resume` option to save time:
 
 ```default
-nextflow run nf-core/testpipeline -profile test,<TODO_container> --multiqc_title koala --outdir my_results -resume
+nextflow run -r 2.0 nf-core/testpipeline -resume -profile test,<SOFTWARE> --outdir 'output_testpipeline' --multiqc_title 'koala'
 ```
 :::
 
-In this example, you can check your parameter has been applied by listing the files created in the results folder (`my_results`):
+You can check your parameter has been applied by listing the files created in the output folder (`output_testpipeline`):
 
 ```default
-ls my_results/multiqc/
+ls output_testpipeline/multiqc/
 ```
 
-### **3.2.7. Configuration files**
+### **3.2.7. Custom configuration files**
 
-Configuration files are `.config` files that can contain various workflow properties. Custom paths passed in the command-line using the `-c` option:
+Configuration `.config` files contain various workflow properties that can also be specified in the command-line, via the `-c` option:
 
 ```default
-nextflow run nf-core/<workflow> -profile test,docker -c <path/to/custom.config>
+nextflow run nf-core/<pipeline> -c <path/to/custom.config>
 ```
 
 Multiple custom `.config` files can be included at execution by separating them with a comma (`,`).
 
-Custom configuration files follow the same structure as the configuration file included in the workflow directory. Configuration properties are organized into [scopes](https://www.nextflow.io/docs/latest/config.html#config-scopes) by grouping the properties in the same scope using the curly brackets notation. For example:
+Custom configuration files follow the same structure as the configuration file included in the workflow directory. Configuration properties are organized into [scopes](https://www.nextflow.io/docs/latest/config.html#config-scopes) by grouping the properties in the same scope using the curly brackets notation. Scopes allow you to quickly configure settings required to deploy a workflow on different infrastructures, using different software management. 
+
+For example, the `executor` scope can be used to provide settings for the deployment of a workflow on a HPC cluster. This example sets the maximum number of parallel tasks to be 100. 
 
 ```default
-alpha {
-     x = 1
-     y = 'string value..'
+executor {
+  queueSize         = 100
 }
 ```
 
-Scopes allow you to quickly configure settings required to deploy a workflow on different infrastructure using different software management. For example, the `executor` scope can be used to provide settings for the deployment of a workflow on a HPC cluster. Similarly, the `<TODO_container>` scope controls how <TODO_container> containers are executed by Nextflow. Multiple scopes can be included in the same `.config` file using a mix of dot prefixes and curly brackets. A full list of scopes is described in detail [here](https://www.nextflow.io/docs/latest/config.html#config-scopes).
+::: {.callout-important}
+**TO DO**
+change to singularity/apptainer/etc
+:::
 
-::: callout-tip
+Similarly, the `<CONTAINER>` scope controls how <CONTAINER> containers are executed by Nextflow. In this example, the <CONTAINER> container software management has been enabled. 
 
-### **Challenge**{.unlisted}
+```default
+<CONTAINER> {
+    enabled = true
+}
+```
 
-Give the MultiQC report for the `nf-core/testpipeline` workflow the name of your favorite color using the [`multiqc_title`](https://github.com/nf-core/testpipeline/blob/master/nextflow.config#L27) parameter in a custom `my_custom.config` file:
+Multiple scopes can be included in the same `.config` file using a mix of dot prefixes and curly brackets. A full list of scopes is described in detail [here](https://www.nextflow.io/docs/latest/config.html#config-scopes).
+
+**Exercise**: Set the [MultiQC report tile](https://github.com/nf-core/testpipeline/blob/master/nextflow.config#L23) as your **favourite colour**, using a custom `custom.config` file. 
+
+::: {.callout-note collapse="true"}
+### Hint
+
+To change set a parameter inside your `custom.config` file, a `params { }` scope has to be used.
+
+Note that you are no longer required to specify the `multiqc_title` via the command line. 
 
 :::
 
-::: {.callout-caution collapse="true"}
+::: {.callout-important}
+**TO DO**
+change to singularity/apptainer/etc
+:::
 
+::: {.callout-note collapse="true"}
 ### Solution
 
-Create a custom `my_custom.config` file that contains your favourite colour, e.g., blue:
+Create a custom `custom.config` file that contains your favourite colour, e.g., blue:
 
 ```default
 params {
@@ -250,110 +433,64 @@ params {
 Include the custom `.config` file in your execution command with the `-c` option:
 
 ```default
-nextflow run nf-core/testpipeline --outdir my_results -profile test,<TODO_container> -c my_custom.config -resume
+nextflow run -r 2.0 nf-core/testpipeline -resume -profile test,<SOFTWARE> --outdir 'output_testpipeline' -c custom.config
 ```
+:::
 
-Check that it has been applied:
+Check if it has been applied:
 
 ```default
-ls my_results/multiqc/
+ls output_testpipeline/multiqc/
 ```
+::: {.callout-warning collapse="true"}
 
 **Why did this fail?**
 
-You **can not** use the `params` scope in custom configuration files. Parameters can only be configured using the `-params-file` option and the command line. While parameter is listed as a parameter on the `STDOUT`, it **was not** applied to the executed command.
+You **can not** use the `params` scope in custom configuration files. Parameters can only be configured using the `-params-file` option and the command line. While the parameter is listed as a parameter on the `STDOUT`, it **was not** applied to the executed command.
 
 We will revisit this at the end of the module
 
 :::
 
 ### **3.2.8 Parameter files**
-Parameter files are used to define `params` options for a pipeline, generally written in the YAML format. They are added to a pipeline with the flag `-params-file`
+Parameter files are used to define the `params` options for a pipeline, generally written in the YAML format. They are added to a pipeline with the flag `-params-file`
 
 Example YAML:
 ```default
-"number": 1,
-"greeting": "hello",
+"number": 1
+"greeting": "hello"
 "mark_duplicates": true
 ```
 
-::: callout-tip
+**Exercise**: Since the `multiqc_title` parameter could not be set using the `custom.config` file, create a `custom_params.yml` file that sets `multiqc_title` to your favourite colour. Then, rerun the pipeline specifying your parameter file. 
 
-### **Challenge**{.unlisted}
-
-Based on the failed application of the parameter `multiqc_title` create a `my_params.yml` setting `multiqc_title` to your favourite colour.
-Then re-run the pipeline with the your `my_params.yml`
-
+::: {.callout-important}
+**TO DO**
+change to singularity/apptainer/etc
 :::
 
-::: {.callout-caution collapse="true"}
-
+::: {.callout-note collapse="true"}
 ### Solution
-Set up `my_params.yml`
+
+Set up `my_params.yml`:
 
 ```default
 multiqc_title: "black"
 ```
 
 ```default
-nextflow run nf-core/testpipeline -profile test,singularity -params-file my_params.yml --outdir Lesson1_2
+nextflow run -r 2.0 nf-core/testpipeline -resume -profile test,<SOFTWARE> --outdir 'output_testpipeline' -params-file my_params.yml 
 ```
-
 :::
-
-### **3.2.9. Default configuration files**
-
-All parameters will have a default setting that is defined using the `nextflow.config` file in the workflow project directory. By default, most parameters are set to `null` or `false` and are only activated by a profile or configuration file.
-
-There are also several `includeConfig` statements in the `nextflow.config` file that are used to load additional `.config` files from the `conf/` folder. Each additional `.config` file contains categorized configuration information for your workflow execution, some of which can be optionally included:
-
-- `base.config`
-  - Included by the workflow by default.
-  - Generous resource allocations using labels.
-  - Does not specify any method for software management and expects software to be available (or specified elsewhere).
-- `igenomes.config`
-  - Included by the workflow by default.
-  - Default configuration to access reference files stored on [AWS iGenomes](https://ewels.github.io/AWS-iGenomes/).
-- `modules.config`
-  - Included by the workflow by default.
-  - Module-specific configuration options (both mandatory and optional).
-
-Notably, configuration files can also contain the definition of one or more profiles. A profile is a set of configuration attributes that can be activated when launching a workflow by using the `-profile` command option:
-
-```default
-nextflow run nf-core/example -profile singularity
-```
-
-Profiles used by nf-core workflows include:
-
-- **Software management profiles**
-  - Profiles for the management of software using software management tools, e.g., `docker`, `singularity`, and `conda`.
-- **Test profiles**
-  - Profiles to execute the workflow with a standardized set of test data and parameters, e.g., `test` and `test_full`.
-
-Multiple profiles can be specified in a comma-separated (`,`) list when you execute your command. The order of profiles is important as they will be read from left to right:
-
-```default
-nextflow run nf-core/example -profile test,singularity
-```
-
-nf-core workflows are required to define **software containers** and **conda environments** that can be activated using profiles.
-
-::: callout-tip
-
-If you're computer has internet access and one of Conda, Singularity, or Docker installed, you should be able to run any nf-core workflow with the `test` profile and the respective software management profile 'out of the box'. The `test` data profile will pull small test files directly from the `nf-core/test-data` [GitHub repository]() and run it on your local system. The `test` profile is an important control to check the workflow is working as expected and is a great way to trial a workflow. Some workflows have multiple test `profiles` for you to test.
-
-:::
-
 
 
 ::: {.callout-note}
 ### **Key points**
 
 - nf-core is a community effort to collect a curated set of analysis workflows built using Nextflow.
-- Nextflow can be used to `pull` nf-core workflows.
-- nf-core workflows follow similar structures
-- nf-core workflows are configured using parameters and profiles
+- Nextflow can be used to `pull` nf-core workflows, or `run` nf-core workflows.
+- nf-core workflows follow similar template structures
+- nf-core workflows can be configured using parameters and profiles
 :::
 
 ---

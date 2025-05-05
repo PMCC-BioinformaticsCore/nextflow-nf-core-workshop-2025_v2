@@ -30,7 +30,7 @@ By the end of this workshop, participants should be able to:
 ### Set up requirements
 Please complete the [Setup Instructions](../workshops/00_setup.html) before the course.
 
-If you have any trouble, please get in contact with us ASAP via Slack
+If you have any trouble, please get in contact with us ASAP. 
 
 ### Workshop schedule
 
@@ -39,12 +39,13 @@ If you have any trouble, please get in contact with us ASAP via Slack
 | [Setup](../workshops/00_setup.html)| Follow these instructions to install VS Code and setup your workspace | Prior to workshop | 
 | Session kick off| Session kick off: Discuss learning outcomes and finalising workspace setup | 10:00 - 10.10 |
 | [Introduction to Nextflow](../workshops/1.1_intro_nextflow.html)| Introduction to Nextflow: Introduce nextflow’s core features and concepts; including CLI and how to run it on cluster | 10:10 - 10:20 | 
-| [Basic to Create a Nextflow Workflow](../workshops/3.1_creating_a_workflow.html)| Introduction to nextflow channels, processes, data types and workflows | 10:20 - 10.50 | 
+| [Introduction to processes and channels](../workshops/1.3_processes_and_channels.qmd)| Introduction to Nextflow channels types and process structure | 10:20 - 10:30 | 
+| [Creating a basic Nextflow workflow](../workshops/3.1_creating_a_workflow.html)| Introduction to nextflow channels, processes, data types and workflows | 10:20 - 10.50 | 
 | Break | Break | 10:50 - 11:00 | 
-| [Introduction to nf-core](../workshops/1.2_intro_nf_core.html)| Introduction to nf-core: Introduce nf-core features and concepts, structures, tools, and example nf-core pipelines | 11:00 - 11:30 | 
-| [Customising & running nf-core pipelines](../workshops/2.1_customise_and_run.html)| Customising & running nf-core pipelines: Discuss pipelines’ required inputs, optional inputs, outputs, parameters file and configurations files | 11:30 - 12:15 | 
+| [Introduction to nf-core](../workshops/1.2_intro_nf_core.html)| Key nf-core features and concepts, structures, tools, and example nf-core pipelines | 11:00 - 11:30 | 
+| [Customising and running nf-core pipelines](../workshops/2.1_customise_and_run.html)| Customising & running nf-core pipelines: Discuss pipelines’ required inputs, optional inputs, outputs, parameters file and configurations files | 11:30 - 12:15 | 
 | Lunch Break | Break | 12:15 - 13:00 | 
-| [Troubleshooting nextflow run](../workshops/2.2_troubleshooting.html)| Troubleshooting nextflow run: Discuss Nextflow logging, caching, task execution directory, dependencies, and manual troubleshooting | 13:00 - 13:30 | 
+| [Troubleshooting a Nextflow run](../workshops/2.2_troubleshooting.html)| Troubleshooting nextflow run: Discuss Nextflow logging, caching, task execution directory, dependencies, and manual troubleshooting | 13:00 - 13:30 | 
 | [Best practise and Q&A](../workshops/2.3_tips_and_tricks.html)| Best practise, tips & tricks for running nextflow pipelines | 13.30 - 14:00 | 
 
 ### Credits and acknowledgement

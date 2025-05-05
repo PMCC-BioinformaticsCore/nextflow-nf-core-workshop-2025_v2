@@ -1,0 +1,98 @@
+---
+title: "**Nextflow Development - Developing Modularised Workflows**"
+output:
+  html_document:
+    toc: false
+    toc_float: false
+from: markdown+emoji
+---
+
+::: callout-tip
+
+### Objectives{.unlisted}
+- Gain an understanding of how version control is utilised throughout the pipeline
+- Use `nf-core lint` to lint the pipeline
+:::
+
+## **7.1 Version control**
+
+In every nf-core module, a `versions.yml` file has been emitted as output. Let's collect all these files together into one channel `ch_versions`, which will contain the versions used for every tool in the pipeline. 
+
+For the `SALMON_INDEX` process, this can be done by using the `.out` attribute, along with `versions`. This file is then added to the list of files already present in `ch_versions`, using the `.mix` operator. 
+
+```default
+    SALMON_INDEX ( 
+        ch_genome_fasta,
+        ch_transcript_fasta
+    )
+
+    ch_versions = ch_versions.mix(SALMON_INDEX.out.versions)
+
+```
+
+**Exercise**: Add the versions for SALMON_QUANT to `ch_versions`
+
+:::{.callout-note collapse="true"}
+## Solution
+
+To add the version file for `SALMON_QUANT` to `ch_versions`, the `.out.versions` attribute can be used. This is then added to `ch_versions` using the `.mix` operator:
+
+```default
+    ch_versions = ch_versions.mix(SALMON_QUANT.out.versions)
+```
+:::
+
+In nf-core, the existing `softwareVersionsToYAML` function will take all `.yml` files inside `ch_versions`, creating one large file that traks all software versions. 
+
+```default
+    //
+    // Collate and save software versions
+    //
+    softwareVersionsToYAML(ch_versions)
+        .collectFile(
+            storeDir: "${params.outdir}/pipeline_info",
+            name: 'nf_core_'  +  'customrnaseq_software_'  + 'mqc_'  + 'versions.yml',
+            sort: true,
+            newLine: true
+        ).set { ch_collated_versions }
+```
+
+This file is saved in the `pipeline_info` folder of the output directory:
+
+```default
+output/pipeline_info/nf_core_customrnaseq_software_mqc_versions.yml
+```
+
+In addition to tool versions used, the Nextflow version, and pipeline version is also recorded
+
+```default
+FASTQC:
+  fastqc: 0.12.1
+SALMON_INDEX:
+  salmon: 1.10.3
+SALMON_QUANT:
+  salmon: 1.10.3
+Workflow:
+    nf-core/customrnaseq: v1.0.0dev
+    Nextflow: 24.10.5
+```
+
+## 8.1 Other resources
+
+### **8.1.1 Pipeline linting**
+
+The `nf-core pipelines lint` command can be used to check that a given pipeline follow all nf-core community guidelines. This is the same test that is used on the automated continuous integration tests, and is important if you would like to contribute to `nf-core`. 
+
+To contribute your pipeline to nf-core, [full documentation](https://nf-co.re/docs/tutorials/adding_a_pipeline/creating_a_pipeline) is available.
+
+
+### **8.1.2 Pipeline test profiles**
+
+Another important feature of nf-core pipelines are their `test` profiles. Pipeline level tests can facilitate more reliable and reproducible pipelines by ensuring identical results are produced at every run. More documentation from nf-core is available [here](https://nf-co.re/docs/guidelines/pipelines/recommendations/testing) and [here](https://nf-co.re/docs/guidelines/components/test_data)
+
+### **8.1.2 Pushing to GitHub**
+
+Currently, we have developed our pipeline locally. However, creating a remote repository can further improve the continuous integration process and streamline work if multiple people are working on the same pipeline. See documentation available [here](https://nf-co.re/docs/tutorials/adding_a_pipeline/creating_a_pipeline). 
+
+---
+^*This workshop is adapted from [Fundamentals Training](https://training.nextflow.io/basic_training/), [Advanced Training](https://training.nextflow.io/advanced/), [Developer Tutorials](https://nf-co.re/docs/contributing/tutorials/creating_with_nf_core#creating-a-pipeline), [Nextflow Patterns](https://nextflow-io.github.io/patterns/) materials from Nextflow, nf-core [nf-core tools documentation](https://nf-co.re/docs/nf-core-tools) and [nf-validation](https://nextflow-io.github.io/nf-validation/)*^ -->

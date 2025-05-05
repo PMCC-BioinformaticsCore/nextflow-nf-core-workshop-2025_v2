@@ -9,135 +9,201 @@ from: markdown+emoji
 
 ### **2.3.1. Running Nextflow Pipelines on a HPC **
 
-Nextflow, by default, spawns parallel task executions wherever it is running. You can use [Nextflow's executors](https://www.nextflow.io/docs/latest/executor.html) feature to run these tasks using an HPC job schedulers such as [SLURM](https://www.nextflow.io/docs/latest/executor.html#slurm) and [PBS Pro](https://www.nextflow.io/docs/latest/executor.html#pbs-pro). Use a custom configuration file to send all processes to the job scheduler as separate jobs and define essential resource requests like `cpus`, `time`, `memory`, and `queue` inside a `process {}` [scope](https://www.nextflow.io/docs/latest/process.html#processes). 
+Nextflow, by default, launches mulitple parallel tasks that can be ran concurrently. Recall previously that we used the `process` and `executor` scope to run these tasks using an HPC job scheduler [SLURM](https://www.nextflow.io/docs/latest/executor.html#slurm), submitting a maximum number of 4 concurrent jobs. 
 
-#### **Run all workflow tasks as separate jobs on HPC**
-
-In this custom configuration file we have sent all tasks that a workflow is running to a PBS Pro job scheduler and specified jobs to be run on the normal queue, each running for a max time of 3 hours with 1 cpu and 4 Gb of memory:
+::: {.callout-important}
+**TO DO**
+Change EXECUTOR + PARTITION
+:::
 
 ```default
 process {
-  executor = 'slurm'
-  queue = 'prod_short'
-  cpus = 1
-  time = '2h'
-  memory = '4.GB'
+    executor = 'slurm'
+    queue = 'PARTITION'
+}
+
+executor {
+    queueSize = 4
 }
 ```
 
-#### **Run processes with different resource profiles as HPC jobs**
+By specifying the executor as `slurm`, Nexflow will submit each process as a separate job using the `sbatch` command. All jobs will be submittd to the `PARTITION` partition.  
 
-Adjusting the custom configuration file above, we can use the `withName {}` [process selector](https://www.nextflow.io/docs/latest/config.html?highlight=withname#process-selectors) to specify process-specific resource requirements:
+Inside the `process { }` [scope](https://www.nextflow.io/docs/latest/process.html#processes), we can also define resources such as `cpus`, `time`, `memory`, and `queue`. 
 
 ```default
 process {
-  executor = 'slurm'
-	
-  withName: processONE {
-    queue = 'prod_short'
+    executor = 'slurm'
+    queue = 'PARTITION'
+
     cpus = 1
     time = '2h'
     memory = '4.GB'
-  }
+}
 
-  withName: processTWO {
-    queue = 'prod_med'
-    cpus = 2
-    time = '10h'
-    memory = '50.GB'
-  }
+executor {
+    queueSize = 4
+}
+```
+Now each individual job will be executed using 1 CPU, 4GB of memory, and a maximum time limit of 2 hours. Since we didn't specify a process label or a process name, this setting will apply for all processes within the pipeline. 
+
+#### **Run processes on different partitions**
+
+Previously, we used the `withLabel` and `withName` [process selectors](https://www.nextflow.io/docs/latest/config.html?highlight=withname#process-selectors) to specify the `cpus`, `time`, `memory` for a group of processes, or a particular process. We can also use those process selectors to change what partition the job will be submitted to.
+
+For example, suppose we have one process that requires the use of GPUs. If we change the `queue` to our GPU partition `gpu_partition`, this means all process jobs, even ones that don't require GPU, will be ran on that partition.
+
+```default
+process {
+    executor = 'slurm'
+    queue = 'gpu_partition'
+
+    cpus = 1
+    time = '2h'
+    memory = '4.GB'
+}
+
+executor {
+    queueSize = 4
+}
+```
+
+Instead, we can use the `withName` process selector to send the job execution for that process to a GPU-speicifc partition. This means we won't unnecessarily use GPU partition resources. 
+
+::: {.callout-important}
+**TO DO**
+Change EXECUTOR + PARTITION
+:::
+
+```default
+process {
+    executor = 'slurm'
+    queue = 'PARTITION'
+
+    cpus = 1
+    time = '2h'
+    memory = '4.GB'
+
+    withName: 'GPU_PROCESS' {
+      queue = 'gpu_queue'
+    }
+}
+
+executor {
+    queueSize = 4
 }
 ```
 
 #### **Specify infrastructure-specific directives for your jobs**
 
-Adjusting the custom configuration file above, we can define any native configuration options using the [clusterOptions](https://www.nextflow.io/docs/latest/process.html#process-clusteroptions) directive. We can use this to specify non-standard resources. Below we have specified which HPC project code to bill for all process jobs:
+Adjusting the custom configuration file above, we can define any native configuration options using the [clusterOptions](https://www.nextflow.io/docs/latest/process.html#process-clusteroptions) process directive, used to specify resources not already available in Nextflow.
 
-You can also setup a config to tailor specific to Peter Mac's HPC partitions setup. 
+For example, if you are running your pipeline on an HPC system that is billed, you have the option to specify what project the resource usage is billed to. 
+
+For example if you typically submit a job using the following command, where `--account` is used to specify the project number resource usage is billed to:
 
 ```default
-executor {
-    queueSize         = 100
-    queueStatInterval = '1 min'
-    pollInterval      = '1 min'
-    submitRateLimit   = '20 min'
-}
+sbatch --acount=PROJECT1 script.sh
+```
 
+By default, this `account` option is not a supported directive in Nextflow. Therefore, we **cannot** use the following config:
+
+```default
 process {
     executor = 'slurm'
-    cache    = 'lenient'
-    beforeScript = 'module load singularity'
-    stageInMode = 'symlink'
-    queue = { task.time < 2.h ? 'prod_short' : task.time < 24.h ? 'prod_med' : 'prod' } 
+    queue = 'PARTITION'
+    account = 'PROJECT1
+
+    cpus = 1
+    time = '2h'
+    memory = '4.GB'
+
+    withName: 'GPU_PROCESS' {
+      queue = 'gpu_queue'
+    }
+}
+
+executor {
+    queueSize = 4
 }
 ```
 
-::: callout-tip
-
-### **Challenge**{.unlisted}
-
-Run the previous nf-core/rnaseq workflow using the `process` and `executor` scope above (in a config file), and send each task to slurm. 
-
-:::
-
-::: {.callout-caution collapse="true"}
-
-### Solution
-
-Create a nextflow.config file
+Instead, this can be specified using `clusterOptions`, as below:
 
 ```default
-process.executor = 'slurm'
+process {
+    executor = 'slurm'
+    queue = 'PARTITION'
+    clusterOptions = "--account=PROJECT1"
+
+    cpus = 1
+    time = '2h'
+    memory = '4.GB'
+
+    withName: 'GPU_PROCESS' {
+      queue = 'gpu_queue'
+    }
+}
+
+executor {
+    queueSize = 4
+}
 ```
 
-Run the nfcore/rna-seq workflow again
-```
-nextflow run nf-core/rnaseq -r 3.14.0 \
-    -params-file workshop-params.yaml
-    -profile singularity \
-    --max_memory '6.GB' \
-    --max_cpus 2 \
-    -resume 
-```
+::: {.callout-caution}
 
-Did you get the following error? 
+On certain HPC systems, you may not be able to submit new jobs from another job (such as an interactive session). In this case, you may get the following error:
 
 ``` default
 sbatch: error: Batch job submission failed: Access/permission denied
 ```
 
-Try running the same workflow on login-node and observe the difference
-
-```default
->>> squeue -u rlupat -i 5
-
-          17429286      prod nf-NFCOR   rlupat  R       0:03      1 papr-res-compute01
-```
-
+To overcome this, use login-node (and exit your interactive session) when running your workflow. 
 :::
 
-<br/>
 
 ### **2.3.3. Clean your work directory**
 
-Your work directory can get very big very quickly (especially if you are using full sized datasets). It is good practise to `clean` your work directory regularly. Rather than removing the `work` folder with all of it's contents, the Nextflow `clean` function allows you to selectively remove data associated with specific runs.
+Your work directory can get very big, very quickly (especially if you are using full sized datasets). It is good practise to `clean` your work directory regularly. Rather than removing the `work` folder with all of it's contents, the Nextflow `clean` function allows you to selectively remove data associated with specific runs.
 
 ```default
 nextflow clean -help
 ```
 
+```default
+Clean up project cache and work directories
+Usage: clean [options] 
+  Options:
+    -after
+       Clean up runs executed after the specified one
+    -before
+       Clean up runs executed before the specified one
+    -but
+       Clean up all runs except the specified one
+    -n, -dry-run
+       Print names of file to be removed without deleting them
+       Default: false
+    -f, -force
+       Force clean command
+       Default: false
+    -h, -help
+       Print the command usage
+       Default: false
+    -k, -keep-logs
+       Removes only temporary files but retains execution log entries and
+       metadata
+       Default: false
+    -q, -quiet
+       Do not print names of files removed
+       Default: false
+```
+
 The `-after`, `-before`, and `-but` options are all very useful to select specific runs to `clean`. The `-dry-run` option is also very useful to see which files will be removed if you were to `-force` the `clean` command.
 
-::: callout-tip
+**Exercise**: Use Nextflow to `clean` your `work` directory of all staged files, but **keep** your execution logs.
 
-### **Challenge**{.unlisted}
 
-You Nextflow to `clean` your work `work` directory of staged files but **keep** your execution logs.
-
-:::
-
-::: {.callout-caution collapse="true"}
-
+::: {.callout-note collapse="true"}
 ### Solution
 
 Use the Nextflow `clean` command with the `-k` and `-f` options:
@@ -145,17 +211,13 @@ Use the Nextflow `clean` command with the `-k` and `-f` options:
 ```default
 nextflow clean -k -f
 ```
-
 :::
 
-<br/>
+### **2.3.4. Change the default Nextflow cache strategy**
 
+Sometimes, a wrkflow execution is [not resumed as expected](https://training.nextflow.io/basic_training/cache_and_resume/#resume-troubleshootingl). The [default behaviour of Nextflow cache keys](https://www.nextflow.io/docs/latest/process.html#cache) is to **index** the input file meta-data information. Reducing the cache stringency to `lenient` means the file cache keys are based only on **filesize** and **path**, and can help to avoid unexpectedly re-running certain processes when `-resume` is in use. 
 
-### **2.3.4. Change default Nextflow cache strategy**
-
-Workflow execution is [sometimes not resumed as expected](https://training.nextflow.io/basic_training/cache_and_resume/#resume-troubleshootingl). The [default behaviour of Nextflow cache keys](https://www.nextflow.io/docs/latest/process.html#cache) is to index the input files meta-data information. Reducing the cache stringency to `lenient` means the files cache keys are based only on filesize and path, and can help to avoid unexpectedly re-running certain processes when `-resume` is in use. 
-
-To apply lenient cache strategy to all of your runs, you could add to a custom configuration file:
+To apply lenient cache strategy to all of your runs, you could add the following to a custom configuration file:
 
 ```default
 process {
@@ -163,9 +225,7 @@ process {
 }
 ```
 
-You can specify different cache stategies for different processes by using `withName` or `withLabel`. You can specify a particular cache strategy be applied to certain `profiles` within your institutional config, or to apply to all profiles described within that config by placing the above `process` code block outside the `profiles` scope.    
-
-
+Again, you can specify different cache stategies for different processes by using `withName` or `withLabel`. 
 
 ### **2.3.5. Access private GitHub repositories**
 
@@ -182,9 +242,11 @@ providers {
 }
 ```
 
+Replace `'my-personal-access-token'` with your personal access token. 
+
 ### **2.3.7. Additional resources **
 
-Here are some useful resources to help you get started with running nf-core pipelines and developing Nextflow pipelines:
+Here are some useful resources to help you get started with running and developing nf-core pipelines:
 
 * [Nextflow tutorials](https://nf-co.re/docs/usage/nextflow)
 * [nf-core pipeline tutorials](https://nf-co.re/usage/usage_tutorials)

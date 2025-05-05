@@ -9,7 +9,7 @@ from: markdown+emoji
 
 ### **2.2.1. Nextflow log**
 
-It is important to keep a record of the commands you have run to generate your results. Nextflow helps with this by creating and storing metadata and logs about the run in hidden files and folders in your current directory (unless otherwise specified). This data can be used by Nextflow to generate reports. It can also be queried using the Nextflow `log` command:
+It is important to keep a record of the commands you have used to generate your results. Nextflow helps with this by creating and storing metadata and logs about the run in hidden files and folders in your current directory (unless otherwise specified). This data can be used by Nextflow to generate reports. It can also be queried using the Nextflow `log` command:
 
 ```default
 nextflow log
@@ -39,19 +39,13 @@ There are many other fields you can query. You can view a full list of fields wi
 nextflow log -l
 ```
 
-::: callout-tip
+**Exercise**: Use the `log` command to view with `process`, `hash`, and `script` fields for your tasks from your most recent Nextflow execution.
 
-### **Challenge**{.unlisted}
-
-Use the `log` command to view with `process`, `hash`, and `script` fields for your tasks from your most recent Nextflow execution.
-
-:::
-
-::: {.callout-caution collapse="true"}
+::: {.callout-note collapse="true"}
 
 ### Solution
 
-Use the `log` command to get a list of you recent executions:
+First, use the `log` command to get a list of your recent executions:
 
 ```default
 nextflow log
@@ -104,7 +98,6 @@ NFCORE_RNASEQ:RNASEQ:MULTIQC	7a/8449d7
     END_VERSIONS
     
 ```
-
 :::
 
 ### **2.2.2. Execution cache and resume**
@@ -113,45 +106,45 @@ Task execution **caching** is an essential feature of modern workflow managers. 
 
 Nextflow caching mechanism works by assigning a unique ID to each task. The task unique ID is generated as a 128-bit hash value composing the the complete file path, file size, and last modified timestamp. These ID's are used to create a separate execution directory where the tasks are executed and the outputs are stored. Nextflow will take care of the inputs and outputs in these folders for you.
 
-You can re-launch the previously executed `nf-core/rnaseq` workflow again, but with a `-resume` flag, and observe the progress. Notice the time it takes to complete the workflow. 
+You can re-launch the previously executed `nf-core/rnaseq` workflow again using `-resume`, and observe the progress. Change the output directory to be `my_results`. Notice the time it takes to complete the workflow. 
+
+::: {.callout-important}
+**TO DO**
+Change CONTAINER
+:::
 
 ```default
 nextflow run nf-core/rnaseq -r 3.14.0 \
-    --input samplesheet.csv \
-    --outdir ./my_results \
-    --fasta $materials/ref/chr22_with_ERCC92.fa \
-    --gtf $materials/ref/chr22_with_ERCC92.gtf \
-    -profile singularity \
-    --skip_markduplicates true \
-    --save_trimmed true \
-    --save_unaligned true \
-    --max_memory '6.GB' \
-    --max_cpus 2 \
-    -resume 
+  -resume 
+  -profile <CONTAINER> \
+  -c my_resources.config \
+  -params-file workshop-params.yaml \
+  --outdir my_results \
 ```
 
 ```default
-
 [80/ec6ff8] process > NFCORE_RNASEQ:RNASEQ:PREPARE_GENOME:GTF2BED (chr22_with_ERCC92.gtf)                  [100%] 1 of 1, cached: 1 ✔
 [1a/7bec9c] process > NFCORE_RNASEQ:RNASEQ:PREPARE_GENOME:GTF_GENE_FILTER (chr22_with_ERCC92.fa)           [100%] 1 of 1, cached: 1 ✔
 
 ```
 
-Executing this workflow will create a `my_results` directory with selected results files and add some further sub-directories into the `work` directory
+Executing this workflow will create a `my_results` directory that contain selected results files, as well as the `work` directory, which contains further sub-directories. 
 
-In the schematic above, the hexadecimal numbers, such as `80/ec6ff8`, identify the unique task execution. These numbers are also the prefix of the `work` directories where each task is executed.
+In the schematic above, the hexadecimal numbers, such as `80/ec6ff8`, identify the unique task execution. These numbers are also the prefix of the `work` subdirectories where each task is executed.
 
-You can inspect the files produced by a task by looking inside the `work` directory and using these numbers to find the task-specific execution path:
+You can inspect the files produced by a task by looking inside the `work` directory and using these numbers to find the task-specific execution path. Use `tab` to autocomplete the full file path:
 
 ```default
 ls work/80/ec6ff8ba69a8b5b8eede3679e9f978/
 ```
 
-If you look inside the `work` directory of a `FASTQC` task, you will find the files that were staged and created when this task was executed:
+If you look inside the `work` directory of a `FASTQC` process, you will find the files that were staged and created when this task was executed:
 
 ```default
->>> ls -la  work/e9/60b2e80b2835a3e1ad595d55ac5bf5/ 
+ls -la  work/e9/60b2e80b2835a3e1ad595d55ac5bf5/ 
+```
 
+```default
 total 15895
 drwxrwxr-x 2 rlupat rlupat    4096 Nov 22 03:39 .
 drwxrwxr-x 4 rlupat rlupat    4096 Nov 22 03:38 ..
@@ -178,29 +171,22 @@ lrwxrwxrwx 1 rlupat rlupat     102 Nov 22 03:39 HBR_Rep1_ERCC-Mix2_Build37-ErccT
 -rw-rw-r-- 1 rlupat rlupat     109 Nov 22 03:39 versions.yml
 ```
 
-The `FASTQC` process runs twice, executing in a different work directories for each set of inputs. Therefore, in the previous example, the work directory [e9/60b2e8] represents just one of the four sets of input data that was processed.
+The `FASTQC` process runs twice, executing in a different work directories for each set of inputs. Therefore, in the previous example, the work directory `[e9/60b2e8]` represents just one of the two sets of input data that was processed.
 
-It's very likely you will execute a workflow multiple times as you find the parameters that best suit your data. You can save a lot of spaces (and time) by **resuming** a workflow from the last step that was completed successfully and/or unmodified.
+It's very likely you will execute a workflow multiple times as you find the parameters that best suit your data. You can save a lot of storage space (and time) by **resuming** a workflow from the last step that was completed successfully and/or unmodified.
 
-In practical terms, the workflow is executed from the beginning. However, before launching the execution of a process, Nextflow uses the task unique ID to check if the work directory already exists and that it contains a valid command exit state with the expected output files. If this condition is satisfied, the task execution is skipped and previously computed results are used as the process results.
+In practical terms, the workflow is executed from the beginning. However, before launching the execution of a process, Nextflow uses the unique task ID to check if the work directory already exists and that it contains a valid command exit state with the expected output files. If this condition is satisfied, the task execution is skipped and previously computed results are saved in the output directory.
 
 Notably, the `-resume` functionality is very sensitive. Even touching a file in the work directory can invalidate the cache.
 
-::: callout-tip
+**Exercise**: Invalidate the cache by touching a `.fastq.gz` file inside the `FASTQC` task work directory (you can use the `touch` command). Execute the workflow again with the `-resume` option. Has the cache has been invalidated?
 
-### **Challenge**{.unlisted}
-
-Invalidate the cache by touching a `.fastq.gz` file in a `FASTQC` task work directory (you can use the `touch` command). Execute the workflow again with the `-resume` option to show that the cache has been invalidated.
-
-:::
-
-::: {.callout-caution collapse="true"}
-
+::: {.callout-note collapse="true"}
 ### Solution
 
 Execute the workflow for the first time (if you have not already).
 
-Use the task ID shown for the `FASTQC` process and use it to find and `touch` a the `sample1_R1.fastq.gz` file:
+Use the task ID shown for the `FASTQC` process and use it to find and `touch` a `.fastq.gz` file:
 
 ```default
 touch work/ff/21abfa87cc7cdec037ce4f36807d32/HBR_Rep1_ERCC_1.fastq.gz
@@ -210,24 +196,18 @@ Execute the workflow again with the `-resume` command option:
 
 ```default
 nextflow run nf-core/rnaseq -r 3.14.0 \
-    --input samplesheet.csv \
-    --outdir ./my_results \
-    --fasta $materials/ref/chr22_with_ERCC92.fa \
-    --gtf $materials/ref/chr22_with_ERCC92.gtf \
-    -profile singularity \
-    --skip_markduplicates true \
-    --save_trimmed true \
-    --save_unaligned true \
-    --max_memory '6.GB' \
-    --max_cpus 2 \
-    -resume 
+  -resume 
+  -profile <CONTAINER> \
+  -c my_resources.config \
+  -params-file workshop-params.yaml \
+  --outdir my_results \
 ```
 
 You should see that some task were invalid and were executed again.
 
 **Why did this happen?**
 
-In this example, the cache of two `FASTQC` tasks were invalid. The fastq file we `touch` is used by in the pipeline in multiple places. Thus, touching the symlink for this file and changing the date of last modification disrupted two task executions.
+In this example, the caching of the two `FASTQC` tasks were invalid. The fastq file we `touch` is used by in the pipeline in multiple places. Thus, touching the symbolic link for this file and changing the date of last modification disrupted two task executions.
 ::: 
 
 ### **2.2.3. Troubleshoot warning and error messages**
@@ -237,21 +217,21 @@ While our previous workflow execution completed successfully, there were a coupl
 ```default
 -[nf-core/rnaseq] Pipeline completed successfully with skipped sampl(es)-
 -[nf-core/rnaseq] Please check MultiQC report: 2/2 samples failed strandedness check.-
-Completed at: 20-Nov-2023 00:29:04
-Duration    : 10m 15s
-CPU hours   : 0.3 
-Succeeded   : 72
+Completed at: 04-May-2025 15:03:01
+Duration    : 7m 59s
+CPU hours   : 0.8
+Succeeded   : 66
 ```
 
 ::: {.callout-warning}
-### Handling dodgy error messages :cursing_face:
+### Handling dodgy error messages 
 The first warning message isn't very descriptive (see this [pull request](https://github.com/nf-core/rnaseq/pull/963)). You might come across issues like this when running nf-core pipelines, too. Bug reports and user feedback is very important to open source software communities like nf-core. If you come across any issues, submit a GitHub issue or start a discussion in the relevant nf-core Slack channel so others are aware and it can be addressed by the pipeline's developers.
 :::
 
-&#x27A4; Take a look at the MultiQC report, as directed by the second message. You can find the MultiQC report in the `lesson2.1/` directory: 
+&#x27A4; Take a look at the MultiQC report, as directed by the second message. You can find the MultiQC report in the `my_results` directory: 
 
 ```default
-ls -la lesson2.1/multiqc/star_salmon/
+ls -la my_results/multiqc/star_salmon/
 ```
 
 ```default
@@ -263,62 +243,55 @@ drwxrwxr-x 5 rlupat rlupat    4096 Nov 22 00:29 multiqc_plots
 -rw-rw-r-- 1 rlupat rlupat 1419998 Nov 22 00:29 multiqc_report.html
 ```
 
-&#x27A4; Download the `multiqc_report.html` the file navigator panel on the left side of your VS Code window by right-clicking on it and then selecting `Download`. Open the file on your computer. 
+&#x27A4; Download the `multiqc_report.html` using the file navigator panel on the left side of your VS Code window. Right click the file navagator, then select `Download`. Open the file on your computer. 
 
 Take a look a the section labelled **WARNING: Fail Strand Check**
 
-The warning we have received is indicating that the read strandedness we specified in our `samplesheet.csv` and **inferred strandedness** identified by the RSeqQC process in the pipeline do not match. It looks like the test samplesheet have incorrectly specified strandedness as forward in the `samplesheet.csv` when our raw reads actually show an equal distribution of sense and antisense reads. 
+The warning indicates that the read strandedness we specified in our `samplesheet.csv` and **inferred strandedness** identified by the RSeqQC process in the pipeline do not match. In the `samplesheet.csv`, it seems we have incorrectly specified strandedness as `forward`, when our raw reads actually show an equal distribution of sense and antisense reads. 
 
 For those who are not familiar with RNAseq data, incorrectly specified strandedness may negatively impact the read quantification step (process: Salmon quant) and give us inaccurate results. So, let's clarify how the Salmon quant process is gathering strandedness information for our input files by default and find a way to address this with the parameters provided by the nf-core/rnaseq pipeline. 
 
-</br>
-
 ### **2.2.4. Identify the run command for a process**
 
-To observe exactly what command is being run for a process, we can attempt to infer this information from the module's `main.nf` script in the `modules/` directory. However, given all the different parameters that may be applied at the process level, this may not be very clear. 
+To observe the exact command used a process, we can attempt to infer this information from the module's `main.nf` script in the `modules/` directory. However, given all the different parameters that may be applied at the process level, this may not be very clear. 
 
-&#x27A4; Take a look at the Salmon quant [main.nf](https://github.com/nf-core/rnaseq/blob/3.11.1/modules/nf-core/salmon/quant/main.nf) file: 
+&#x27A4; Take a look at the Salmon quant [main.nf](https://github.com/nf-core/rnaseq/blob/3.11.1/modules/nf-core/salmon/quant/main.nf) file. 
 
-```default
-nf-core-rnaseq-3.11.1/workflow/modules/nf-core/salmon/quant/main.nf
-```
+This file contains many function definitions within the process, variable substitutions, and internal parameters determined based on strandedness. This makes it very hard to see what is actually happening in the code, given all the different variables and conditional arguments inside this script. 
 
-Unless you are familiar with developing nf-core pipelines, it can be very hard to see what is actually happening in the code, given all the different variables and conditional arguments inside this script. Above the script block we can see strandedness is being applied using a few different conditional arguments. Instead of trying to infer how the `$strandedness` variable is being defined and applied to the process, let's use the hidden command files saved for this task in the `work/` directory.   
+Above the script block, we can see strandedness is being applied using a few different conditional arguments. Instead of trying to infer how the `$strandedness` variable is being defined and applied to the process, let's use the hidden command files saved for this process in its `work` execution directory.   
 
 ::: callout-tip
 ### **Hidden files in the work directory!**
 
-Remember that the pipeline's results are cached in the `work` directory. In addition to the cached files, each task execution directories inside the work directory contains a number of hidden files:
+Remember that the pipeline's results are cached in the `work` directory. In addition to the cached files, each task execution directory inside the work directory contains a number of hidden files:
 
-* `.command.sh`: The command script run for the task. 
-* `.command.run`: The command wrapped used to run the task. 
+* `.command.sh`: The command used for the task. 
+* `.command.run`: Specifying resources, executor, software management profiles to use. 
 * `.command.out`: The task's standard output log.
 * `.command.err`: The task's standard error log.
-* `.command.log`: The wrapper execution output.
+* `.command.log`: A wrapper for the execution output.
 * `.command.begin`: A file created as soon as the job is launched.
-* `.exitcode`: A file containing the task exit code (0 if successful)
+* `.exitcode`: A file containing the task exit code (`0` if successful)
 :::
 
-With `nextflow log` command that we discussed previously, there are multiple options to facilitate the queries and is especially useful while debugging a pipeline and while inspecting pipeline execution metadata. 
+Within the `nextflow log` command that we discussed previously, there are multiple options to facilitate pipeline debugging and inspecting pipeline execution metadata. To understand how Salmon is interpreting strandedness, we're going to use this command to determine the full path to hidden `.command.sh` scripts for each Salmon quant task that was run. This will allow us to investigate how Salmon handles strandedness and if there is a way for us to override this. 
 
-To understand how Salmon quant is interpreting strandedness, we're going to use this command to track down the hidden `.command.sh` scripts for each Salmon quant task that was run. This will allow us to find out how Salmon quant handles strandedness and if there is a way for us to override this. 
-
-&#x27A4; Use the [Nextflow log](https://www.nextflow.io/docs/latest/tracing.html#execution-log) command to get the unique run name information of the previously executed pipelines: 
+&#x27A4; Use the [`nextflow log`](https://www.nextflow.io/docs/latest/tracing.html#execution-log) command to get the unique run name information of previously executed pipelines. Then, add that run name to your command: 
 
 ```default
 nextflow log <run-name>
 ```
 
-That command will list out all the work subdirectories for all processes run.  
-And we now need to find the specific hidden`.command.sh` for Salmon tasks. But how to find them? :thinking: 
+After running the command, we can see that it provided a list of all the work subdirectories created for each processes when the pipeline was executed. How do we use this information to find the speicfic hidden`.command.sh` for Salmon tasks? 
 
-&#x27A4; Let's add some custom bash code to query a Nextflow run with the run name from the previous lesson. First, save your run name in a bash variable. For example:
+&#x27A4; Let's use Bash to query a Nextflow run with the run name from the previous lesson. First, save your run name in a Bash variable `run_name`. For example:
 
 ```default
 run_name=marvelous_shannon
 ```
 
-&#x27A4; And let's save the tool of interest (salmon) in another bash variable to pull it from a run command:
+&#x27A4; And let's save the tool of interest (`salmon`) in another Bash variable `tool`:
 ```default
 tool=salmon
 ```
@@ -335,7 +308,7 @@ nextflow log ${run_name} | while read line;
     done 
 ```
 
-That will list all process `.command.sh` scripts containing 'salmon'. There are a few different processes that run Salmon to perform other steps in the workflow. We are looking for Salmon quant which performs the read quantification:
+This will list all process `.command.sh` scripts containing the word 'salmon'. Notice that there are a few different processes that run Salmon to perform other steps in the workflow. We are looking for Salmon quant which performs the read quantification:
 
 ```default
 /scratch/users/rlupat/nfWorkshop/lesson2.1/work/57/fba8f9a2385dac5fa31688ba1afa9b/.command.sh
@@ -354,8 +327,8 @@ That will list all process `.command.sh` scripts containing 'salmon'. There are 
 
 Compared with the salmon quant `main.nf` file, we get a lot more fine scale details from the `.command.sh` process scripts: 
 
+`main.nf`:
 ```default
->>> cat main.nf
 salmon quant \\
         --geneMap $gtf \\
         --threads $task.cpus \\
@@ -366,8 +339,8 @@ salmon quant \\
         -o $prefix
 ```
 
+`.command.sh`:
 ```default
->>> cat .command.sh
 salmon quant \
     --geneMap chr22_with_ERCC92.gtf \
     --threads 2 \
@@ -378,78 +351,114 @@ salmon quant \
     -o HBR_Rep1_ERCC
 ```
 
-Looking at the nf-core/rnaseq Parameter documentation and Salmon documentation, we found that we can override this default using the `--salmon_quant_libtype A` [parameter](https://nf-co.re/rnaseq/3.14.0/parameters#salmon_quant_libtype) to indicate our data is unstranded and override `samplesheet.csv` input. 
+From `.command.sh`, we see that `--libType` has been set to `ISF` (ie. forward strandedness), based on our samplesheet. 
 
-::: callout-note
+**Exercise**: Besides changing the samplesheet input, we can use parameter settings to over-ride the `--libType`. Use the [pipeline Parameters documentation](https://nf-co.re/rnaseq/3.14.0/parameters#salmon_quant_libtype) to determine what parameter has to be changed. Instead, we would like this to be `ISR` (ie. reverse strandedness). How can we do this?
 
-### **How do I get rid of the strandedness check warning message?**
-If we want to get rid of the warning message `Please check MultiQC report: 2/2 samples failed strandedness check`, we'll have to change the strandedness fields in our `samplesheet.csv`. Keep in mind, doing this will invalidate the pipeline's cache and cause the pipeline to run from the beginning.  
+::: {.callout-note collapse="true"}
+### Solution
+
+From the pipeline documentation, the `--salmon_quant_libtype` can be changed. To change the `libType` specified to Salmon to be `ISR`, we can specify `--salmon_quant_libtype ISR` using the command line or in a parameter file. 
 :::
 
-</br>
+### **2.2.5. Using a parameter file**
 
-### **2.2.5. Write a parameter file**
+From the previous section we learn that Nextflow can accept a `yaml` parameter file. Any of the **pipeline-specific** [parameters](https://nf-co.re/rnaseq/3.14.0/parameters) can be supplied to a Nextflow pipeline in this way. 
 
-From the previous section we learn that Nextflow accepts either `yaml` or `json` formats for parameter files. Any of the pipeline-specific [parameters](https://nf-co.re/rnaseq/3.14.0/parameters) can be supplied to a Nextflow pipeline in this way. 
+**Exercise**: Set the Salmon `libType` to `ISR`, inside the `workshop-params.yaml` file we created previously. 
 
 ::: callout-tip
-### **Challenge**{.unlisted}
-
-Fill in the parameters file below and save as `workshop-params.yaml`. This time, include the `--salmon_quant_libtype A` parameter. 
-
-:bulb: YAML formatting tips!
-
+### **YAML Formatting Tip**{.unlisted}
 * Strings need to be inside double quotes 
 * Booleans (true/false) and numbers do not require quotes 
+:::
 
-```yaml
-input: ""
-outdir: "lesson2.2"
-fasta: ""
-gtf: ""
-star_index: ""
-salmon_index: ""
-skip_markduplicates: 
-save_trimmed: 
-save_unaligned: 
+::: {.callout-note collapse="true"}
+### Solution
+`workshop-params.yaml` should now contain one additional parameter:
+
+```default
 salmon_quant_libtype: "A" 
 ```
 :::
 
-### **2.2.6. Apply the parameter file**
-
-&#x27A4; Once your params file has been saved, run:
+&#x27A4; Now that our params file has been saved, we can rerun the pipeline:
 
 ```default
 nextflow run nf-core/rnaseq -r 3.14.0 \
-    -params-file workshop-params.yaml
-    -profile singularity \
-    --max_memory '6.GB' \
-    --max_cpus 2 \
-    -resume 
+  -resume 
+  -profile <CONTAINER> \
+  -c my_resources.config \
+  -params-file workshop-params.yaml \
+  --outdir my_results \
 ```
-
-The number of pipeline-specific parameters we've added to our run command has been significantly reduced. The only `--` parameters we've provided to the run command relate to how the pipeline is executed on our interative job. These resource limits won't be applicable to others who will run the pipeline on a different infrastructure. 
 
 As the workflow runs a second time, you will notice 4 things:
 
-1. The command is much tidier thanks to offloading some parameters to the params file
-2. The `-resume` flag. Nextflow has lots of [run options](https://www.nextflow.io/docs/latest/cli.html?highlight=resume#run) including the ability to use cached output!
-3. Some processes will be pulled from the cache. These processes remain unaffected by our addition of a new parameter.  
-4. This run of the pipeline will complete in a much shorter time.
+1. The `nextflow run` command is much tidier, due to the use of a `-params-file` that stores **pipeline** parameters used in a Nextflow run
+2. The `-resume` flag. Nextflow has many [run options](https://www.nextflow.io/docs/latest/cli.html?highlight=resume#run) including the ability to use cached output
+3. Some processes will be pulled from the cache. These processes remain unaffected by our addition of the new parameter.  
+4. This run of the pipeline will complete in a much shorter time compared to starting the pipeline from the beginning, due to pipeline caching.
 
 ```default
 -[nf-core/rnaseq] Pipeline completed successfully with skipped sampl(es)-
 -[nf-core/rnaseq] Please check MultiQC report: 2/2 samples failed strandedness check.-
-Completed at: 21-Apr-2023 05:58:06
-Duration    : 1m 51s
-CPU hours   : 0.3 (82.2% cached)
+Completed at: 04-May-2025 17:28:40
+Duration    : 3m 59s
+CPU hours   : 0.6 (66.3% cached)
 Succeeded   : 11
 Cached      : 55
 ```
 
-</br>
+We still seem to be getting the warning `Please check MultiQC report: 2/2 samples failed strandedness check.-`. Let's check what `--libType` has been used inside the salmon process.
 
+**Exercise**: Determine the hexadecimal code output by Nextflow for a `SALMON_QUANT` process in your most recent run. Use this code to determine the `work` execution directory for `SALMON_QUANT`, and look inside the `.command.sh`. What `--libType` has been used? Is it the one we specified in our parameter file?
+
+::: {.callout-note collapse="true"}
+### Solution
+
+In the Nextflow output, the following line provides the hexadeximal for a `SALMON_QUANT` process. 
+
+```default
+[04/d742db] NFC…TAR_SALMON:SALMON_QUANT (HBR_Rep2_ERCC) | 2 of 2 ✔
+```
+
+The `work` execution directory for this process is located in (using `tab` to autocomplete the folder name):
+
+```default
+ls -a work/04/d742db4c1760d0c4581fb7790a71a9/
+```
+
+Inside the `.command.sh` file, the `--libType` parameter matches the one specified in our parameter file:
+
+```default
+#!/bin/bash -euo pipefail
+salmon quant \
+    --geneMap chr22_with_ERCC92.filtered.gtf \
+    --threads 4 \
+    --libType=ISR \
+    -t genome.transcripts.fa \
+    -a HBR_Rep2_ERCC.Aligned.toTranscriptome.out.bam \
+     \
+    -o HBR_Rep2_ERCC
+
+if [ -f HBR_Rep2_ERCC/aux_info/meta_info.json ]; then
+    cp HBR_Rep2_ERCC/aux_info/meta_info.json "HBR_Rep2_ERCC_meta_info.json"
+fi
+
+cat <<-END_VERSIONS > versions.yml
+"NFCORE_RNASEQ:RNASEQ:QUANTIFY_STAR_SALMON:SALMON_QUANT":
+    salmon: $(echo $(salmon --version) | sed -e "s/salmon //g")
+END_VERSIONS
+```
+
+The tool is working as we expect!
+:::
+
+::: callout-note
+### **How do I get rid of the strandedness check warning message?**
+If we want to remove the warning message `Please check MultiQC report: 2/2 samples failed strandedness check`, we will have to change the strandedness fields in our `samplesheet.csv`. Keep in mind, doing this will invalidate the pipeline's cache and will cause the pipeline to run from the beginning.  
+:::
 
 ---
 ^*These materials are adapted from [Customising Nf-Core Workshop](https://sydney-informatics-hub.github.io/customising-nfcore-workshop/notebooks/1.2_nfcore.html) by Sydney Informatics Hub*^

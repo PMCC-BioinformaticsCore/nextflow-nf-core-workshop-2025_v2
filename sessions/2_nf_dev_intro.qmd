@@ -2,7 +2,9 @@
 title: "Developing bioinformatics workflows with Nextflow"
 ---
 
-This workshop is designed to provide participants with a fundamental understanding of developing bioinformatics pipelines using Nextflow. This workshop aims to provide participants with the necessary skills required to create a Nextflow pipeline from scratch or from the nf-core template. 
+This workshop is designed to provide participants with a fundamental understanding of developing bioinformatics pipelines using nf-core templates. 
+
+TO DO
 
 ### Course Presenters
 
@@ -13,6 +15,8 @@ This workshop is designed to provide participants with a fundamental understandi
 
 TBC
 
+TO DO
+
 ### Prerequisites
 
 - Experience with command line interface and cluster/slurm
@@ -22,13 +26,14 @@ TBC
 ### Learning Objectives:
 By the end of this workshop, participants should be able to:
 
-- Develop a basic Nextflow workflow consisting of processes that use multiple scripting languages
+- Develop a basic Nextflow workflow using nf-core templates 
+- Create processes that consist of multiple scripting languages
+
+TO DO :
+
 - Read data of different types into a Nextflow workflow
 - Output Nextflow process results to a predefined directory
 - Re-use and import processes, modules, and sub-workflows into a Nextflow workflow
-- Gain an understanding of Nextflow channel operators 
-- Develop a basic Nextflow workflow with nf-core templates 
-- Troubleshoot known errors in workflow development
 
 ### Set up requirements
 Please complete the [Setup Instructions](../workshops/00_setup.html) before the course.
@@ -39,14 +44,13 @@ If you have any trouble, please get in contact with us ASAP via Slack.
 
 | Lesson     | Overview | Time | 
 |------------|----------| ---------- |
-| [Setup](../workshops/00_setup.html)| Follow these instructions to install VS Code and setup your workspace | < 10.00 | 
-| Session kick off| Session kick off: Discuss learning outcomes and finalising workspace setup | 10.00 - 10.10 |
-| [Working with nf-core Templates](../workshops/5.1_nf_core_template.html) | Introduction to nf-core templates and its structure | 10.10 - 10.50 |
+| Session kick off| Session kick off: Discuss learning outcomes and finalise [setup](../workshops/00_setup.html) | 10.00 - 10.10 |
+| [Creating workflows using nf-core templates](../workshops/5.1_nf_core_template.qmd) | Introduction to nf-core pipeline template structure and workflow syntax | 10.10 - 10.50 |
 | Break | Break | 10:50 - 11:00 | 
-| [Creating workflow with nf-core Templates](../workshops/5.1_nf_core_template.html) - NEED NEW NOTES | Creating workflow with nf-core templates | 11.00 - 12.15 |
+| [nf-core modules and subworkflows](../workshops/5.2_nf_core_modules.qmd) | Installing and creating nf-core modules | 11.00 - 12.15 |
 | Lunch Break | Break | 12:15 - 13:00 |
-| [metadata](../workshops/7.1_metadata_propagation.qmd) - NEED NEW NOTES | Working with Nextflow-Schema & Metadata | 13.00 - 13.30 | 
-| [Best practise and Q&A](../workshops/2.3_tips_and_tricks.html)| Best practise, tips & tricks for running nextflow pipelines | 13.30 - 14:00 | 
+| [Metadata propagation](../workshops/5.3_metadata_propagation.qmd) | Working with Nextflow-Schema & Metadata | 13.00 - 13.40 | 
+| [Pipeline testing and Q&A](../workshops/5.4_pipeline_testing.qmd)| Pipeline development best practice | 13.45 - 14:00 | 
 
 
 ### Credits and acknowledgement

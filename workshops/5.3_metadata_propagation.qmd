@@ -1,0 +1,1083 @@
+---
+title: "**Nextflow Development - Metadata Proprogation**"
+output:
+  html_document:
+    toc: false
+    toc_float: false
+from: markdown+emoji
+---
+
+::: callout-tip
+### Objectives{.unlisted}
+- Gain an understanding of how to use nf-core modules in a workflow script
+- Manipulate and proprogate sample metadata throughout the workflow
+- Create a custom nf-core module
+:::
+
+
+## **6.1 Samplesheet parsing**
+
+In the `./nf-core-customrnaseq/main.nf` script, the `PIPELINE_INITIALISATION` subworkflow created by default from the nf-core template will output a channel that contains the parsed `--input` samplesheet. This channel is then input into `NFCORE_CUSTOMRNASEQ`, which launches our analysis workflow containing the newly included modules `salmon/quant` and `salmon/quant`. 
+
+```default
+...
+
+include { PIPELINE_INITIALISATION } from './subworkflows/local/utils_nfcore_customrnaseq_pipeline'
+
+...
+
+workflow {
+
+    main:
+
+    ...
+
+    //
+    // WORKFLOW: Run main workflow
+    //
+    NFCORE_CUSTOMRNASEQ (
+        PIPELINE_INITIALISATION.out.samplesheet
+    )
+
+    ...
+
+}
+```
+
+How does the `PIPELINE_INITIALISATION` parse the samplesheet?
+
+::: {.callout-note collapse="true"}
+### `./nf-core-customrnaseq/subworkflows/local/utils_nfcore_customrnaseq_pipeline/main.nf`
+```default
+//
+// Create channel from input file provided through params.input
+//
+workflow PIPELINE_INITIALISATION {
+
+    take:
+    version           // boolean: Display version and exit
+    validate_params   // boolean: Boolean whether to validate parameters against the schema at runtime
+    monochrome_logs   // boolean: Do not use coloured log outputs
+    nextflow_cli_args //   array: List of positional nextflow CLI args
+    outdir            //  string: The output directory where the results will be saved
+    input             //  string: Path to input samplesheet
+
+    main:
+
+    ...
+
+    Channel
+        .fromList(samplesheetToList(params.input, "${projectDir}/assets/schema_input.json"))
+        .map {
+            meta, fastq_1, fastq_2 ->
+                if (!fastq_2) {
+                    return [ meta.id, meta + [ single_end:true ], [ fastq_1 ] ]
+                } else {
+                    return [ meta.id, meta + [ single_end:false ], [ fastq_1, fastq_2 ] ]
+                }
+        }
+        .groupTuple()
+        .map { samplesheet ->
+            validateInputSamplesheet(samplesheet)
+        }
+        .map {
+            meta, fastqs ->
+                return [ meta, fastqs.flatten() ]
+        }
+        .set { ch_samplesheet }
+
+    emit:
+    samplesheet = ch_samplesheet
+    versions    = ch_versions
+}
+
+```
+:::
+
+The important pieces of information that we will explore further in this section are:
+
+1. The use of a `schema_input.json` to validate the samplesheet metadata
+2. The use of `.map { }` and `.groupTuple()` functions to manipulate sample metadata
+
+### **6.1.1 Default samplesheet channel**
+
+The samplesheet is automatically parsed, resulting in a channel that contains all relevant datta specified in the `--input`. What does this channel contain?
+
+Open the analysis workflow file `workflows/customrnaseq.nf`. Use the `.view()` function inside the `workflow` scope to view the `ch_samplesheet` that has been input to the pipeline:
+
+```default
+workflow CUSTOMRNASEQ {
+
+    take:
+    ch_samplesheet // channel: samplesheet read in from --input
+    main:
+
+    ch_samplesheet.view()
+
+    ch_versions = Channel.empty()
+    ch_multiqc_files = Channel.empty()
+
+    ...
+}
+```
+
+Now, rerun the pipeline, ensuring `-resume` is specified in the `nextflow run` command. **Note** ebsure you are no longer inside your pipeline folder. 
+
+::: {.callout-important}
+**TO DO**
+
+Change CONTAINER
+:::
+
+```default
+nextflow run ./nf-core-customrnaseq/main.nf -resume -profile CONTAINER --input ./samplesheet.csv --outdir output
+```
+
+The channel should have the following structure:
+
+```default
+[[id:gut, single_end:false], [/.../data/gut_1.fastq.gz, /.../data/gut_2.fastq.gz]]
+[[id:liver, single_end:false], [/.../data/liver_1.fastq.gz, /.../data/liver_2.fastq.gz]]
+[[id:lung, single_end:false], [/.../data/lung_1.fastq.gz, /.../data/lung_2.fastq.gz]]
+```
+
+This channel contains three elements, one for each sample type. The first element is a tuple, where the first element is a `list` that represents the sample metadata. This metadata contains the sample name, stored as `id`, and if the sample is single-ded, stored as `single_end`. The second element in this tuple contain the paths to the input FASTQ files. 
+
+Let's see how this relates to our samplesheet:
+
+```default
+sample,fastq_1,fastq_2
+gut,/.../data/gut_1.fastq.gz,/.../data/gut_2.fastq.gz
+liver,/.../data/liver_1.fastq.gz,/.../data/liver_2.fastq.gz
+lung,/.../data/lung_1.fastq.gz,/s.../data/lung_2.fastq.gz
+```
+
+Notice that the value under the `sample` column has been assigned as `id` in the channel metadata. File paths in the `fastq_1` and `fastq_2` have been added as the second element in the tuple, which represents the read paths. 
+
+This is defined inside the `assets/schema_input.json` file. In this file, each "property" represents a column that can be present inside the `--input` samplesheet. Any required columns are also specified, as the `"required"` item. 
+
+:::{.callout-note collapse="true"}
+## assets/schema_input.json
+```default
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://raw.githubusercontent.com/nf-core/customrnaseq/main/assets/schema_input.json",
+    "title": "nf-core/customrnaseq pipeline - params.input schema",
+    "description": "Schema for the file provided with params.input",
+    "type": "array",
+    "items": {
+        "type": "object",
+        "properties": {
+            "sample": {
+                "type": "string",
+                "pattern": "^\\S+$",
+                "errorMessage": "Sample name must be provided and cannot contain spaces",
+                "meta": ["id"]
+            },
+            "fastq_1": {
+                "type": "string",
+                "format": "file-path",
+                "exists": true,
+                "pattern": "^\\S+\\.f(ast)?q\\.gz$",
+                "errorMessage": "FastQ file for reads 1 must be provided, cannot contain spaces and must have extension '.fq.gz' or '.fastq.gz'"
+            },
+            "fastq_2": {
+                "type": "string",
+                "format": "file-path",
+                "exists": true,
+                "pattern": "^\\S+\\.f(ast)?q\\.gz$",
+                "errorMessage": "FastQ file for reads 2 cannot contain spaces and must have extension '.fq.gz' or '.fastq.gz'"
+            }
+        },
+        "required": ["sample", "fastq_1"]
+    }
+}
+```
+:::
+
+Inside the `"sample"` property, the `"meta"` has been set to `["id"]`. This is the value in the channel metadata that the sample name will be assigned to. For example, if the following was specified: `"meta": ["name"]`
+
+The parsed channel would have the following structure, where `id` is replaced with `name`:
+
+```default
+[[name:gut, single_end:false], [/.../data/gut_1.fastq.gz, /.../data/gut_2.fastq.gz]]
+[[name:liver, single_end:false], [/.../data/liver_1.fastq.gz, /.../data/liver_2.fastq.gz]]
+[[name:lung, single_end:false], [/.../data/lung_1.fastq.gz, /.../data/lung_2.fastq.gz]]
+```
+
+Therefore, if you wish to specify an additional column in the sampleshet (ie. adding sample metadata), the `schema_input.json` should also be changed to allow for this. We will investigate this later in the session. 
+
+:::{.callout-tip}
+Many existing nf-core nodules rely on the input metadata having **at least** the `id` value -- it is not recommended to change this name from the default. 
+:::
+
+
+### **6.1.2 Input channels to an nf-core module**
+
+Now that we know the contents of our parsed samplesheet channel, let's check what inputs are required to our two processes. 
+
+#### Process `salmon/index`
+
+From the `salmon/index` [module GitHub page](https://github.com/nf-core/rnaseq/blob/b96a75361a4f1d49aa969a2b1c68e3e607de06e8/modules/nf-core/salmon/index/main.nf), we see that the process requires two inputs: a `genom_fasta` file, and a `transcript_fasta` file. 
+
+```default
+process SALMON_INDEX {
+    tag "$transcript_fasta"
+    label "process_medium"
+
+    conda "${moduleDir}/environment.yml"
+    container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
+        'https://depot.galaxyproject.org/singularity/salmon:1.10.3--h6dccd9a_2' :
+        'biocontainers/salmon:1.10.3--h6dccd9a_2' }"
+
+    input:
+    path genome_fasta
+    path transcript_fasta
+
+    ...
+    
+}
+```
+
+Let's take a closer look at the main Nextflow script that we use to launch the pipeline. Near the top of the script, it provides an example of how to set parameters. These parameters can be specified to the `nextflow run` command using a parameter `.yaml` file, specified with `-params-file`. 
+
+```default
+/*
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    GENOME PARAMETER VALUES
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+*/
+
+// TODO nf-core: Remove this line if you don't need a FASTA file
+//   This is an example of how to use getGenomeAttribute() to fetch parameters
+//   from igenomes.config using `--genome`
+params.fasta = getGenomeAttribute('fasta')
+
+```
+
+In the template, it provides an example of how to set the `fasta` parameter that can be passed to the workflow. Since we won't need this, we can comment it out. Instead, we want to add a `genome_fasta` and `transcript_fasta` parameter. 
+
+Edit that code block to the following:
+
+```default
+/*
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    GENOME PARAMETER VALUES
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+*/
+
+// TODO nf-core: Remove this line if you don't need a FASTA file
+//   This is an example of how to use getGenomeAttribute() to fetch parameters
+//   from igenomes.config using `--genome`
+// params.fasta = getGenomeAttribute('fasta')
+params.genome_fasta = getGenomeAttribute('genome_fasta')
+params.transcript_fasta = getGenomeAttribute('transcript_fasta')
+```
+In summary, the `getGenomeAttribute` will access the `genome_fasta` or `transcript_fasta` that's specified to it via the command line or a parameter file, and re-assign it as a Nextflow parameter that can be accessed in workflows. 
+
+Now, we can create a parameter file `params.yaml`, and specify the paths to `genome_fasta` and `transcript_fasta`:
+
+::: {.callout-important}
+**TO DO**
+Change PATH TO DATA
+:::
+
+```default
+genome_fasta: "/.../data/genome.fa"
+transcript_fasta: "/.../transcriptome.fa"
+```
+
+Since these parameters are strings, we can convert them into channels using the `Channel.fromPath` channel factory. Open you analysis workflow script and add the following:
+
+```default
+workflow CUSTOMRNASEQ {
+
+    take:
+    ch_samplesheet // channel: samplesheet read in from --input
+
+    main:
+
+    // Gather reference files
+    ch_genome_fasta = Channel.fromPath(params.genome_fasta)
+    ch_transcript_fasta = Channel.fromPath(params.transcript_fasta)
+
+    ch_versions = Channel.empty()
+    ch_multiqc_files = Channel.empty()
+
+    ...
+}
+```
+
+::: {.callout-tip}
+Nextflow parameters are global variables that can be accessed by any script within the pipeline. Therefore, it doesn't need to be passed from one file/workflow/process to another. 
+:::
+
+The newly created channels `ch_genome_fasta` and `ch_transcript_fasta` match the inputs defined in the `SALMON_INDEX` process. Suppy these channels as inputs to the `SALMON_INDEX`, inside `workflow CUSTOMRNASEQ { ... }` 
+
+```default
+    SALMON_INDEX ( 
+        ch_genome_fasta,
+        ch_transcript_fasta
+    )
+```
+
+Rerun the pipeline, specifying the `params.yaml` file in the `nextflow run` command
+
+::: {.callout-important}
+**TO DO**
+Change CONTAINER
+:::
+
+```default
+nextflow run ./nf-core-customrnaseq/main.nf -resume -profile CONTAINER --input ./samplesheet.csv --outdir output -params-file ./params.yaml 
+```
+:::{.callout-note collapse="true"}
+## stdout
+```default
+
+ N E X T F L O W   ~  version 24.10.5
+
+Launching `./nf-core-customrnaseq/main.nf` [goofy_cori] DSL2 - revision: 5492b74b7a
+
+
+------------------------------------------------------
+                                        ,--./,-.
+        ___     __   __   __   ___     /,-._.--~'
+  |\ | |__  __ /  ` /  \ |__) |__         }  {
+  | \| |       \__, \__/ |  \ |___     \`-._,-`-,
+                                        `._,._,'
+  nf-core/customrnaseq 1.0.0dev
+------------------------------------------------------
+Input/output options
+  input              : ./samplesheet.csv
+  outdir             : output
+
+Generic options
+  trace_report_suffix: 2025-05-06_03-22-36
+
+Core Nextflow options
+  runName            : goofy_cori
+  containerEngine    : singularity
+  launchDir          : /scratch/users/sli/workshop/pipeline
+  workDir            : /scratch/users/sli/workshop/pipeline/work
+  projectDir         : /scratch/users/sli/workshop/pipeline/nf-core-customrnaseq
+  userName           : sli
+  profile            : singularity
+  configFiles        : /scratch/users/sli/workshop/pipeline/nf-core-customrnaseq/nextflow.config
+
+!! Only displaying parameters that differ from the pipeline defaults !!
+------------------------------------------------------
+* The nf-core framework
+    https://doi.org/10.1038/s41587-020-0439-x
+
+* Software dependencies
+    https://github.com/nf-core/customrnaseq/blob/main/CITATIONS.md
+
+WARN: The following invalid input values have been detected:
+
+* --genome_fasta: /scratch/users/sli/workshop/training/nf4-science/rnaseq/data/genome.fa
+* --transcript_fasta: /scratch/users/sli/workshop/training/nf-training/data/ggal/transcriptome.fa
+
+
+executor >  local (1)
+[19/79bd6e] NFCORE_CUSTOMRNASEQ:CUSTOMRNASEQ:FASTQC (liver)       | 3 of 3, cached: 3 ✔
+[5c/05a99e] NFC…ASEQ:CUSTOMRNASEQ:SALMON_INDEX (transcriptome.fa) | 1 of 1 ✔
+[e4/41d893] NFCORE_CUSTOMRNASEQ:CUSTOMRNASEQ:MULTIQC              | 1 of 1 ✔
+-[nf-core/customrnaseq] Pipeline completed successfully-
+
+```
+:::
+
+Here, the pipeline completed successfully, with the new process `SALMON_INDEX` completing successfully. However, there are two new warnings, which we will discuss more later:
+
+```default
+WARN: The following invalid input values have been detected:
+
+* --genome_fasta: /scratch/users/sli/workshop/training/nf4-science/rnaseq/data/genome.fa
+* --transcript_fasta: /scratch/users/sli/workshop/training/nf-training/data/ggal/transcriptome.fa
+```
+
+#### Process `salmon/quant`
+
+Let's repeat the process for `salmon/quant`. Now that we know the contents of the parsed samplesheet channel, we need to determine if this channel is suitable to be used in our processes.
+
+```default
+[[name:gut, single_end:false], [/.../data/gut_1.fastq.gz, /.../data/gut_2.fastq.gz]]
+[[name:liver, single_end:false], [/.../data/liver_1.fastq.gz, /.../data/liver_2.fastq.gz]]
+[[name:lung, single_end:false], [/.../data/lung_1.fastq.gz, /.../data/lung_2.fastq.gz]]
+```
+
+From the `salmon/quant` [module GitHub page](https://github.com/nf-core/modules/blob/master/modules/nf-core/salmon/quant/main.nf), we see that many inputs are needed in addition to our data. 
+
+```default
+process SALMON_QUANT {
+    tag "$meta.id"
+    label "process_medium"
+
+    conda "${moduleDir}/environment.yml"
+    container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
+        'https://depot.galaxyproject.org/singularity/salmon:1.10.3--h6dccd9a_2' :
+        'biocontainers/salmon:1.10.3--h6dccd9a_2' }"
+
+    input:
+    tuple val(meta), path(reads)
+    path  index
+    path  gtf
+    path  transcript_fasta
+    val   alignment_mode
+    val   lib_type
+
+    ...
+
+}
+```
+
+- The first input that is required is a tuple of two elements -- the first element containing the sample metadata, and the second element containing the paths to the FASTQ files. The default channel parsed from the samplesheet matches this structure, so it can be used as the input. 
+
+:::{.callout-tip}
+## tag "$meta.id"
+Recall that when a process is exected, the output containing the process name, along with the contents of the `tag` directive will be printed:
+
+```default
+[6e/28919b] Submitted process > FOO (alpha)
+[d2/1c6175] Submitted process > FOO (gamma)
+[1c/3ef220] Submitted process > FOO (omega)
+```
+
+In the first input to the process, the sample metadata is specified -- the `id` contained within this metadata is accessed (ie. the sample name), and used in the `tag` directive. This directive is typically defined as "$meta.id" for all nf-core processes, so it is recommended that your pipeline contains this `id` metadata value.
+
+:::
+
+- The second input to the process is the path to the index file. The `SALMON_INDEX` output of this process can be used as input to `SALMON_QUANT`
+
+- The last two inputs are values that defines how `SALMON_QUANT` will be ran. For now, let's define these variables within the workflow block of `workflows/customrnaseq.nf`:
+
+```default
+    def align_mode = false
+    def lib_type = "A"
+```
+
+**Exercise**: Following the steps we used previously to add `genome_fasta` and `transcript_fasta` to the workflow, repeat it for `gtf`. Provide these inputs to the `SALMON_QUANT` and rerun the workflow, ensuring the new process has been executed. 
+
+:::{.callout-important}
+CHANGE PATH TO DATA
+
+:::
+
+:::{.callout-note collapse="true"}
+## Solution
+1. Inside `nf-core-customrnaseq/main.nf`, the `gtf` parameter is added:
+
+```default
+params.gtf = getGenomeAttribute('gtf')
+```
+
+2. The path to the `gtf` file is specified in the `params.yaml`:
+
+```default
+gtf: "/PATH TO DATA/rna-seq/ref/chr22_with_ERCC92.gtf"
+```
+
+3. Inside `workflows/customrnaseq.nf`, convert the parameter to a channel
+
+```default
+ch_gtf =  Channel.fromPath(params.gtf)
+```
+
+4. The inputs to `SALMON_QUANT` are defined as:
+
+```default
+SALMON_QUANT (
+    ch_samplesheet,
+    SALMON_INDEX.out.index,
+    ch_gtf,
+    ch_transcript_fasta,
+    align_mode,
+    lib_type
+)
+```
+
+**Note** that the order of inputs matter, and have to match what is declared in the process input definition. 
+
+5. The new process `SALMON_QUANT` is present, when rerunning the pipeline
+
+```default
+nextflow run ./nf-core-customrnaseq/main.nf -resume -profile singularity --input ./samplesheet.csv --outdir output -params-file ./params.yaml 
+```
+```default
+executor >  local (1)
+[10/4a95a5] NFCORE_CUSTOMRNASEQ:CUSTOMRNASEQ:FASTQC (lung)        | 3 of 3, cached: 3 ✔
+[5c/05a99e] NFC…ASEQ:CUSTOMRNASEQ:SALMON_INDEX (transcriptome.fa) | 1 of 1, cached: 1 ✔
+[be/6fe5d8] NFCORE_CUSTOMRNASEQ:CUSTOMRNASEQ:SALMON_QUANT (gut)   | 1 of 1, cached: 1 ✔
+[2c/bfcac1] NFCORE_CUSTOMRNASEQ:CUSTOMRNASEQ:MULTIQC              | 1 of 1 ✔
+-[nf-core/customrnaseq] Pipeline completed successfully-
+111
+```
+:::
+
+:::{.callout-tip collapse="true"}
+## nf-core-customrnaseq/main.nf
+
+```default
+#!/usr/bin/env nextflow
+/*
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    nf-core/customrnaseq
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Github : https://github.com/nf-core/customrnaseq
+    Website: https://nf-co.re/customrnaseq
+    Slack  : https://nfcore.slack.com/channels/customrnaseq
+----------------------------------------------------------------------------------------
+*/
+
+/*
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    IMPORT FUNCTIONS / MODULES / SUBWORKFLOWS / WORKFLOWS
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+*/
+
+include { CUSTOMRNASEQ  } from './workflows/customrnaseq'
+include { PIPELINE_INITIALISATION } from './subworkflows/local/utils_nfcore_customrnaseq_pipeline'
+include { PIPELINE_COMPLETION     } from './subworkflows/local/utils_nfcore_customrnaseq_pipeline'
+include { getGenomeAttribute      } from './subworkflows/local/utils_nfcore_customrnaseq_pipeline'
+
+/*
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    GENOME PARAMETER VALUES
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+*/
+
+// TODO nf-core: Remove this line if you don't need a FASTA file
+//   This is an example of how to use getGenomeAttribute() to fetch parameters
+//   from igenomes.config using `--genome`
+// params.fasta = getGenomeAttribute('fasta')
+params.genome_fasta = getGenomeAttribute('genome_fasta')
+params.transcript_fasta = getGenomeAttribute('transcript_fasta')
+params.gtf = getGenomeAttribute('gtf')
+
+/*
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    NAMED WORKFLOWS FOR PIPELINE
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+*/
+
+//
+// WORKFLOW: Run main analysis pipeline depending on type of input
+//
+workflow NFCORE_CUSTOMRNASEQ {
+
+    take:
+    samplesheet // channel: samplesheet read in from --input
+
+    main:
+
+    //
+    // WORKFLOW: Run pipeline
+    //
+    CUSTOMRNASEQ (
+        samplesheet
+    )
+    emit:
+    multiqc_report = CUSTOMRNASEQ.out.multiqc_report // channel: /path/to/multiqc_report.html
+}
+/*
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    RUN MAIN WORKFLOW
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+*/
+
+workflow {
+
+    main:
+    //
+    // SUBWORKFLOW: Run initialisation tasks
+    //
+    PIPELINE_INITIALISATION (
+        params.version,
+        params.validate_params,
+        params.monochrome_logs,
+        args,
+        params.outdir,
+        params.input
+    )
+
+    //
+    // WORKFLOW: Run main workflow
+    //
+    NFCORE_CUSTOMRNASEQ (
+        PIPELINE_INITIALISATION.out.samplesheet
+    )
+    //
+    // SUBWORKFLOW: Run completion tasks
+    //
+    PIPELINE_COMPLETION (
+        params.email,
+        params.email_on_fail,
+        params.plaintext_email,
+        params.outdir,
+        params.monochrome_logs,
+        params.hook_url,
+        NFCORE_CUSTOMRNASEQ.out.multiqc_report
+    )
+}
+
+/*
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    THE END
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+*/
+
+```
+:::
+
+:::{.callout-tip collapse="true"}
+## nf-core-customrnaseq/workflows/customrnaseq.nf
+
+```default
+/*
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    IMPORT MODULES / SUBWORKFLOWS / FUNCTIONS
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+*/
+include { FASTQC                 } from '../modules/nf-core/fastqc/main'
+include { MULTIQC                } from '../modules/nf-core/multiqc/main'
+include { paramsSummaryMap       } from 'plugin/nf-schema'
+include { paramsSummaryMultiqc   } from '../subworkflows/nf-core/utils_nfcore_pipeline'
+include { softwareVersionsToYAML } from '../subworkflows/nf-core/utils_nfcore_pipeline'
+include { methodsDescriptionText } from '../subworkflows/local/utils_nfcore_customrnaseq_pipeline'
+
+include { SALMON_INDEX } from '../modules/nf-core/salmon/index/main' 
+include { SALMON_QUANT } from '../modules/nf-core/salmon/quant/main'    
+
+/*
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    RUN MAIN WORKFLOW
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+*/
+
+workflow CUSTOMRNASEQ {
+
+    take:
+    ch_samplesheet // channel: samplesheet read in from --input
+
+    main:
+
+    // Gather reference files
+    ch_genome_fasta = Channel.fromPath(params.genome_fasta)
+    ch_transcript_fasta = Channel.fromPath(params.transcript_fasta)
+    ch_gtf =  Channel.fromPath(params.gtf)
+
+    ch_versions = Channel.empty()
+    ch_multiqc_files = Channel.empty()
+
+    //
+    // MODULE: Run FastQC
+    //
+    FASTQC (
+        ch_samplesheet
+    )
+    ch_multiqc_files = ch_multiqc_files.mix(FASTQC.out.zip.collect{it[1]})
+    ch_versions = ch_versions.mix(FASTQC.out.versions.first())
+
+
+    SALMON_INDEX ( 
+        ch_genome_fasta,
+        ch_transcript_fasta
+    )
+
+    def align_mode = false
+    def lib_type = "A"
+
+    SALMON_QUANT (
+        ch_samplesheet,
+        SALMON_INDEX.out.index,
+        ch_gtf,
+        ch_transcript_fasta,
+        align_mode,
+        lib_type
+    )
+
+
+    //
+    // Collate and save software versions
+    //
+    softwareVersionsToYAML(ch_versions)
+        .collectFile(
+            storeDir: "${params.outdir}/pipeline_info",
+            name: 'nf_core_'  +  'customrnaseq_software_'  + 'mqc_'  + 'versions.yml',
+            sort: true,
+            newLine: true
+        ).set { ch_collated_versions }
+
+
+    //
+    // MODULE: MultiQC
+    //
+    ch_multiqc_config        = Channel.fromPath(
+        "$projectDir/assets/multiqc_config.yml", checkIfExists: true)
+    ch_multiqc_custom_config = params.multiqc_config ?
+        Channel.fromPath(params.multiqc_config, checkIfExists: true) :
+        Channel.empty()
+    ch_multiqc_logo          = params.multiqc_logo ?
+        Channel.fromPath(params.multiqc_logo, checkIfExists: true) :
+        Channel.empty()
+
+    summary_params      = paramsSummaryMap(
+        workflow, parameters_schema: "nextflow_schema.json")
+    ch_workflow_summary = Channel.value(paramsSummaryMultiqc(summary_params))
+    ch_multiqc_files = ch_multiqc_files.mix(
+        ch_workflow_summary.collectFile(name: 'workflow_summary_mqc.yaml'))
+    ch_multiqc_custom_methods_description = params.multiqc_methods_description ?
+        file(params.multiqc_methods_description, checkIfExists: true) :
+        file("$projectDir/assets/methods_description_template.yml", checkIfExists: true)
+    ch_methods_description                = Channel.value(
+        methodsDescriptionText(ch_multiqc_custom_methods_description))
+
+    ch_multiqc_files = ch_multiqc_files.mix(ch_collated_versions)
+    ch_multiqc_files = ch_multiqc_files.mix(
+        ch_methods_description.collectFile(
+            name: 'methods_description_mqc.yaml',
+            sort: true
+        )
+    )
+
+    MULTIQC (
+        ch_multiqc_files.collect(),
+        ch_multiqc_config.toList(),
+        ch_multiqc_custom_config.toList(),
+        ch_multiqc_logo.toList(),
+        [],
+        []
+    )
+
+    emit:multiqc_report = MULTIQC.out.report.toList() // channel: /path/to/multiqc_report.html
+    versions       = ch_versions                 // channel: [ path(versions.yml) ]
+
+}
+
+/*
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    THE END
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+*/
+
+```
+:::
+
+## **6.2 Complex datasets**
+
+Consider the dataset below:
+
+```default
+HBR_Rep1_read1.fastq.gz
+HBR_Rep1_read2.fastq.gz
+HBR_Rep2_read1.fastq.gz
+HBR_Rep2_read2.fastq.gz
+UHR_Rep1_read1.fastq.gz
+UHR_Rep1_read2.fastq.gz
+UHR_Rep2_read1.fastq.gz
+UHR_Rep2_read2.fastq.gz
+```
+
+There are two samples, `HBR` and `UHR`, each with two replicates. How can we adjust our samplesheet and pipeline to handle this dataset?
+
+### **6.2.1 Samplesheet metadata**
+
+The first step is to add an additional column to the samplesheet. For this dataset, we will add `replicate`. 
+
+::: {.callout-important}
+**TO DO**
+Change path 
+:::
+
+```default
+sample,replicate,fastq_1,fastq_2
+ERC,1,/.../HBR_Rep1_read1.fastq.gz,/.../HBR_Rep1_read2.fastq.gz
+ERC,2,/.../HBR_Rep2_read1.fastq.gz,/.../HBR_Rep2_read2.fastq.gz
+UHR,1,/.../UHR_Rep1_read1.fastq.gz,/.../UHR_Rep1_read2.fastq.gz
+UHR,2,/.../UHR_Rep2_read1.fastq.gz,/.../UHR_Rep2_read2.fastq.gz
+```
+
+Since this new column was added, the `assets/schema_input.json` will also need to be changed, specifying a new `"replicate"` property. Currently, there is no `nf-core` tool that can help add a new property to the schema -- this has to be done manually. Add the following as a "property" to `assets/schema_input.json`:
+
+```default
+            "replicate": {
+                "type": "integer",
+                "errorMessage": "Replicate number must be provided",
+                "meta": ["rep"]
+            }
+```
+
+Here, the important specification is `"meta"`, which will result in parsed samplesheet channel to have an additional metadata value `rep`, which corresponds to the replicate specified in the samplesheet. 
+
+Now, let's run the pipeline with the new samplesheet, and `view()` the `ch_samplesheet` that has been created:
+
+::: {.callout-warning collapse="true"}
+
+Inside the `PIPELINE_INITIALISATION` workflow, you will need to change the samplesheet parsing to the following:
+
+`nf-core-customrnaseq/subworkflows/local/utils_nfcore_customrnaseq_pipeline/main.nf`:
+```default
+
+    //
+    // Create channel from input file provided through params.input
+    //
+
+    Channel
+        .fromList(samplesheetToList(params.input, "${projectDir}/assets/schema_input.json"))
+        .map {
+            meta, fastq_1, fastq_2 ->
+                if (!fastq_2) {
+                    return [ meta + [ single_end:true ], [ fastq_1 ] ]
+                } else {
+                    return [ meta + [ single_end:false ], [ fastq_1, fastq_2 ] ]
+                }
+        }
+        // .groupTuple()
+        // .map { samplesheet ->
+        //     validateInputSamplesheet(samplesheet)
+        // }
+        // .map {
+        //     meta, fastqs ->
+        //         return [ meta, fastqs.flatten() ]
+        // }
+        .set { ch_samplesheet }
+```
+
+Here, the `.groupTuple()` and downstream functions have been commented out. Within the first `map { }` funcion, the first element of the array has also been removed.
+
+When the full command is used, this can cause unexpected behaviour, especially when creating new metadata values. 
+:::
+
+
+::: {.callout-important}
+**TO DO**
+Change CONTAINER 
+:::
+
+```default
+nextflow run ./nf-core-customrnaseq/main.nf -resume -profile CONTAINER --input ./samplesheet_replicates.csv --outdir output -params-file ./params.yaml 
+```
+
+As expected, the new metadata value `rep` has been added in `ch_samplesheet`:
+
+```default
+[[id:ERC, rep:1, single_end:false], [/.../HBR_Rep1_read1.fastq.gz, /.../HBR_Rep1_read2.fastq.gz]]
+[[id:ERC, rep:2, single_end:false], [/.../HBR_Rep2_read1.fastq.gz, /.../HBR_Rep2_read2.fastq.gz]]
+[[id:UHR, rep:1, single_end:false], [/.../UHR_Rep1_read1.fastq.gz, /.../UHR_Rep1_read2.fastq.gz]]
+[[id:UHR, rep:2, single_end:false], [/.../UHR_Rep2_read1.fastq.gz, /.../UHR_Rep2_read2.fastq.gz]]
+```
+
+### **6.2.2 Grouping metadata**
+
+Now, what if we wish to concatenate the replicate FASTQ files that belong to one sample together? This can be done using the `map { }` function. 
+
+Let's first consider one element channel:
+
+```default
+[[id:ERC, rep:1, single_end:false], [/.../HBR_Rep1_read1.fastq.gz, /.../HBR_Rep1_read2.fastq.gz]]
+```
+
+This element is a tuple, where the first list contains the metadata specified in the input samplesheet, and the second list contain the FASTQ files. 
+
+The `map { }` function can be used to access different values in the tuple. 
+
+```default
+ch_samplesheet
+    .map { meta, fqs ->
+        meta.id = "CHANGED_NAME"
+        [meta, fqs]
+    }
+    .view()
+```
+
+First, the local variables `meta` and `fqs` are declared within the map function. Variables declared before the `->` are always local variables that reference the input channel. The fist local variable `meta` can then be used to access the first element in the `ch_input` tuple (the metadata list). Similarly, the second local variable `fqs` can be used to access te second element in the `ch_input` tuple (the FASTQ list). 
+
+In the second line of the map function, the `id` value inside `meta` has been changed from `ERC` to `"CHANGED_SAMPLE"`. 
+
+In the last line of the map function, the updated metadata and unchanged FASTQs are returned. The last line of the map function will be the output. 
+
+These steps are repeated for each element in `ch_samplesheet`, resulting in the following output:
+
+```default
+[[id:CHANGED_SAMPLE, rep:1, single_end:false], [/.../HBR_Rep1_read1.fastq.gz, /.../HBR_Rep1_read2.fastq.gz]]
+[[id:CHANGED_SAMPLE, rep:2, single_end:false], [/.../HBR_Rep2_read1.fastq.gz, /.../HBR_Rep2_read2.fastq.gz]]
+[[id:CHANGED_SAMPLE, rep:1, single_end:false], [/.../UHR_Rep1_read1.fastq.gz, /.../UHR_Rep1_read2.fastq.gz]]
+[[id:CHANGED_SAMPLE, rep:2, single_end:false], [/.../UHR_Rep2_read1.fastq.gz, /.../UHR_Rep2_read2.fastq.gz]]
+```
+
+The `map { }` function can also be used to remove metadata values. To remove `rep` from the metadata:
+
+```default
+ch_samplesheet
+    .map { meta, fqs ->
+        meta = meta - meta.subMap('rep') 
+        [meta, fqs]
+    }
+    .view()
+```
+Here, `subMap` is used to remove `rep` from the original metadata. In the last line of the `map { }` function, the updated metadata is returned 
+
+**Exercise**: What do you think the new outputs would look like? Add the `map { }` function to your workflow script to confirm.
+
+::: {.callout-note collapse="true"}
+## Solution
+
+`rep` is removed from the metadata, resulting in only `id` and `single_end` keys. 
+
+```default
+[[id:ERC, single_end:false], [/.../HBR_Rep1_read1.fastq.gz, /.../HBR_Rep1_read2.fastq.gz]]
+[[id:ERC, single_end:false], [/.../HBR_Rep2_read1.fastq.gz, /.../HBR_Rep2_read2.fastq.gz]]
+[[id:UHR, single_end:false], [/.../UHR_Rep1_read1.fastq.gz, /.../UHR_Rep1_read2.fastq.gz]]
+[[id:UHR, single_end:false], [/.../UHR_Rep2_read1.fastq.gz, /.../UHR_Rep2_read2.fastq.gz]]
+```
+
+In the above output, we can see that we now have two samples that have the same metadata, but **different** FASTQ input files. 
+
+::: 
+
+
+To group together all FASTQ files containing the same file metadata, `groupTuple()` can be used.
+
+**Exercise**: Add `groupTuple()` after your `map { }` function and view the results. Does the output match what you expect?
+
+::: {.callout-note collapse="true"}
+## Solution
+
+Adding `groupTuple()` after the `map { }` function and viewing the result:
+
+```default
+    ch_samplesheet
+        .map { meta, fqs ->
+            meta = meta - meta.subMap('rep') 
+            [meta, fqs]
+        }
+        .groupTuple()
+        .view()
+```
+
+The following can be seen:
+
+```default
+[[id:ERC, single_end:false], [/.../HBR_Rep1_read1.fastq.gz, /.../HBR_Rep1_read2.fastq.gz], [/.../HBR_Rep2_read1.fastq.gz, /.../HBR_Rep2_read2.fastq.gz]]
+[[id:UHR, single_end:false], [/.../UHR_Rep1_read1.fastq.gz, /.../UHR_Rep1_read2.fastq.gz], [/.../UHR_Rep2_read1.fastq.gz, /.../UHR_Rep2_read2.fastq.gz]]
+```
+:::
+
+In the output, notice that while all FASTQ files that contain the same metadata are grouped together, they are still nested as `[ [s1r1, s1r2], [s2r1, s2r2] ]`.
+
+**Exercise**: Using the [nf-core operator documentation](https://www.nextflow.io/docs/latest/reference/operator.html), can you find a suitable operator that will un-nest the FASTQ files such that the output structure is `[ s1r1, s1r2, s2r1, s2r2 ]`? Can you use it in combination with a **new** `map { }` function to un-nest just the FASTQ files (and not the metadata list)? Test it out by adding it after the `groupTuple()` operator and view the result. 
+
+::: {.callout-note collapse="true"}
+## Hint
+
+The following `map` function structure can be used
+
+```default
+    ch_samplesheet
+        .map { meta, fqs ->
+            meta = meta - meta.subMap('rep') 
+            [meta, fqs]
+        }
+        .groupTuple()
+        .map { meta, fqs -> 
+            <OPERATOR_COMMAND_HERE>
+            [meta, fqs]
+        }
+        .view()
+```
+::: 
+
+
+::: {.callout-note collapse="true"}
+## Solution
+
+The [flatten operator](https://www.nextflow.io/docs/latest/reference/operator.html#flatten) can be used to achieve this. 
+
+```default
+    ch_samplesheet
+        .map { meta, fqs ->
+            meta = meta - meta.subMap('rep') 
+            [meta, fqs]
+        }
+        .groupTuple()
+        .map { meta, fqs -> 
+            fqs = fqs.flatten()
+            [meta, fqs]
+        }
+        .view()
+```
+
+The FASTQ files have now been flattened:
+
+```default
+[[id:ERC, single_end:false], [/.../HBR_Rep1_read1.fastq.gz, /.../HBR_Rep1_read2.fastq.gz, /.../HBR_Rep2_read1.fastq.gz, /.../HBR_Rep2_read2.fastq.gz]]
+[[id:UHR, single_end:false], [/.../UHR_Rep1_read1.fastq.gz, /.../UHR_Rep1_read2.fastq.gz, /.../UHR_Rep2_read1.fastq.gz, /.../UHR_Rep2_read2.fastq.gz]]
+```
+:::
+
+### **6.2.3 Creating a custom nf-core module**
+
+To concatenate the FASTQ files together, let's create a custom module. This can be done with `nf-core modules create`
+
+When prompted, the tool `cat` can be specified. 
+
+```default
+
+                                          ,--./,-.
+          ___     __   __   __   ___     /,-._.--~\ 
+    |\ | |__  __ /  ` /  \ |__) |__         }  {
+    | \| |       \__, \__/ |  \ |___     \`-._,-`-,
+                                          `._,._,'
+
+    nf-core/tools version 3.2.0 - https://nf-co.re
+    There is a new version of nf-core/tools available! (3.2.1)
+
+
+INFO     Repository type: pipeline                                                                                                                                  
+INFO     Press enter to use default values (shown in brackets) or type your own responses. ctrl+click underlined text to open links.                                
+Name of tool/subtool: cat
+```
+
+Notice that nf-core will automatically locate the corresponding `bioconda` package and `singularity` or `Docker` container.
+
+```default
+INFO     Using Bioconda package: 'bioconda::cat=6.0.1'                                                                                                              
+INFO     Using Docker container: 'biocontainers/cat:6.0.1--hdfd78af_0'                                                                                              
+INFO     Using Singularity container: 'https://depot.galaxyproject.org/singularity/cat:6.0.1--hdfd78af_0'    
+```
+
+Progress through the prompts, setting your GitHub username as the author, and accept any default settings. When this command has completed successfully, a list of created files along with environment files will be displayed. 
+
+```default
+INFO     Created component template: 'cat'                                                                             
+INFO     Created following files:                                                                                      
+           modules/local/cat/main.nf                                                                                   
+           modules/local/cat/meta.yml                                                                                  
+           modules/local/cat/environment.yml                                                                           
+           modules/local/cat/tests/main.nf.test    
+```
+
+Open the `modules/local/cat/main.nf` file. Notice that the conda environment file and container repositories have already been included. Some example `input` and `outputs` have also been created. 
+
+```default
+    conda "${moduleDir}/environment.yml"
+    container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
+        'https://depot.galaxyproject.org/singularity/cat:6.0.1--hdfd78af_0':
+        'biocontainers/cat:6.0.1--hdfd78af_0' }"
+```
+
+
+**Exercise**: 
+
+1. Remove the `stub` block for now
+2. Edit the `input` block such that it takes an input of type tuple -- the first element in the tuple is the metadata, and the second element are FASTQ files. 
+3. Edit the `script` block such that all read_1 FASTQ files will be concatenated together, and all read_2 FASTQ files will be concatenated together
+4. Edit the `output` block such that an output of type tuple will be emitted as `merged` from the process -- the first element in the tuple is the metadata and the second element contains the FASTQ files
+
+
+::: {.callout-important }
+### TO DO
+ADD SOLUTION
+
+ADD outputs of merging as inputs to existing SALMON

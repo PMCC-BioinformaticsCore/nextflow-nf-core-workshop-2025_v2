@@ -20,21 +20,37 @@ from: markdown+emoji
 
 Set up an interactive shell to run our Nextflow workflow: 
 
+::: {.callout-important}
+**TO DO**
+Change partition
+:::
+
 ``` default
-srun --pty -p prod_short --mem 8GB --mincpus 2 -t 0-2:00 bash
+srun --pty -p <PARTITION> --mem 8GB --mincpus 2 -t 0-5:00 bash
 ```
 
 Load the required modules to run Nextflow:
 
+::: {.callout-important}
+**TO DO**
+Module loading required? / Version?
+:::
+
 ``` default
-module load nextflow/23.04.1
-module load singularity/3.7.3
+module load nextflow/<VERSION>
+module load singularity/<VERSION>
 ```
 
 Set the singularity cache environment variable:
 
+::: {.callout-important}
+**TO DO**
+Change path to cache env
+:::
+
+
 ```default
-export NXF_SINGULARITY_CACHEDIR=/config/binaries/singularity/containers_devel/nextflow
+export NXF_SINGULARITY_CACHEDIR=<PATH_TO_CACHE>
 ```
 
 Singularity images downloaded by workflow executions will now be stored in this directory.
@@ -43,64 +59,691 @@ You may want to include these, or other environmental variables, in your `.bashr
 
 Set up a python virtual environment with [nf-core/tools](https://nf-co.re/docs/nf-core-tools) installed:
 
+::: {.callout-important}
+If nf-core is already downloaded, then don't need this step.
+
+**TO DO**
+Change file paths
+:::
+
 ```default
-module load python/3.11.2
+module load python/<VERSION>
 python -m venv /scratch/users/${USER}/nfcorevenv
 
 source /scratch/users/${USER}/nfcorevenv/bin/activate
 
-pip install nf-core==2.14.1
+pip install nf-core==3.2.0
 ```
 
-## **5. Nf-core**
-nf-core is a **community** effort to collect a curated set of **analysis workflows** built using Nextflow.
+## **5.1 Recap: nf-core**
+#### **What is nf-core?**
 
-nf-core provides a standardized set of **best practices**, **guidelines**, and **templates** for building and sharing bioinformatics workflows. These workflows are designed to be **modular**, **scalable**, and **portable**, allowing researchers to easily adapt and execute them using their own data and compute resources.
-
-The community is a diverse group of bioinformaticians, developers, and researchers from around the world who collaborate on **developing** and **maintaining** a growing collection of high-quality workflows. These workflows cover a range of applications, including transcriptomics, proteomics, and metagenomics.
-
-One of the key benefits of nf-core is that it promotes **open development**, **testing**, and **peer review**, ensuring that the workflows are robust, well-documented, and validated against real-world datasets. This helps to increase the reliability and reproducibility of bioinformatics analyses and ultimately enables researchers to accelerate their scientific discoveries.
+nf-core provides a standardised set of **analysis workflows** that are **modular**, **scalable**, and **portable**. These workflows follow **best practices**, and allow researchers from around the world to collaborate on workflow **development** and **maintainence**, all of which are **tested** and **peer reviewed**. Ultimately, this helps increase the reliability and reproducibility of bioinformatics analysis.  
 
 nf-core is published in Nature Biotechnology: [Nat Biotechnol 38, 276–278 (2020). Nature Biotechnology](https://www.nature.com/articles/s41587-020-0439-x)
 
-**Key Features of nf-core workflows**
+Key features of nf-core workflows include: extensive **documentation**, which outlines installation, usage, and expected output files, **stable releases** which ensure reproducibility, **portability** of packaged software that is automatically downloaded using Conda/Singularity/Docker, and **cloud-ready** allowing scalability. 
 
-- **Documentation**
-    - nf-core workflows have extensive documentation covering installation, usage, and description of output files to ensure that you won’t be left in the dark.
+#### **nf-core workflow structure**
+nf-core workflows follow a common template structure. For [`nf-core/rnaseq`](https://github.com/nf-core/rnaseq/tree/master): 
 
-- **Stable Releases**
-    - nf-core workflows use GitHub releases to tag stable versions of the code and software, making workflow runs totally reproducible.
+![](./media/5.0_rnaseq_github.png)
 
-- **Packaged software**
-    - Pipeline dependencies are automatically downloaded and handled using Docker, Singularity, Conda, or other software management tools. There is no need for any software installations.
+The main folders and files we will focus on today: 
 
-- **Portable and reproducible**
-    - nf-core workflows follow best practices to ensure maximum portability and reproducibility. The large community makes the workflows exceptionally well-tested and easy to execute.
+- **Modules** and **subworkflows** are stored as separate `.nf` files
+    - `modules.json`: contains a list of the modules and subworkflows installed in the
+- **Configuration** files are stored as separate `.config` files. 
+    - `conf/base.config`: contain default resource allocations for process groups (ie. `process_high`, etc.)
+    - `nextflow.config`: contain default **workflow** parameters and **software management** profiles
+- A main **workflow** `.nf` file that is used to launch the workflow
+- An analysis workflow file inside `workflows/<pipeline>/main.nf` is used to chain together separate modules/subworkflows
+- A schema file `assets/schema_input.json`, used to specify required values in the **input samplesheet**. This can be used to build sample metadata
+- A schema file `nextflow_schema.json`, used to specify required parameters to the **pipeline**
 
-- **Cloud-ready**
-    - nf-core workflows are tested on AWS
+## **5.2 Pipeline syntax**
 
-## **5.1 Nf-core tools**
-`nf-core-tools` is a python package with helper tools for the nf-core community.
+### **5.2.1 Module file and process structure**
 
-These helper tools can be used for both building and running nf-core workflows.
+In nf-core pipelines, each process is separated into a separate module file. For example, RNASEQ's `fastqc` [module file](https://github.com/nf-core/rnaseq/blob/3.14.0/modules/nf-core/fastqc/main.nf) contains just one process -- `FASTQC`. 
 
-Today we will be focusing on the developer commands to build a workflow using nf-core templates and structures.
-
-Take a look at what is within with `nf-core-tools` suite
+:::{.callout-note collapse="true"}
+## fastqc/main.nf
 
 ```default
-nf-core -h
+process FASTQC {
+    tag "$meta.id"
+    label 'process_medium'
+
+    conda "bioconda::fastqc=0.12.1"
+    container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
+        'https://depot.galaxyproject.org/singularity/fastqc:0.12.1--hdfd78af_0' :
+        'biocontainers/fastqc:0.12.1--hdfd78af_0' }"
+
+    input:
+    tuple val(meta), path(reads)
+
+    output:
+    tuple val(meta), path("*.html"), emit: html
+    tuple val(meta), path("*.zip") , emit: zip
+    path  "versions.yml"           , emit: versions
+
+    when:
+    task.ext.when == null || task.ext.when
+
+    script:
+    def args = task.ext.args ?: ''
+    def prefix = task.ext.prefix ?: "${meta.id}"
+    // Make list of old name and new name pairs to use for renaming in the bash while loop
+    def old_new_pairs = reads instanceof Path || reads.size() == 1 ? [[ reads, "${prefix}.${reads.extension}" ]] : reads.withIndex().collect { entry, index -> [ entry, "${prefix}_${index + 1}.${entry.extension}" ] }
+    def rename_to = old_new_pairs*.join(' ').join(' ')
+    def renamed_files = old_new_pairs.collect{ old_name, new_name -> new_name }.join(' ')
+    """
+    printf "%s %s\\n" $rename_to | while read old_name new_name; do
+        [ -f "\${new_name}" ] || ln -s \$old_name \$new_name
+    done
+
+    fastqc \\
+        $args \\
+        --threads $task.cpus \\
+        $renamed_files
+
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        fastqc: \$( fastqc --version | sed '/FastQC v/!d; s/.*v//' )
+    END_VERSIONS
+    """
+
+    stub:
+    def prefix = task.ext.prefix ?: "${meta.id}"
+    """
+    touch ${prefix}.html
+    touch ${prefix}.zip
+
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        fastqc: \$( fastqc --version | sed '/FastQC v/!d; s/.*v//' )
+    END_VERSIONS
+    """
+}
+```
+
+:::
+
+This process follows the typical structure we have seen previously:
+
+- The process name `FASTQC` is declared after the `process` scope
+- Directives `tag`, `label`, `conda`, and `container` are defined at the start of the process
+- `input` block that defines process inputs and their qualifier
+- `output` block that defines process process outputs and their qualifier
+- `script` block that contains what the process will execute
+- `stub` block for prototyping workflow logic
+
+#### Directives
+
+Previously, we saw that processes were grouped together based on their resource requirements using the `withLabel` function. This function utilises the `label` directive to 'annotate' the process. 
+
+In the `FASTQC` process, the `tag` directive is used to display the sample name when that process is being ran. For example: 
+
+```default
+process FOO {
+  tag "$code"
+
+  input:
+  val code
+
+  script:
+  """
+  echo $code
+  """
+}
+
+workflow {
+    ch_in = Channel.of('alpha', 'gamma', 'omega')
+    FOO(ch_in)
+}
+```
+
+The following will be printed, where the process names contain the `tag` that has been defined:
+```default
+[6e/28919b] Submitted process > FOO (alpha)
+[d2/1c6175] Submitted process > FOO (gamma)
+[1c/3ef220] Submitted process > FOO (omega)
+```
+
+In the `FASTQC` process, the tag has been defined as `$meta.id`, which we will investigate later. 
+
+```default
+    tag "$meta.id"
+    label 'process_medium'
+
+    conda "bioconda::fastqc=0.12.1"
+    container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
+        'https://depot.galaxyproject.org/singularity/fastqc:0.12.1--hdfd78af_0' :
+        'biocontainers/fastqc:0.12.1--hdfd78af_0' }"
+```
+
+The `conda` and `container` directives define the software dependencies that will automatically be created by Nextflow, based on the `profile` specified by the user. In the `FASTQC` process, `conda` contains the name of the channel where a package needs to be downloaded, and `container` defines where the container is hosted.
+
+#### Input 
+
+The input block defines the input channels to a process. It consists of a qualifier (ie. input data type), and a variable name that can be referenced in the process. Based on the qualifier, Nextflow can handle the input differently. 
+
+- `path`: Nextflow will 'stage' the input into the `work` execution directory of the process
+- `val`: the input vale can be accessed by the name
+- `tuple`: group common inputs, each with another qualifier
+
+For `FASTQC`, the input is a `tuple`, where the first element is assigned the variable `meta` that is of data type `val`. The second element in the tuple is set as the variable `reads`, that is of the data type `path`. This means file paths that are provided to this `FASTQC` process will be symbolically linked inside the execution directory, where it can be accessed by within the `script`. 
+
+```default
+    input:
+    tuple val(meta), path(reads)
+
+    output:
+    tuple val(meta), path("*.html"), emit: html
+    tuple val(meta), path("*.zip") , emit: zip
+    path  "versions.yml"           , emit: versions
+```
+
+#### Output 
+
+Similar to `input`, the `output` block allows the output of the process to be specified, along with its accompanying qualifier. Only files that are defined within this `output` block can be saved to the output directory. 
+
+Note that wildcards can be used when defining process outputs. For example, using `path("*.html")` will match for all files with an `.html` extension. 
+
+Additionally, there is an option to `emit` that output with a name that can be referenced to inside the workflow scope. Adding to the previous example:
+
+```default
+process FOO {
+  tag "$code"
+
+  input:
+  val code
+
+  output:
+  path "*.txt"
+
+  script:
+  """
+  echo $code > values.txt
+  """
+}
+
+workflow {
+    ch_in = Channel.of('alpha', 'gamma', 'omega')
+    ch_out = FOO(ch_in)
+}
+```
+The value that is input to the process is now printed into a file `values.txt`. This file is matched using the `*` in the `output` block, and returned with qualifier `path`. Within the `workflow` scope, the output of the `FOO` process is assigned to `ch_out`.
+
+There are many ways to obtain the output of a process within the `workflow` scope. Another way is to provide the inputs to the process without assigning it to a new channel. Any process outputs can then be accessed using the `.out` attribute. 
+
+```default
+workflow {
+    ch_in = Channel.of('alpha', 'gamma', 'omega')
+
+    FOO(ch_in)
+    ch_out = FOO.out
+}
+```
+
+This becomes useful if there are multiple outputs in a process. We have created an additional output file `edited_values.txt` that will be output by `FOO`: 
+
+```default
+process FOO {
+  tag "$code"
+
+  input:
+  val code
+
+  output:
+  path "values.txt"
+  path "edited_values.txt"
+
+  script:
+  """
+  echo $code > values.txt
+  echo edited_$code > edited_values.txt
+  """
+}
+
+workflow {
+    ch_in = Channel.of('alpha', 'gamma', 'omega')
+
+    FOO(ch_in)
+    ch_out = FOO.out[0]
+}
+```
+
+Inside the `workflow` scope, the different outputs can be accessed by indexing the `.out` attribute. Alternatively, `emit` can be used:
+
+```default
+process FOO {
+  tag "$code"
+
+  input:
+  val code
+
+  output:
+  path "values.txt", emit: original
+  path "edited_values.txt", emit: edited
+
+  script:
+  """
+  echo $code > values.txt
+  echo edited_$code > edited_values.txt
+  """
+}
+
+workflow {
+    ch_in = Channel.of('alpha', 'gamma', 'omega')
+
+    FOO(ch_in)
+    ch_out = FOO.out.original
+}
+```
+The original `values.txt` has been emitted as `original`, which can be accessed within the `.out` attribute inside the `workflow` scope.
+
+
+#### Script
+
+The `script` block defines the commands that is executed by the process. By default, it is executed as a Bash script, and can be any command or script normally executed on the command line. Within this block, **Bash** variables can be referenced to using an escaped dollar sign, ie. `\$`. **Nextflow** variables can be referenced to using the singular dollar sign, ie. `$`. 
+
+Let's take a look at the `script` block for RNASEQ's `FASTQC` process: 
+
+```default
+script:
+    def args = task.ext.args ?: ''
+    def prefix = task.ext.prefix ?: "${meta.id}"
+    // Make list of old name and new name pairs to use for renaming in the bash while loop
+    def old_new_pairs = reads instanceof Path || reads.size() == 1 ? [[ reads, "${prefix}.${reads.extension}" ]] : reads.withIndex().collect { entry, index -> [ entry, "${prefix}_${index + 1}.${entry.extension}" ] }
+    def rename_to = old_new_pairs*.join(' ').join(' ')
+    def renamed_files = old_new_pairs.collect{ old_name, new_name -> new_name }.join(' ')
+    """
+    printf "%s %s\\n" $rename_to | while read old_name new_name; do
+        [ -f "\${new_name}" ] || ln -s \$old_name \$new_name
+    done
+
+    fastqc \\
+        $args \\
+        --threads $task.cpus \\
+        $renamed_files
+
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        fastqc: \$( fastqc --version | sed '/FastQC v/!d; s/.*v//' )
+    END_VERSIONS
+    """
+```
+
+The script starts by defnining local variables that can be accessed within the execution section (encapsulated by three double-quotes). These definitions are written in Groovy, which we will investigate this later in the session. Notice that 
+
+- **Nextflow** variables, such as `args`, are accessed within the quoted section of the script using `$`
+- A singular back-slash in Bash is also escaped, resulting in `\\`
+- A `versions.yml` file is created, which tracks the tool versions used in the pipeline
+
+### **5.2.2 Importing modules into a Nextflow script**
+
+Since processes are stored as separate Nextflow files, they need to be imported to a workflow script before they can be called inside a `workflow` scope. 
+
+Within the `fastq_fastqc_umitools_fastp` [subworkflow file](https://github.com/nf-core/rnaseq/blob/b96a75361a4f1d49aa969a2b1c68e3e607de06e8/subworkflows/nf-core/fastq_fastqc_umitools_fastp/main.nf#L5), the `FASTQC` process is imported using the following command:
+
+```default
+include { FASTQC as FASTQC_RAW  } from '../../../modules/nf-core/fastqc/main'
+include { FASTQC as FASTQC_TRIM } from '../../../modules/nf-core/fastqc/main'
+```
+
+Notice that the `FASTQC` nodule is included twice, once under the alias `FASTQC_RAW`, and the other time under the alias `FASTQC_TRIM`. In Nextflow, once a process has been used once, it cannot be re-used. Therefore, if we wish to re-use the same process, it has to be **separately** included under a new alias.
+
+Also notice that while processes are stored inside a `main.nf` script, the Nextflow file extension `.nf` does not need to be added when we `include` the module.
+
+Finally, the **relative** path to the module is being used. This means the path may be different, depending on the origin of the `include`.
+
+```default
+rnaseq
+├── modules
+│   └── nf-core
+│       ├── fastqc
+│       │   ├── main.nf
+│       │   └── ...
+│       └─ ...
+├── subworkflows
+│   └── nf-core
+│       ├── fastq_fastqc_umitools_fastp
+│       │   ├── main.nf
+│       │   └── ...
+│       └─ ...
+├── workflows
+│   └── rnaseq
+│       ├── main.nf
+│       └─ ...
+└-─ ...
+```
+The subworkflow file is located inside `subworkflows/nf-cor/fastq_fastqc_umitools_fastp/main.nf`. Therefore, we need to go back **three** directory levels before reaching the `modules` folder. Therefore, the relative path will be:
+
+```default
+'../../../modules/nf-core/fastqc/main'
+```
+
+If we wish to include the `FASTQC` module from inside `workflows/rnaseq/main.nf`, we only need to go back **two** directory levels before reaching the `modules` folder. Therefore, the relative path will be:
+
+```default
+'../../modules/nf-core/fastqc/main'
+```
+
+### **5.2.3 Workflow scopes**
+
+In Nextflow, a `workflow` can be used to define what processes are executed, and the flow of data from one process to another. 
+
+```default
+workflow <NAME> {
+    take:
+    ...
+
+    main:
+    ...
+
+    emit:
+    ...
+}
+```
+
+A workflow can be defined with a name, which allows it to be called and imported by another script or workflow. Only **named** workflows can be imported and called by other workflows. The main sections of the named workflow are:
+
+- `take`: declares inputs to the workflow
+- `main`: defines data flow logic
+- `emit`: declares the outputs of the workflow
+
+Consider the `fastq_fastqc_umitools_fastp` [subworkflow](https://github.com/nf-core/rnaseq/blob/b96a75361a4f1d49aa969a2b1c68e3e607de06e8/subworkflows/nf-core/fastq_fastqc_umitools_fastp/main.nf#L36). 
+
+:::{.callout-note collapse="true"}
+## subworkflows/nf-core/fastq_fastqc_umitools_fastp/main.nf
+
+```default
+//
+// Read QC, UMI extraction and trimming
+//
+
+include { FASTQC as FASTQC_RAW  } from '../../../modules/nf-core/fastqc/main'
+include { FASTQC as FASTQC_TRIM } from '../../../modules/nf-core/fastqc/main'
+include { UMITOOLS_EXTRACT      } from '../../../modules/nf-core/umitools/extract/main'
+include { FASTP                 } from '../../../modules/nf-core/fastp/main'
+
+//
+// Function that parses fastp json output file to get total number of reads after trimming
+//
+import groovy.json.JsonSlurper
+
+def getFastpReadsAfterFiltering(json_file, min_num_reads) {
+
+    if ( workflow.stubRun ) { return min_num_reads }
+
+    def Map json = (Map) new JsonSlurper().parseText(json_file.text).get('summary')
+    return json['after_filtering']['total_reads'].toLong()
+}
+
+def getFastpAdapterSequence(json_file){
+
+    if ( workflow.stubRun ) { return "" }
+
+    def Map json = (Map) new JsonSlurper().parseText(json_file.text)
+    try{
+        adapter = json['adapter_cutting']['read1_adapter_sequence']
+    } catch(Exception ex){
+        adapter = ""
+    }
+    return adapter
+}
+
+workflow FASTQ_FASTQC_UMITOOLS_FASTP {
+    take:
+    reads             // channel: [ val(meta), [ reads ] ]
+    skip_fastqc       // boolean: true/false
+    with_umi          // boolean: true/false
+    skip_umi_extract  // boolean: true/false
+    umi_discard_read  // integer: 0, 1 or 2
+    skip_trimming     // boolean: true/false
+    adapter_fasta     // file: adapter.fasta
+    save_trimmed_fail // boolean: true/false
+    save_merged       // boolean: true/false
+    min_trimmed_reads // integer: > 0
+
+    main:
+    ch_versions = Channel.empty()
+    fastqc_raw_html = Channel.empty()
+    fastqc_raw_zip  = Channel.empty()
+    if (!skip_fastqc) {
+        FASTQC_RAW (
+            reads
+        )
+        fastqc_raw_html = FASTQC_RAW.out.html
+        fastqc_raw_zip  = FASTQC_RAW.out.zip
+        ch_versions     = ch_versions.mix(FASTQC_RAW.out.versions.first())
+    }
+
+    umi_reads = reads
+    umi_log   = Channel.empty()
+    if (with_umi && !skip_umi_extract) {
+        UMITOOLS_EXTRACT (
+            reads
+        )
+        umi_reads   = UMITOOLS_EXTRACT.out.reads
+        umi_log     = UMITOOLS_EXTRACT.out.log
+        ch_versions = ch_versions.mix(UMITOOLS_EXTRACT.out.versions.first())
+
+        // Discard R1 / R2 if required
+        if (umi_discard_read in [1,2]) {
+            UMITOOLS_EXTRACT
+                .out
+                .reads
+                .map {
+                    meta, reads ->
+                        meta.single_end ? [ meta, reads ] : [ meta + [single_end: true], reads[umi_discard_read % 2] ]
+                }
+                .set { umi_reads }
+        }
+    }
+
+    trim_reads        = umi_reads
+    trim_json         = Channel.empty()
+    trim_html         = Channel.empty()
+    trim_log          = Channel.empty()
+    trim_reads_fail   = Channel.empty()
+    trim_reads_merged = Channel.empty()
+    fastqc_trim_html  = Channel.empty()
+    fastqc_trim_zip   = Channel.empty()
+    trim_read_count   = Channel.empty()
+    adapter_seq       = Channel.empty()
+
+    if (!skip_trimming) {
+        FASTP (
+            umi_reads,
+            adapter_fasta,
+            false, // don't want to set discard_trimmed_pass, else there will be no reads output
+            save_trimmed_fail,
+            save_merged
+        )
+        trim_json         = FASTP.out.json
+        trim_html         = FASTP.out.html
+        trim_log          = FASTP.out.log
+        trim_reads_fail   = FASTP.out.reads_fail
+        trim_reads_merged = FASTP.out.reads_merged
+        ch_versions       = ch_versions.mix(FASTP.out.versions.first())
+
+        //
+        // Filter FastQ files based on minimum trimmed read count after adapter trimming
+        //
+        FASTP
+            .out
+            .reads
+            .join(trim_json)
+            .map { meta, reads, json -> [ meta, reads, getFastpReadsAfterFiltering(json, min_trimmed_reads.toLong()) ] }
+            .set { ch_num_trimmed_reads }
+
+        ch_num_trimmed_reads
+            .filter { meta, reads, num_reads -> num_reads >= min_trimmed_reads.toLong() }
+            .map { meta, reads, num_reads -> [ meta, reads ] }
+            .set { trim_reads }
+
+        ch_num_trimmed_reads
+            .map { meta, reads, num_reads -> [ meta, num_reads ] }
+            .set { trim_read_count }
+
+        trim_json
+            .map { meta, json -> [meta, getFastpAdapterSequence(json)] }
+            .set { adapter_seq }
+
+        if (!skip_fastqc) {
+            FASTQC_TRIM (
+                trim_reads
+            )
+            fastqc_trim_html = FASTQC_TRIM.out.html
+            fastqc_trim_zip  = FASTQC_TRIM.out.zip
+            ch_versions      = ch_versions.mix(FASTQC_TRIM.out.versions.first())
+        }
+    }
+
+    emit:
+    reads = trim_reads // channel: [ val(meta), [ reads ] ]
+
+    fastqc_raw_html    // channel: [ val(meta), [ html ] ]
+    fastqc_raw_zip     // channel: [ val(meta), [ zip ] ]
+
+    umi_log            // channel: [ val(meta), [ log ] ]
+    adapter_seq        // channel: [ val(meta), [ adapter_seq] ]
+
+    trim_json          // channel: [ val(meta), [ json ] ]
+    trim_html          // channel: [ val(meta), [ html ] ]
+    trim_log           // channel: [ val(meta), [ log ] ]
+    trim_reads_fail    // channel: [ val(meta), [ fastq.gz ] ]
+    trim_reads_merged  // channel: [ val(meta), [ fastq.gz ] ]
+    trim_read_count    // channel: [ val(meta), val(count) ]
+
+    fastqc_trim_html   // channel: [ val(meta), [ html ] ]
+    fastqc_trim_zip    // channel: [ val(meta), [ zip ] ]
+
+    versions = ch_versions // channel: [ versions.yml ]
+}
+```
+:::
+
+The subworkflow script begins by including any modules used within script. Within the `workflow` defintion, the name is defined as `FASTQ_FASTQC_UMITOOLS_FASTP`. 
+
+The following are defined as the workflow inputs:
+
+```default
+    take:
+    reads             // channel: [ val(meta), [ reads ] ]
+    skip_fastqc       // boolean: true/false
+    with_umi          // boolean: true/false
+    skip_umi_extract  // boolean: true/false
+    umi_discard_read  // integer: 0, 1 or 2
+    skip_trimming     // boolean: true/false
+    adapter_fasta     // file: adapter.fasta
+    save_trimmed_fail // boolean: true/false
+    save_merged       // boolean: true/false
+    min_trimmed_reads // integer: > 0
+```
+
+These inputs can then be used within the `main` block of the workflow. At the start of the block, some empty channels are created. Next, the `skip_fastqc` input is used to determine if the `FASTQC` process will be executed. If the parameter is `True`, then `FASTQC_RAW` will be executed on the input `reads` that are specified to the workflow. As we saw previously, the `.out` attribute can be used to specific output file that is emitted by the process. 
+
+```default
+    main:
+    ch_versions = Channel.empty()
+    fastqc_raw_html = Channel.empty()
+    fastqc_raw_zip  = Channel.empty()
+    if (!skip_fastqc) {
+        FASTQC_RAW (
+            reads
+        )
+        fastqc_raw_html = FASTQC_RAW.out.html
+        fastqc_raw_zip  = FASTQC_RAW.out.zip
+        ch_versions     = ch_versions.mix(FASTQC_RAW.out.versions.first())
+    }
+
+    ...
+```
+
+In the workflow's `emit` block, pipeline outputs are defined. 
+
+```default
+ emit:
+    reads = trim_reads // channel: [ val(meta), [ reads ] ]
+
+    fastqc_raw_html    // channel: [ val(meta), [ html ] ]
+    fastqc_raw_zip     // channel: [ val(meta), [ zip ] ]
+
+    umi_log            // channel: [ val(meta), [ log ] ]
+    adapter_seq        // channel: [ val(meta), [ adapter_seq] ]
+
+    trim_json          // channel: [ val(meta), [ json ] ]
+    trim_html          // channel: [ val(meta), [ html ] ]
+    trim_log           // channel: [ val(meta), [ log ] ]
+    trim_reads_fail    // channel: [ val(meta), [ fastq.gz ] ]
+    trim_reads_merged  // channel: [ val(meta), [ fastq.gz ] ]
+    trim_read_count    // channel: [ val(meta), val(count) ]
+
+    fastqc_trim_html   // channel: [ val(meta), [ html ] ]
+    fastqc_trim_zip    // channel: [ val(meta), [ zip ] ]
+
+    versions = ch_versions // channel: [ versions.yml ]
+```
+
+To access the outputs of a **named** workflow, let's first check the [fastq_qc_trim_filter_setstrandedness](https://github.com/nf-core/rnaseq/blob/b96a75361a4f1d49aa969a2b1c68e3e607de06e8/subworkflows/nf-core/fastq_qc_trim_filter_setstrandedness/main.nf#L14) subworkflow. Since subworkflows are sparated into separate `.nf` files, they also have to be included inside the Nextflow script.
+
+```default
+include { FASTQ_FASTQC_UMITOOLS_FASTP        } from '../fastq_fastqc_umitools_fastp'
+```
+
+Similar to a module, the [included subworkflow](https://github.com/nf-core/rnaseq/blob/b96a75361a4f1d49aa969a2b1c68e3e607de06e8/subworkflows/nf-core/fastq_qc_trim_filter_setstrandedness/main.nf#L186) can now be used within the `main` section of a `workflow`. 
+
+```default
+    //
+    // SUBWORKFLOW: Read QC, extract UMI and trim adapters with fastp
+    //
+    if (trimmer == 'fastp') {
+        FASTQ_FASTQC_UMITOOLS_FASTP (
+            ch_filtered_reads,
+            skip_fastqc,
+            with_umi,
+            skip_umi_extract,
+            umi_discard_read,
+            skip_trimming,
+            [],
+            save_trimmed,
+            fastp_merge,
+            min_trimmed_reads
+        )
+        ch_filtered_reads      = FASTQ_FASTQC_UMITOOLS_FASTP.out.reads
+        ch_trim_read_count     = FASTQ_FASTQC_UMITOOLS_FASTP.out.trim_read_count
+
+        ch_versions = ch_versions.mix(FASTQ_FASTQC_UMITOOLS_FASTP.out.versions)
+        ch_multiqc_files = FASTQ_FASTQC_UMITOOLS_FASTP.out.fastqc_raw_zip
+            .mix(FASTQ_FASTQC_UMITOOLS_FASTP.out.fastqc_trim_zip)
+            .mix(FASTQ_FASTQC_UMITOOLS_FASTP.out.trim_json)
+            .mix(ch_multiqc_files)
+    }
+```
+
+Similar to how inputs to processes can be specified, inputs to workflows are specified positionally. To access the outputs of the `FASTQ_FASTQC_UMITOOLS_FASTP` subworkflow, the `.out` attribute can be used, along with the desired output declared in `emit`. 
+
+## **5.3 `nf-core tools`**
+`nf-core` is a python package that contain tools for both building and running workflows.
+
+Take a look at what is available within with the `nf-core/tools` suite
+
+```default
+nf-core --help
 ```
 
 ```default
                                           ,--./,-.
-          ___     __   __   __   ___     /,-._.--~\
+          ___     __   __   __   ___     /,-._.--~\ 
     |\ | |__  __ /  ` /  \ |__) |__         }  {
     | \| |       \__, \__/ |  \ |___     \`-._,-`-,
                                           `._,._,'
 
-    nf-core/tools version 2.14.1 - https://nf-co.re
+    nf-core/tools version 3.2.0 - https://nf-co.re
 
 
                                                                                                     
@@ -109,6 +752,12 @@ nf-core -h
  nf-core/tools provides a set of helper tools for use with nf-core Nextflow pipelines.              
  It is designed for both end-users running pipelines and also developers creating new pipelines.    
                                                                                                     
+╭─ Commands ───────────────────────────────────────────────────────────────────────────────────────╮
+│ pipelines         Commands to manage nf-core pipelines.                                          │
+│ modules           Commands to manage Nextflow DSL2 modules (tool wrappers).                      │
+│ subworkflows      Commands to manage Nextflow DSL2 subworkflows (tool wrappers).                 │
+│ interface         Launch the nf-core interface                                                   │
+╰──────────────────────────────────────────────────────────────────────────────────────────────────╯
 ╭─ Options ────────────────────────────────────────────────────────────────────────────────────────╮
 │ --version                        Show the version and exit.                                      │
 │ --verbose        -v              Print verbose output to the console.                            │
@@ -116,919 +765,572 @@ nf-core -h
 │ --log-file       -l  <filename>  Save a verbose log to a file.                                   │
 │ --help           -h              Show this message and exit.                                     │
 ╰──────────────────────────────────────────────────────────────────────────────────────────────────╯
-╭─ Commands for users ─────────────────────────────────────────────────────────────────────────────╮
+```
+
+Within `nf-core`, the commands available are `pipelines`, `modules`, `subworkflows`, and `interface`. Today we will be using `pipelines` and `modules` to create our own pipeline. 
+
+```default
+nf-core pipelines
+```
+
+```default
+
+
+                                          ,--./,-.
+          ___     __   __   __   ___     /,-._.--~\ 
+    |\ | |__  __ /  ` /  \ |__) |__         }  {
+    | \| |       \__, \__/ |  \ |___     \`-._,-`-,
+                                          `._,._,'
+
+    nf-core/tools version 3.2.0 - https://nf-co.re
+
+
+                                                                                                    
+ Usage: nf-core pipelines [OPTIONS] COMMAND [ARGS]...                                               
+                                                                                                    
+ Commands to manage nf-core pipelines.                                                              
+                                                                                                    
+╭─ For users ──────────────────────────────────────────────────────────────────────────────────────╮
 │ list                  List available nf-core pipelines with local info.                          │
 │ launch                Launch a pipeline using a web GUI or command line prompts.                 │
-│ create-params-file    Build a parameter file for a pipeline.                                     │
 │ download              Download a pipeline, nf-core/configs and pipeline singularity images.      │
-│ licences              List software licences for a given workflow (DSL1 only).                   │
-│ tui                   Open Textual TUI.                                                          │
+│ create-params-file    Build a parameter file for a pipeline.                                     │
 ╰──────────────────────────────────────────────────────────────────────────────────────────────────╯
-╭─ Commands for developers ────────────────────────────────────────────────────────────────────────╮
-│ create            Create a new pipeline using the nf-core template.                              │
-│ lint              Check pipeline code against nf-core guidelines.                                │
-│ modules           Commands to manage Nextflow DSL2 modules (tool wrappers).                      │
-│ subworkflows      Commands to manage Nextflow DSL2 subworkflows (tool wrappers).                 │
-│ schema            Suite of tools for developers to manage pipeline schema.                       │
-│ create-logo       Generate a logo with the nf-core logo template.                                │
-│ bump-version      Update nf-core pipeline version number.                                        │
-│ sync              Sync a pipeline TEMPLATE branch with the nf-core template.                     │
+╭─ For developers ─────────────────────────────────────────────────────────────────────────────────╮
+│ create         Create a new pipeline using the nf-core template.                                 │
+│ lint           Check pipeline code against nf-core guidelines.                                   │
+│ bump-version   Update nf-core pipeline version number with `nf-core pipelines bump-version`.     │
+│ sync           Sync a pipeline TEMPLATE branch with the nf-core template.                        │
+│ schema         Suite of tools for developers to manage pipeline schema.                          │
+│ rocrate        Make an Research Object Crate                                                     │
+│ create-logo    Generate a logo with the nf-core logo template.                                   │
+╰──────────────────────────────────────────────────────────────────────────────────────────────────╯
+╭─ Options ────────────────────────────────────────────────────────────────────────────────────────╮
+│ --help  -h    Show this message and exit.                                                        │
 ╰──────────────────────────────────────────────────────────────────────────────────────────────────╯
 ```
 
-Today we will be predominately focusing on most of the tools for developers.
+For users who wish to run existing nf-core pipelines, the commands `list`, `launch`, `download`, and `create-params-file` are available. To build a workflow following the standardised nf-core template structure, `developer` tools can be used. We will focus on the developer commands.
 
-## **5.2 Nf-core Pipeline**
-Let's review the structure of the [nf-core/rnaseq](https://github.com/nf-core/rnaseq) pipeline.
+## **5.4 `nf-core pipelines create`**
 
-Almost all of the structure provided here is from the nf-core templates.
-As we briefly covered last week in [Developing Modularised Workflows](./4.1_modules.html), it is good practice to separate your workflow from subworkflows and modules. As this allows you to modularise your workflows and reuse modules.
-
-Nf-core assists in enforcing this structure with the subfolders:
-
-- `workflows` - contains the main workflow
-- `subworkflows` - contains subworkflows either as written by the nf-core community or self-written
-- `modules` - contains modules either as written by the nf-core community or self-written
-
-In our **Introduction to Nextflow and running nf-core workflows** workshop in [Customising & running nf-core pipelines](./2.1_customise_and_run.html), we briefly touched on configuration files in the `conf/` folder and `nextflow.config`.
-
-Today we will be working on files in these locations and expanding our use of the nf-core template to include:
-
-- files in the `assets` folder
-- `nextflow_schema.json`
-- 
-
-### **5.2.1 nf-core create**
-
-The `create` subcommand makes a new pipeline using the nf-core base template. With a given pipeline name, description and author, it makes a starter pipeline which follows nf-core best practices.
-
-After creating the files, the command initialises the folder as a git repository and makes an initial commit. This first “vanilla” commit which is identical to the output from the templating tool is important, as it allows us to keep your pipeline in sync with the base template in the future. See the [nf-core syncing docs](https://nf-co.re/developers/sync) for more information.
-
-Let's set up the nf-core template for today's workshop:
+Let's start by creating a pipeline:
 
 ```default
-nf-core create
+nf-core pipelines create
 ```
 
-As we progress through the interactive prompts, we will use the following values below:
-![](./media/5.2.1_nf_core_create_interactive.png)
+The pipeline we will be creating is a custom rnaseq pipeline `customrnaseq`. Navigate through the interactive window that is launched on the terminal to create the template. 
 
-**Remember to swap out the `Author` name with your own!**
+1. Select **`nf-core`** as the pipeline type 
 
-The creates a pipeline  called `myrnaseq` in the directory `pmcc-myrnaseq` (`<prefix>-<name>`) with `mmyeung` as the author. If selected exclude the following:
+2. Enter a workflow name (consisting of *only* letters, and no special characters or numbers), description, and author name 
 
-- `github`: removed all files required for GitHub hosting of the pipeline. Specifically, the `.github` folder and `.gitignore` file.
-- `ci`: removes the GitHub continuous integration tests from the pipeline. Specifically, the `.github/workflows/` folder.
-- `github_badges`: removes GitHub badges from the `README.md` file.
-- `igenomes`: removes pipeline options related to iGenomes. Including the `conf/igenomes.config` file and all references to it.
-- `nf_core_configs`: excludes `nf_core/configs` repository options, which make multiple config profiles for various institutional clusters available.
+3. Leave all template features (use reference genomes, use multiqc, use fastqc, use nf-schema) **on** as default 
 
-To run the pipeline creation silently (i.e. without any prompts) with the nf-core template, you can use the `--plain` option.
+4. Specify the path to where your template will be generated 
 
-::: callout-tip
-### **Author name**{.unlisted}
-Typically, we would use your github username as the value here, this allows an extra layer of traceability.
-:::
+5. Today we won't be pushing the pipeline to a GitHub repository, so we will be selecting **Finish without creating a repo** 
 
-::: callout-tip
-### **Customised pipeline prefix**{.unlisted}
-Remember we are currently only making the most of the nf-core templates and **not contributing** back to `nf-core`.
-As such, we should not use the `nf-core` prefix to our pipeline.
-:::
+The created template will be stored in a folder with our specified pipeline name, prefixed with `nf-core`. 
 
-::: callout-tip
-### **Skipped templates**{.unlisted}
-Note that the highlighted values under `Skip template areas?` are the sections that will be skipped.
-As this is a test pipeline we are **skipping** the set up of github CI and badges
-:::
+This newly created pipeline folder contains the same strucure as `nf-core/rnaseq`. Notice that: 
 
-As we have requested `GitHub hosting`, on completion of the command, you will note there are suggested github commands included in the output. Use these commands to push the commits from your computer. You can then continue to edit, commit and push normally as you build your pipeline.
+- Configuration files are contained within the `conf` directory
+- Modules and subworkflows are contained as separate `.nf` scripts inside their own directories
+- The main workflow file `./nf-core-customrnaseq/main.nf` can be used to launch the pipeline. 
+- There is also a workflow script `./nf-core-customrnaseq/workflows/customrnaseq.nf`, which we will add modules and subworkflows to. 
 
-![](./media/5.2.1_nf_core_create_github.png)
-
-
-### **nf-core template**
-Let's see what has been minimally provided by `nf-core create`
+:::{.callout-note collapse="true"}
+## Pipeline template structure
 
 ```default
-ll pmcc-myrnaseq/
+./nf-core-customrnaseq/
+├── assets
+│   ├── adaptivecard.json
+│   ├── email_template.html
+│   ├── email_template.txt
+│   ├── methods_description_template.yml
+│   ├── multiqc_config.yml
+│   ├── nf-core-customrnaseq_logo_light.png
+│   ├── samplesheet.csv
+│   ├── schema_input.json
+│   ├── sendmail_template.txt
+│   └── slackreport.json
+├── CHANGELOG.md
+├── CITATIONS.md
+├── CODE_OF_CONDUCT.md
+├── conf
+│   ├── base.config
+│   ├── igenomes.config
+│   ├── igenomes_ignored.config
+│   ├── modules.config
+│   ├── test.config
+│   └── test_full.config
+├── docs
+│   ├── images
+│   │   ├── nf-core-customrnaseq_logo_dark.png
+│   │   └── nf-core-customrnaseq_logo_light.png
+│   ├── output.md
+│   ├── README.md
+│   └── usage.md
+├── LICENSE
+├── main.nf
+├── modules
+│   └── nf-core
+│       ├── fastqc
+│       │   ├── environment.yml
+│       │   ├── main.nf
+│       │   ├── meta.yml
+│       │   └── tests
+│       │       ├── main.nf.test
+│       │       └── main.nf.test.snap
+│       └── multiqc
+│           ├── environment.yml
+│           ├── main.nf
+│           ├── meta.yml
+│           └── tests
+│               ├── main.nf.test
+│               ├── main.nf.test.snap
+│               ├── nextflow.config
+│               └── tags.yml
+├── modules.json
+├── nextflow.config
+├── nextflow_schema.json
+├── README.md
+├── ro-crate-metadata.json
+├── subworkflows
+│   ├── local
+│   │   └── utils_nfcore_customrnaseq_pipeline
+│   │       └── main.nf
+│   └── nf-core
+│       ├── utils_nextflow_pipeline
+│       │   ├── main.nf
+│       │   ├── meta.yml
+│       │   └── tests
+│       │       ├── main.function.nf.test
+│       │       ├── main.function.nf.test.snap
+│       │       ├── main.workflow.nf.test
+│       │       ├── nextflow.config
+│       │       └── tags.yml
+│       ├── utils_nfcore_pipeline
+│       │   ├── main.nf
+│       │   ├── meta.yml
+│       │   └── tests
+│       │       ├── main.function.nf.test
+│       │       ├── main.function.nf.test.snap
+│       │       ├── main.workflow.nf.test
+│       │       ├── main.workflow.nf.test.snap
+│       │       ├── nextflow.config
+│       │       └── tags.yml
+│       └── utils_nfschema_plugin
+│           ├── main.nf
+│           ├── meta.yml
+│           └── tests
+│               ├── main.nf.test
+│               ├── nextflow.config
+│               └── nextflow_schema.json
+├── tower.yml
+└── workflows
+    └── customrnaseq.nf
 ```
 
-```
-total 47
-drwxrwxr-x 2 myeung myeung  4096 Jun 11 15:00 assets
--rw-rw-r-- 1 myeung myeung   372 Jun 11 15:00 CHANGELOG.md
--rw-rw-r-- 1 myeung myeung  2729 Jun 11 15:00 CITATIONS.md
-drwxrwxr-x 2 myeung myeung  4096 Jun 11 15:00 conf
-drwxrwxr-x 3 myeung myeung  4096 Jun 11 15:00 docs
--rw-rw-r-- 1 myeung myeung  1060 Jun 11 15:00 LICENSE
--rw-rw-r-- 1 myeung myeung  3108 Jun 11 15:00 main.nf
-drwxrwxr-x 3 myeung myeung  4096 Jun 11 15:00 modules
--rw-rw-r-- 1 myeung myeung  1561 Jun 11 15:00 modules.json
--rw-rw-r-- 1 myeung myeung  9982 Jun 11 15:00 nextflow.config
--rw-rw-r-- 1 myeung myeung 16657 Jun 11 15:00 nextflow_schema.json
--rw-rw-r-- 1 myeung myeung  3843 Jun 11 15:00 README.md
-drwxrwxr-x 4 myeung myeung  4096 Jun 11 15:00 subworkflows
--rw-rw-r-- 1 myeung myeung   165 Jun 11 15:00 tower.yml
-drwxrwxr-x 2 myeung myeung  4096 Jun 11 15:00 workflows
-```
-
-As you take look through the files created you will see many comments through the files starting with `// TODO nf-core`.
-These are pointers from nf-core towards areas of the pipeline that you may be intersted in changing.
-
-They are also the "key word" used by the `nf-core lint`.
-
-#### **Alternative setups for `nf-core create`**
-Aside from the interactive setup we have just completed for `nf-core create`, there are two alternative methods.
-
-1. Provide the option using the optional flags from `nf-core create`
-2. Provide a `template.yaml` via the `--template-yaml` option
-
-::: callout-tip
-### **Challenge**{.unlisted}
-Create a second pipeline template using the optional flags with the `name` "myworkflow", provide a `description`, `author` name and set the `version` to "0.0.1"
-
-What options are still you still prompted for?
 :::
 
-::: {.callout-caution collapse="true"}
-### Solution{.unlisted}
+### **5.4.1 Workflow script `main.nf`**
 
-Run the following: 
+Let's take a look inside `./nf-core-customrnaseq/main.nf`:
+
+- The main workflow, `customrnaseq`, is included as a workflow
+
+    ```default
+    /*
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        IMPORT FUNCTIONS / MODULES / SUBWORKFLOWS / WORKFLOWS
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    */
+
+    include { CUSTOMRNASEQ  } from './workflows/customrnaseq'
+    include { PIPELINE_INITIALISATION } from './subworkflows/local/utils_nfcore_customrnaseq_pipeline'
+    include { PIPELINE_COMPLETION     } from './subworkflows/local/utils_nfcore_customrnaseq_pipeline'
+    include { getGenomeAttribute      } from './subworkflows/local/utils_nfcore_customrnaseq_pipeline'
+
+    /*
+    ```
+- By default, pipeline initialisation and completion subworkflows are included to log nextflow version, pipeline version, validate parameters, and summarise pipeline parameters. 
+
+    - `PIPELINE_INITIALISATION` will also parse the `input` samplesheet to create a channel that can be input to modules/subworkflows
+
+    ```default
+    ./nf-core-customrnaseq/subworkflows/local/utils_nfcore_customrnaseq_pipeline/main.nf
+    ```
+
+:::{.callout-note collapse="true"}
+## PIPELINE_INITIALISATION
+
 ```default
-nf-core create --name myworkflow --description "my workflow test" --author "@mmyeung" --version "0.0.1"
-```
+workflow PIPELINE_INITIALISATION {
 
-Note that you are still prompted for any additional customisations such as the pipeline prefix and steps to skip
+take:
+version           // boolean: Display version and exit
+validate_params   // boolean: Boolean whether to validate parameters against the schema at runtime
+monochrome_logs   // boolean: Do not use coloured log outputs
+nextflow_cli_args //   array: List of positional nextflow CLI args
+outdir            //  string: The output directory where the results will be saved
+input             //  string: Path to input samplesheet
+    
+main:
+
+// ...
+
+//
+// Create channel from input file provided through params.input
+//
+
+Channel
+    .fromList(samplesheetToList(params.input, "${projectDir}/assets/schema_input.json"))
+    .map {
+        meta, fastq_1, fastq_2 ->
+            if (!fastq_2) {
+                return [ meta.id, meta + [ single_end:true ], [ fastq_1 ] ]
+            } else {
+                return [ meta.id, meta + [ single_end:false ], [ fastq_1, fastq_2 ] ]
+            }
+    }
+    .groupTuple()
+    .map { samplesheet ->
+        validateInputSamplesheet(samplesheet)
+    }
+    .map {
+        meta, fastqs ->
+            return [ meta, fastqs.flatten() ]
+    }
+    .set { ch_samplesheet }
+
+emit:
+samplesheet = ch_samplesheet
+versions    = ch_versions
+}
+```
 :::
 
-::: callout-tip
-### **Advanced Challange**{.unlisted}
-Create another pipeline template using a yaml file called `mytemplate.yaml`
+- A new workflow block `NFCORE_CUSTOMRNASEQ` has been created to launch the main analysis workflow
 
-*Hint: the key values in the yaml should be `name`, `description`, `author`, `prefix` and `skip`*
+    ```default
+    //
+    // WORKFLOW: Run main analysis pipeline depending on type of input
+    //
+    workflow NFCORE_CUSTOMRNASEQ {
 
-Set the pipeline to skip `ci`, `igenomes` and `nf_core_configs`
-:::
+        take:
+        samplesheet // channel: samplesheet read in from --input
 
-::: {.callout-caution collapse="true"}
-### Solution{.unlisted}
+        main:
 
-Run the following: 
-```default
-vim mytemplate.yaml
-```
-Values in `mytemplate.yaml`
-```default
-name: coolpipe
-description: A cool pipeline
-author: me
-prefix: myorg
-skip:
-  - ci
-  - igenomes
-  - nf_core_configs
-```
+        //
+        // WORKFLOW: Run pipeline
+        //
+        CUSTOMRNASEQ (
+            samplesheet
+        )
+        emit:
+        multiqc_report = CUSTOMRNASEQ.out.multiqc_report // channel: /path/to/multiqc_report.html
+    }
+    ```
+- The main workflow calls the initialisation pipeline, inputs the channel created in `PIPELINE_COMPLETION` to the new workflow block `NFCORE_CUSTOMRNASEQ` (which launches the analysis workflow), then runs `PIPELINE_COMPLETION`
 
-```default
-nf-core create --template-yaml mytemplate.yaml
-```
-:::
-
-## **5.3 Test Profile**
-nf-core tries to encourage software engineering concepts such as minimal test sets, this can be set up using the `conf/test.config` and `conf/test_full.config`
-
-For the duration of this workshop we will be making use of the `conf/test.config`, to test our pipeline.
-
-Let's take a look at what is currently in the `conf/test.config`.
-
-```default
-cat pmcc-myrnaseq/conf/test.config
-```
+:::{.callout-note collapse="true"}
+## main.nf
 
 ```default
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    Nextflow config file for running minimal tests
+    RUN MAIN WORKFLOW
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    Defines input files and everything required to run a fast and simple pipeline test.
-
-    Use as follows:
-        nextflow run pmcc/myrnaseq -profile test,<docker/singularity> --outdir <OUTDIR>
-
-----------------------------------------------------------------------------------------
 */
 
-params {
-    config_profile_name        = 'Test profile'
-    config_profile_description = 'Minimal test dataset to check pipeline function'
+workflow {
 
-    // Limit resources so that this can run on GitHub Actions
-    max_cpus   = 2
-    max_memory = '6.GB'
-    max_time   = '6.h'
+    main:
+    //
+    // SUBWORKFLOW: Run initialisation tasks
+    //
+    PIPELINE_INITIALISATION (
+        params.version,
+        params.validate_params,
+        params.monochrome_logs,
+        args,
+        params.outdir,
+        params.input
+    )
 
-    // Input data
-    // TODO nf-core: Specify the paths to your test data on nf-core/test-datasets
-    // TODO nf-core: Give any required params for the test so that command line flags are not needed
-    input  = params.pipelines_testdata_base_path + 'viralrecon/samplesheet/samplesheet_test_illumina_amplicon.csv'
-
-    // Genome references
-    genome = 'R64-1-1'
+    //
+    // WORKFLOW: Run main workflow
+    //
+    NFCORE_CUSTOMRNASEQ (
+        PIPELINE_INITIALISATION.out.samplesheet
+    )
+    //
+    // SUBWORKFLOW: Run completion tasks
+    //
+    PIPELINE_COMPLETION (
+        params.email,
+        params.email_on_fail,
+        params.plaintext_email,
+        params.outdir,
+        params.monochrome_logs,
+        params.hook_url,
+        NFCORE_CUSTOMRNASEQ.out.multiqc_report
+    )
 }
-```
 
-From this, we can see that this config uses the `params` scope to define:
-
-- Maximal values for resources
-- Directs the `input` parameter to a sample sheet hosted in the [`nf-core/testdata`](https://github.com/nf-core/test-datasets) github
-- Sets the genome to "R64-1-1"
-
-::: callout-note
-### How does setting the parameter `genome` set all the genome references?{.unlisted}
-This is possible due to us using the `igenomes` configs from `nf-core`.
-
-You can see in the `conf/igenomes.config` how nested within each `genome` definition are paths to various reference files.
-
-To find out more about the `igenomes` project [here](https://sapac.support.illumina.com/sequencing/sequencing_software/igenome.html)
-:::
-
-For the duration of this workshop we are going to use the data from `nf-training` that was cloned in the first workshop.
-We are also going to update our `test.config` to contain the `igenomes_base` parameter, as we have a local cache on the cluster.
-
-```default
-input = "/home/Shared/For_NF_Workshop/training/nf-training/data/ggal/samplesheet.csv"
-outdir = "/scratch/users/${USER}/myrnaseqtest"
-
-// genome references
-genome = "GRCh38"
-igenomes_base = "/data/janis/nextflow/references/genomes/ngi-igenomes"
-```
-
-Also, we will need to change the value, `custom_config_base` to `null`, in `nextflow.config`
-```default
-custom_config_base         = null
-```
-
-Let's quickly check that our pipeline runs with the test profile.
-```default
-cd ..
-nextflow run ./pmcc-myrnaseq -profile test,singularity
-```
-
-::: callout-tip
-### What's the difference between the `test.config` and the `test_full.config`{.unlisted}
-Typically the `test.config` contains the minimal test example, while the `test_full.config` contains at least one full sized example data.
-:::
-
-## **5.4 Nf-core modules**
-You can find all the nf-core modules that have been accepted and peer-tested by the community in [nf-core modules](https://nf-co.re/modules).
-
-or with
-
-```default
-nf-core modules list remote
-```
-
-you can check which modules are installed localling in your pipeline by running `nf-core modules list local`, within the pipeline folder.
-
-```default
-cd pmcc-myrnaseq
-
-nf-core modules list local
-```
-
-```default
-
-                                          ,--./,-.
-          ___     __   __   __   ___     /,-._.--~\
-    |\ | |__  __ /  ` /  \ |__) |__         }  {
-    | \| |       \__, \__/ |  \ |___     \`-._,-`-,
-                                          `._,._,'
-
-    nf-core/tools version 2.14.1 - https://nf-co.re
-
-
-INFO     Repository type: pipeline
-INFO     Modules installed in '.':
-┏━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━┓
-┃ Module Name ┃ Repository      ┃ Version SHA ┃ Message                              ┃ Date       ┃
-┡━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━┩
-│ fastqc      │ nf-core/modules │ 285a505     │ Fix FastQC memory allocation (#5432) │ 2024-04-05 │
-│ multiqc     │ nf-core/modules │ b7ebe95     │ Update MQC container (#5006)         │ 2024-02-29 │
-└─────────────┴─────────────────┴─────────────┴──────────────────────────────────────┴────────────┘
-```
-
-::: callout-tip
-### **Overall Challenge**{.unlisted}
-We are going to replicate sections of the workflow from last week.
-
-FASTQC -> Trimgalore -> FASTQC -> MULTIQC
-
-:::
-
-
-### **5.3.1 Installing nf-core modules**
-The general format for installing modules is as below.
-
-```default
-nf-core modules install <tool>/<subcommand>
-```
-
-::: callout-tip
-Note that if you search for the modules on the [nf-core modules website](https://nf-co.re/modules), you can find the install command at the top of the tool
-:::
-
-::: callout-tip
-Remember to run the install commands from within the nf-core pipeline folder (in this case the `pmcc-myrnaseq` folder)
-
-If you are not in an nf-core folder you will see the following error
-
-```default
-
-                                          ,--./,-.
-          ___     __   __   __   ___     /,-._.--~\
-    |\ | |__  __ /  ` /  \ |__) |__         }  {
-    | \| |       \__, \__/ |  \ |___     \`-._,-`-,
-                                          `._,._,'
-
-    nf-core/tools version 2.14.1 - https://nf-co.re
-
-
-WARNING  'repository_type' not defined in .nf-core.yml
-? Is this repository an nf-core pipeline or a fork of nf-core/modules? (Use arrow keys)
- » Pipeline
-   nf-core/modules
+/*
 ```
 :::
 
+### **5.4.2 Analysis workflow script `workflows/customrnaseq.nf`**
 
-::: callout-tip
-### **Challenge**{.unlisted}
-Install the following nf-core modules
+Now, let's look inside the main analysis script `./nf-core-customrnaseq/workflows/customrnaseq.nf`.
 
-- trimgalore
-- salmon quant
-- fastqc
-
-What happens when we try to install the `fastqc` module?
-:::
-
-::: {.callout-caution collapse="true"}
-### Solution{.unlisted}
-Unfortunately, nf-core does not allow the installation of multiple modules in one line therefore we mush provide the commands separately for each module.
-```default
-nf-core modules install trimgalore
-nf-core modules install salmon/quant
-nf-core modules install fastqc
-```
-Note that from above, when we checked which modules have been installed locally in our pipeline, `fastqc` was already installed.
-As such, we see the following output warning us that `fastqc` is installed and we can either force the reinstallation or we can update the module
+The first section of the script includes some default modules `FASTQC` and `MULTIQC`, as well as default subworkflows `paramsSummaryMultiqc`, `softwareVersionsToYAML` and `methodsDescriptionText`, and plugin `paramsSummaryMap`. 
 
 ```default
-
-                                          ,--./,-.
-          ___     __   __   __   ___     /,-._.--~\
-    |\ | |__  __ /  ` /  \ |__) |__         }  {
-    | \| |       \__, \__/ |  \ |___     \`-._,-`-,
-                                          `._,._,'
-
-    nf-core/tools version 2.14.1 - https://nf-co.re
-
-INFO     Module 'fastqc' is already installed.
-INFO     To update 'fastqc' run 'nf-core modules update fastqc'. To force reinstallation use '--force'. 
+/*
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    IMPORT MODULES / SUBWORKFLOWS / FUNCTIONS
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+*/
+include { FASTQC                 } from '../modules/nf-core/fastqc/main'
+include { MULTIQC                } from '../modules/nf-core/multiqc/main'
+include { paramsSummaryMap       } from 'plugin/nf-schema'
+include { paramsSummaryMultiqc   } from '../subworkflows/nf-core/utils_nfcore_pipeline'
+include { softwareVersionsToYAML } from '../subworkflows/nf-core/utils_nfcore_pipeline'
+include { methodsDescriptionText } from '../subworkflows/local/utils_nfcore_customrnaseq_pipeline'
 ```
 
-:::
+The workflow block then defines the name of our pipeline `CUSTOMRNASEQ`, taking the parsed samplesheet (as a channel) as the input. The workflow then runs the `FASTQC` module, which takes the samplesheet channel as input. The `FASTQC` output files are added to the `ch_multiqc_files` channel, and the FastQC version is added to `ch_versions` using the `.mix` operator. Then, all module software versions are collected and assigned to `ch_collated_versions`. Finally, `MULTIQC` is ran on all required files. 
 
-::: callout-tip
-### **Advanced Challenge**{.unlisted}
-Can you think of a way to streamline the installation of modules?
-:::
-
-
-following the installation what files changed, check with
-```default
-git status
-```
+:::{.callout-note collapse="true"}
+## workflows/customrnaseq.nf
 
 ```default
-On branch master
-Changes not staged for commit:
-  (use "git add <file>..." to update what will be committed)
-  (use "git restore <file>..." to discard changes in working directory)
-        modified:   modules.json
+/*
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    RUN MAIN WORKFLOW
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+*/
+workflow CUSTOMRNASEQ {
 
-Untracked files:
-  (use "git add <file>..." to include in what will be committed)
-        modules/nf-core/salmon/
-        modules/nf-core/trimgalore/
+    take:
+    ch_samplesheet // channel: samplesheet read in from --input
+    main:
 
-no changes added to commit (use "git add" and/or "git commit -a")
-```
+    ch_versions = Channel.empty()
+    ch_multiqc_files = Channel.empty()
+    //
+    // MODULE: Run FastQC
+    //
+    FASTQC (
+        ch_samplesheet
+    )
+    ch_multiqc_files = ch_multiqc_files.mix(FASTQC.out.zip.collect{it[1]})
+    ch_versions = ch_versions.mix(FASTQC.out.versions.first())
 
-`modules.json` is a running record of the modules installed and should be included in your pipeline.
-Note: you can find the github SHA for the exact "version" of the module installed.
-
-This insulates your pipeline from when a module is deleted.
-
-```default
-rm -r modules/nf-core/salmon/quant
-
-nf-core modules list local
-```
-
-```default
-
-                                          ,--./,-.
-          ___     __   __   __   ___     /,-._.--~\
-    |\ | |__  __ /  ` /  \ |__) |__         }  {
-    | \| |       \__, \__/ |  \ |___     \`-._,-`-,
-                                          `._,._,'
-
-    nf-core/tools version 2.14.1 - https://nf-co.re
+    //
+    // Collate and save software versions
+    //
+    softwareVersionsToYAML(ch_versions)
+        .collectFile(
+            storeDir: "${params.outdir}/pipeline_info",
+            name: 'nf_core_'  +  'customrnaseq_software_'  + 'mqc_'  + 'versions.yml',
+            sort: true,
+            newLine: true
+        ).set { ch_collated_versions }
 
 
-INFO     Repository type: pipeline
-INFO     Reinstalling modules found in 'modules.json' but missing from directory: 'modules/nf-core/salmon/quant'
-INFO     Modules installed in '.':
-┏━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━┓
-┃ Module Name  ┃ Repository      ┃ Version SHA ┃ Message                                ┃ Date       ┃
-┡━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━┩
-│ fastqc       │ nf-core/modules │ 285a505     │ Fix FastQC memory allocation (#5432)   │ 2024-04-05 │
-│ multiqc      │ nf-core/modules │ b7ebe95     │ Update MQC container (#5006)           │ 2024-02-29 │
-│ salmon/quant │ nf-core/modules │ cb6b2b9     │ fix stubs salmon (#5517)               │ 2024-04-24 │
-│ trimgalore   │ nf-core/modules │ a984184     │ run nf-core lint on trimgalore (#5129) │ 2024-03-15 │
-└──────────────┴─────────────────┴─────────────┴────────────────────────────────────────┴────────────┘
-```
+    //
+    // MODULE: MultiQC
+    //
+    ch_multiqc_config        = Channel.fromPath(
+        "$projectDir/assets/multiqc_config.yml", checkIfExists: true)
+    ch_multiqc_custom_config = params.multiqc_config ?
+        Channel.fromPath(params.multiqc_config, checkIfExists: true) :
+        Channel.empty()
+    ch_multiqc_logo          = params.multiqc_logo ?
+        Channel.fromPath(params.multiqc_logo, checkIfExists: true) :
+        Channel.empty()
 
-::: callout-tip
-###  **Advanced Challenge**{.unlisted}
-How would you look up previous versions of the module?
-:::
+    summary_params      = paramsSummaryMap(
+        workflow, parameters_schema: "nextflow_schema.json")
+    ch_workflow_summary = Channel.value(paramsSummaryMultiqc(summary_params))
+    ch_multiqc_files = ch_multiqc_files.mix(
+        ch_workflow_summary.collectFile(name: 'workflow_summary_mqc.yaml'))
+    ch_multiqc_custom_methods_description = params.multiqc_methods_description ?
+        file(params.multiqc_methods_description, checkIfExists: true) :
+        file("$projectDir/assets/methods_description_template.yml", checkIfExists: true)
+    ch_methods_description                = Channel.value(
+        methodsDescriptionText(ch_multiqc_custom_methods_description))
 
+    ch_multiqc_files = ch_multiqc_files.mix(ch_collated_versions)
+    ch_multiqc_files = ch_multiqc_files.mix(
+        ch_methods_description.collectFile(
+            name: 'methods_description_mqc.yaml',
+            sort: true
+        )
+    )
 
-::: {.callout-caution collapse="true"}
-There are a few ways to approach this.
+    MULTIQC (
+        ch_multiqc_files.collect(),
+        ch_multiqc_config.toList(),
+        ch_multiqc_custom_config.toList(),
+        ch_multiqc_logo.toList(),
+        [],
+        []
+    )
 
-1. You could hop onto github and search throught the git history for the `main.nf` of the particular module, to identify the git SHA and provide it to the `--sha` flag.
-2. You could run the install command with the `--prompt` flag, as seen below
+    emit:multiqc_report = MULTIQC.out.report.toList() // channel: /path/to/multiqc_report.html
+    versions       = ch_versions                 // channel: [ path(versions.yml) ]
 
-```default
+}
 
-                                          ,--./,-.
-          ___     __   __   __   ___     /,-._.--~\
-    |\ | |__  __ /  ` /  \ |__) |__         }  {
-    | \| |       \__, \__/ |  \ |___     \`-._,-`-,
-                                          `._,._,'
-
-    nf-core/tools version 2.14.1 - https://nf-co.re
-
-
-INFO     Module 'fastqc' is already installed.
-? Module fastqc is already installed.
-Do you want to force the reinstallation? Yes
-? Select 'fastqc' commit: (Use arrow keys)
-   Fix FastQC memory allocation (#5432) 285a50500f9e02578d90b3ce6382ea3c30216acd (installed version)
-   Update FASTQC to use unique names for snapshots (#4825) f4ae1d942bd50c5c0b9bd2de1393ce38315ba57c
-   CHORES: update fasqc tests with new data organisation (#4760) c9488585ce7bd35ccd2a30faa2371454c8112fb9
-   fix fastqc tests n snap (#4669) 617777a807a1770f73deb38c80004bac06807eef
-   Update version strings (#4556) 65ad3e0b9a4099592e1102e92e10455dc661cf53
-   Remove pytest-workflow tests for modules covered by nf-test (#4521) 3e8b0c1144ccf60b7848efbdc2be285ff20b49ee
-   Add conda environment names (#4327) 3f5420aa22e00bd030a2556dfdffc9e164ec0ec5
-   Fix conda declaration (#4252) 8fc1d24c710ebe1d5de0f2447ec9439fd3d9d66a
-   Move conda environment to yml (#4079) 516189e968feb4ebdd9921806988b4c12b4ac2dc
-   authors => maintainers (#4173) cfd937a668919d948f6fcbf4218e79de50c2f36f
- » older commits
-```
-
-:::
-
-### **5.3.2 Updating nf-core modules**
-
-Above we got and error message for fastq because the module was already installed. As listed in the output, one of the suggested solutions is that we might be looking to update the module
-
-```default
-nf-core modules update fastqc
-```
-
-After running the command you will find that you are prompted for whether you wish to view the differences between the current installation and the update.
-
-```default
-
-                                          ,--./,-.
-          ___     __   __   __   ___     /,-._.--~\
-    |\ | |__  __ /  ` /  \ |__) |__         }  {
-    | \| |       \__, \__/ |  \ |___     \`-._,-`-,
-                                          `._,._,'
-
-    nf-core/tools version 2.14.1 - https://nf-co.re
-
-
-? Do you want to view diffs of the proposed changes? (Use arrow keys)
- » No previews, just update everything
-   Preview diff in terminal, choose whether to update files
-   Just write diffs to a patch file
-```
-
-For the sake of this exercise, we are going to roll fastqc back by one commit.
-
-If you select the 2nd option `Preview diff in terminal, choose whether to update files`
-```default
-nf-core modules update fastqc -p
-```
-
-```default
-                                          ,--./,-.
-          ___     __   __   __   ___     /,-._.--~\
-    |\ | |__  __ /  ` /  \ |__) |__         }  {
-    | \| |       \__, \__/ |  \ |___     \`-._,-`-,
-                                          `._,._,'
-
-    nf-core/tools version 2.14.1 - https://nf-co.re
-
-
-? Do you want to view diffs of the proposed changes? Preview diff in terminal, choose whether to update files
-? Select 'fastqc' commit: (Use arrow keys)
-   Fix FastQC memory allocation (#5432) 285a50500f9e02578d90b3ce6382ea3c30216acd (installed version)
- » Update FASTQC to use unique names for snapshots (#4825) f4ae1d942bd50c5c0b9bd2de1393ce38315ba57c
-   CHORES: update fasqc tests with new data organisation (#4760) c9488585ce7bd35ccd2a30faa2371454c8112fb9
-   fix fastqc tests n snap (#4669) 617777a807a1770f73deb38c80004bac06807eef
-   Update version strings (#4556) 65ad3e0b9a4099592e1102e92e10455dc661cf53
-   Remove pytest-workflow tests for modules covered by nf-test (#4521) 3e8b0c1144ccf60b7848efbdc2be285ff20b49ee
-   Add conda environment names (#4327) 3f5420aa22e00bd030a2556dfdffc9e164ec0ec5
-   Fix conda declaration (#4252) 8fc1d24c710ebe1d5de0f2447ec9439fd3d9d66a
-   Move conda environment to yml (#4079) 516189e968feb4ebdd9921806988b4c12b4ac2dc
-   authors => maintainers (#4173) cfd937a668919d948f6fcbf4218e79de50c2f36f
-   older commits
-```
-
-
-```default
-? Select 'fastqc' commit: Update FASTQC to use unique names for snapshots (#4825) f4ae1d942bd50c5c0b9bd2de1393ce38315ba57c
-INFO     Changes in module 'nf-core/fastqc' between (285a50500f9e02578d90b3ce6382ea3c30216acd) and (f4ae1d942bd50c5c0b9bd2de1393ce38315ba57c)
-INFO     Changes in 'fastqc/main.nf':
- --- modules/nf-core/fastqc/main.nf
- +++ modules/nf-core/fastqc/main.nf
- @@ -25,11 +25,6 @@
-      def old_new_pairs = reads instanceof Path || reads.size() == 1 ? [[ reads, "${prefix}.${reads.extension}" ]] : reads.withIndex().collect { entry, index -> [ entry, "${prefix}_${index + 1}.${entry.extension}" ] }
-      def rename_to = old_new_pairs*.join(' ').join(' ')
-      def renamed_files = old_new_pairs.collect{ old_name, new_name -> new_name }.join(' ')
- -
- -    def memory_in_mb = MemoryUnit.of("${task.memory}").toUnit('MB')
- -    // FastQC memory value allowed range (100 - 10000)
- -    def fastqc_memory = memory_in_mb > 10000 ? 10000 : (memory_in_mb < 100 ? 100 : memory_in_mb)
- -
-      """
-      printf "%s %s\\n" $rename_to | while read old_name new_name; do
-          [ -f "\${new_name}" ] || ln -s \$old_name \$new_name
- @@ -38,7 +33,6 @@
-      fastqc \\
-          $args \\
-          --threads $task.cpus \\
- -        --memory $fastqc_memory \\
-          $renamed_files
-
-      cat <<-END_VERSIONS > versions.yml
-INFO     'modules/nf-core/fastqc/meta.yml' is unchanged
-INFO     'modules/nf-core/fastqc/environment.yml' is unchanged
-INFO     'modules/nf-core/fastqc/tests/main.nf.test.snap' is unchanged
-INFO     'modules/nf-core/fastqc/tests/tags.yml' is unchanged
-INFO     'modules/nf-core/fastqc/tests/main.nf.test' is unchanged
-? Update module 'fastqc'? No
-INFO     Updates complete ✨   
-```
-
-### **5.3.3 Removing nf-core modules**
-
-As mentioned above, if you decide that you don't need a module anymore, you can't just remove the folder with `rm -r`.
-
-For `nf-core` to no longer register the module is to be distributed with your pipeline you need to use:
-```default
-nf-core modules remove
-```
-
-
-As an exercise, we are going to install the `samtools/sort` module
-
-```default
-nf-core modules install samtools/sort
-```
-Quickly view the `modules.json` or use `nf-core modules list local` to view the changes from installing the module.
-
-Now remove the `samtools/sort` module
-```default
-nf-core modules remove samtools/sort
-```
-
-::: callout-tip
-### **Overall Challenge**{.unlisted}
-
-Now add the `include` module statements to the our `workflows/myrnaseq.nf`
-:::
-
-::: {.callout-caution collapse="true"}
-```default
-include { FASTQC as FASTQC_one } from '../modules/nf-core/fastq/main' 
-include { FASTQC as FASTQC_two } from '../modules/nf-core/fastq/main' 
-
-include { TRIMGALORE } from '../modules/nf-core/trimgalore/main'
+/*
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    THE END
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+*/
 ```
 :::
 
+This initial pipeline will use the samples defined in the samplesheet, run FastQC and MultiQC, and save any software versions used. 
 
-### **5.3.4 Writing modules with nf-core template**
-For this section we are going to refer to the [nf-core guidelines for modules](https://nf-co.re/docs/guidelines/components/modules).
+### **5.4.3 Samplesheet `assets/samplesheet.csv`**
 
-While these are the full guidelines for *contributing* back to nf-core, there are still some general components that are good practice even if you are NOT planning to contribute.
+Before we can run the pipeline, we have to create a samplesheet with our data. The file `./nf-core-customrnaseq/assets/samplesheet.csv` contains an example samplesheet which we can adapt. 
 
-::: callout-note
-### Summary of guidelines
+```default
+sample,fastq_1,fastq_2
+SAMPLE_PAIRED_END,/path/to/fastq/files/AEG588A1_S1_L002_R1_001.fastq.gz,/path/to/fastq/files/AEG588A1_S1_L002_R2_001.fastq.gz
+SAMPLE_SINGLE_END,/path/to/fastq/files/AEG588A4_S4_L003_R1_001.fastq.gz,
+```
 
-1. All required and optional input **files** must be included in the input as a `path` variable
-2. The command should run without any additional argument, any required flag values should be included as an input `val` variable
-3. `task.ext.args` must be provided as a variable
-4. Where possible all input and output files should be compressed (i.e. `fastq.gz` and `.bam`)
-5. A `versions.yml` file is output
-6. Naming conventions include using all lowercase without puntuation and follows the convention of `software/tool` (i.e. `bwa/mem`)
-7. All outputs must include an `emit` definition
+Copy this samplesheet into your folder, one level higher than the pipeline folder `./nf-core-customrnaseq`
+
+```default 
+cp ./nf-core-customrnaseq/assets/samplesheet.csv .
+```
+
+Also copy the following test data to your folder. 
+
+::: {.callout-important}
+**TO DO**
+
+Copy test data to your directory
+
+**TRANSCRIPTOME FILE**
 :::
 
-
-We are going to write up our own `samtools/view` module.
 ```default
-nf-core modules create 
+cp -r <PATH TO TEST DATA> .
 ```
 
-```default
-
-                                          ,--./,-.
-          ___     __   __   __   ___     /,-._.--~\
-    |\ | |__  __ /  ` /  \ |__) |__         }  {
-    | \| |       \__, \__/ |  \ |___     \`-._,-`-,
-                                          `._,._,'
-
-    nf-core/tools version 2.14.1 - https://nf-co.re
-
-
-INFO     Repository type: pipeline
-INFO     Press enter to use default values (shown in brackets) or type your own responses. ctrl+click underlined text to open links.
-Name of tool/subtool: samtools/view
-INFO     Using Bioconda package: 'bioconda::samtools=1.20'
-INFO     Could not find a Docker/Singularity container (Unexpected response code `500` for https://api.biocontainers.pro/ga4gh/trs/v2/tools/samtools/versions/samtools-1.20) ## Cluster
-GitHub Username: (@author): @mmyeung
-INFO     Provide an appropriate resource label for the process, taken from the nf-core pipeline template.
-         For example: process_single, process_low, process_medium, process_high, process_long
-? Process resource label: process_low
-INFO     Where applicable all sample-specific information e.g. 'id', 'single_end', 'read_group' MUST be provided as an input via a Groovy Map called
-         'meta'. This information may not be required in some instances, for example indexing reference genome files.
-Will the module require a meta map of sample information? [y/n] (y): y
-INFO     Created component template: 'samtools/view'
-INFO     Created following files:
-           modules/local/samtools/view.nf
-```
-
-As we progressed through the interactive prompt, you will have noticed that nf-core always attempts to locate the corresponding `bioconda` package and `singularity`/`Docker` container.
-
-::: {.callout-tip collapse=true}
-### What happens when there is no `bioconda` package or container?
+This test dataset consists of two paired-end samples `gut`, `liver`, and `lung`, as well as a transcriptome file. 
 
 ```default
-nf-core modules create --author @mmyeung --label process_single --meta testscript
+data
+├── gut_1.fastq.gz
+├── gut_2.fastq.gz
+├── liver_1.fastq.gz
+├── liver_2.fastq.gz
+├── lung_1.fastq.gz
+├── lung_2.fastq.gz
+└-- transcriptome.fa
 ```
-The command will indicate that the there is no `bioconda` package with the software name, and prompt you for a package name you might wish to use.
+
+Your samplesheet and data folder should now sit **outside** of your pipeline folder.
 
 ```default
-INFO     Repository type: pipeline
-INFO     Press enter to use default values (shown in brackets) or type your own responses. ctrl+click underlined text to open links.
-WARNING  Could not find Conda dependency using the Anaconda API: 'testscript'
-Do you want to enter a different Bioconda package name? [y/n]: n
-WARNING  Could not find Conda dependency using the Anaconda API: 'testscript'
-         Building module without tool software and meta, you will need to enter this information manually.
-INFO     Created component template: 'testscript'
-INFO     Created following files:
-           modules/local/testscript.nf      
+.
+├── nf-core-customrnaseq 
+├── samplesheet.csv 
+└── data 
 ```
 
-
-within the module `.nf` script you will note that the definitions for the `conda` and `container` are incomplete for the tool.
+Edit the samplesheet to use our test data. Replace `<full_path>` with the path to your current working directory. 
 
 ```default
-    conda "${moduleDir}/environment.yml"
-    container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
-        'https://depot.galaxyproject.org/singularity/YOUR-TOOL-HERE':
-        'biocontainers/YOUR-TOOL-HERE' }"
+sample,fastq_1,fastq_2
+gut,<full_path>/data/gut_1.fastq.gz,<full_path>/data/gut_2.fastq.gz
+liver,<full_path>/data/liver_1.fastq.gz,<full_path>/data/liver_2.fastq.gz
+lung,<full_path>/data/lung_1.fastq.gz,<full_path>/data/lung_2.fastq.gz
 ```
 
-nf-core has a large cache of containers [here](https://depot.galaxyproject.org/singularity). Though you can also provide a simple path to docker hub.
+### **5.4.4 Running the pipeline**
 
-```default
-    container "mmyeung/trccustomunix:0.0.1"
-```
+Previously, we used a singularity profile, which allowed nextflow to store downloaded containers in a shared location. This location was defined using the bash command below:
+
+::: {.callout-important}
+**TO DO**
+
+Cache directory location
 :::
 
-The resource labels, are those as defined in `conf/base.config`
-
-
-::: callout-tip
-### **Challenge**{.unlisted}
-Write up the `inputs`, `outputs` and `script` for `samtools/view`.
-
-Assume that all the inputs will be `.bam` and the outputs will also be `.bam`.
-
-For reference look at the documentation for [`samtools/view`](http://www.htslib.org/doc/1.19/samtools-view.html)
-
-Are there optional flags that take file inputs?
-What options need to set to ensure that the command runs without error?
-:::
-
-
-::: {.callout-caution collapse="true"}
 ```default
-process SAMTOOLS_VIEW {
-    tag "$meta.id"
-    label 'process_low'
-
-    conda "${moduleDir}/environment.yml"
-    container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
-        'https://depot.galaxyproject.org/singularity/samtools:1.20--h50ea8bc_0' :
-        'biocontainers/samtools:1.20--h50ea8bc_0' }"
-
-    input:
-    tuple val(meta), path(input), path(index)
-    tuple val(meta2), path(fasta)
-    path bed
-    path qname
-
-    output:
-    tuple val(meta), path("*.bam"),  emit: bam
-    path  "versions.yml",            emit: versions
-
-    when:
-    task.ext.when == null || task.ext.when
-
-    script:
-    def args = task.ext.args ?: ''
-    def args2 = task.ext.args2 ?: ''
-    def prefix = task.ext.prefix ?: "${meta.id}"
-    def reference = fasta ? "--reference ${fasta}" : ""
-    def readnames = qname ? "--qname-file ${qname}": ""
-    def regions = bed ? "-L ${bed}": ""
-    if ("$input" == "${prefix}.${file_type}") error "Input and output names are the same, use \"task.ext.prefix\" to disambiguate!"
-    """
-    samtools \\
-        view \\
-        -hb \\
-        --threads ${task.cpus-1} \\
-        ${reference} \\
-        ${readnames} \\
-        ${regions} \\
-        $args \\
-        -o ${prefix}.bam \\
-        $input \\
-        $args2
-
-    cat <<-END_VERSIONS > versions.yml
-    "${task.process}":
-        samtools: \$(echo \$(samtools --version 2>&1) | sed 's/^.*samtools //; s/Using.*\$//')
-    END_VERSIONS
-    """
-
-    stub:
-    def args = task.ext.args ?: ''
-    def prefix = task.ext.prefix ?: "${meta.id}"
-    def file_type = args.contains("--output-fmt sam") ? "sam" :
-                    args.contains("--output-fmt bam") ? "bam" :
-                    args.contains("--output-fmt cram") ? "cram" :
-                    input.getExtension()
-    if ("$input" == "${prefix}.${file_type}") error "Input and output names are the same, use \"task.ext.prefix\" to disambiguate!"
-
-    def index = args.contains("--write-index") ? "touch ${prefix}.csi" : ""
-
-    """
-    touch ${prefix}.${file_type}
-    ${index}
-
-    cat <<-END_VERSIONS > versions.yml
-    "${task.process}":
-        samtools: \$(echo \$(samtools --version 2>&1) | sed 's/^.*samtools //; s/Using.*\$//')
-    END_VERSIONS
-    """
+export NXF_SINGULARITY_CACHEDIR=<path_to_cache> 
 ```
 
-:::
-Similar to `nf-core create` you can minimise a the number of prompts by using optional flags.
-
-
-::: callout-tip
-### **Overall Challenge**{.unlisted}
-Write up the short workflow as discussed above
-
-FASTQC -> trimgalore -> FASTQC -> MULTIQC
-:::
-
-
-## **5.4 Nf-core subworkflow**
-[nf-core subworkflows](https://nf-co.re/subworkflows)
-
-or with
+Let's run our pipeline by specifying the singularity profile, input samplesheet, and output location.:
 
 ```default
-nf-core subworkflows list remote
+nextflow run ./nf-core-customrnaseq/main.nf -profile singularity --input ./samplesheet.csv --outdir output
 ```
+Note that we are launching the wrapper workflow file, which contains the `PIPELINE_INITIALISATION`, `PIPELINE_COMPLETION`, and our analysis workflow `CUSTOMRNASEQ`. 
 
-### **5.4.1 Installing nf-core subworkflows**
-
-**Subworkflows can be updated/removed like modules**
-
-::: callout-tip
-### **Challenge**{.unlisted}
-Install the subworkflow `fastq_subsample_fq_salmon` into the workflow
-:::
-
-
-::: {.callout-caution collapse="true"}
-```default
-nf-core subworkflows install fastq_subsample_fq_salmon
-```
-:::
-
-### **5.4.2 Writing subworkflows with nf-core template**
-
-::: callout-tip
-### **Challenge**{.unlisted}
-Write up the `QC_WF` subworkflow from last week.
-:::
-
-## **5.5 Nf-core schema and input validation**
-Relies on `plugins` written by nf-core community
-
-In particular [`nf-validation`](https://github.com/nextflow-io/nf-validation)
-
-`nextflow_schmea.json` is for pipeline parameters
-
-```default
-nf-core schema build
-```
+As expected, the modules that have completed successfully are `FASTQC` and `MULTIQC`
 
 ```default
 
-                                          ,--./,-.
-          ___     __   __   __   ___     /,-._.--~\
-    |\ | |__  __ /  ` /  \ |__) |__         }  {
-    | \| |       \__, \__/ |  \ |___     \`-._,-`-,
-                                          `._,._,'
+ N E X T F L O W   ~  version 24.10.5
 
-    nf-core/tools version 2.14.1 - https://nf-co.re
+Launching `./nf-core-customrnaseq/main.nf` [amazing_varahamihira] DSL2 - revision: d93ca14588
 
 
-INFO     [✓] Default parameters match schema validation
-INFO     [✓] Pipeline schema looks valid (found 32 params)
-INFO     Writing schema with 32 params: 'nextflow_schema.json'
-🚀  Launch web builder for customisation and editing? [y/n]: y
-INFO     Opening URL: https://nf-co.re/pipeline_schema_builder?id=1718112529_0841fa08f86f
-INFO     Waiting for form to be completed in the browser. Remember to click Finished when you're done.
-⢿ Use ctrl+c to stop waiting and force exit.
+------------------------------------------------------
+                                        ,--./,-.
+        ___     __   __   __   ___     /,-._.--~'
+  |\ | |__  __ /  ` /  \ |__) |__         }  {
+  | \| |       \__, \__/ |  \ |___     \`-._,-`-,
+                                        `._,._,'
+  nf-core/customrnaseq 1.0.0dev
+------------------------------------------------------
+Input/output options
+  input              : ./samplesheet.csv
+  outdir             : output
+
+Generic options
+  trace_report_suffix: 2025-05-01_16-19-14
+
+Core Nextflow options
+  runName            : amazing_varahamihira
+  containerEngine    : singularity
+  launchDir          : /scratch/users/sli/workshop/pipeline
+  workDir            : /scratch/users/sli/workshop/pipeline/work
+  projectDir         : /scratch/users/sli/workshop/pipeline/nf-core-customrnaseq
+  userName           : sli
+  profile            : singularity
+  configFiles        : /scratch/users/sli/workshop/pipeline/nf-core-customrnaseq/nextflow.config
+
+!! Only displaying parameters that differ from the pipeline defaults !!
+------------------------------------------------------
+* The nf-core framework
+    https://doi.org/10.1038/s41587-020-0439-x
+
+* Software dependencies
+    https://github.com/nf-core/customrnaseq/blob/main/CITATIONS.md
+
+executor >  local (4)
+[27/5fb1e5] NFCORE_CUSTOMRNASEQ:CUSTOMRNASEQ:FASTQC (liver) | 3 of 3 ✔
+[4c/9df475] NFCORE_CUSTOMRNASEQ:CUSTOMRNASEQ:MULTIQC        | 1 of 1 ✔
+-[nf-core/customrnaseq] Pipeline completed successfully-
 ```
 
-Recommend writing in web browser
-
-
-json format details [additional reading](https://json-schema.org/understanding-json-schema)
-
-
-::: callout-tip
-### **Challenge**{.unlisted}
-We are going add the input parameter for the `transcript.fa`
-
-Then install `salmon/index` and write up `quant_wf` subworkflow from last week.git 
-:::
-
-### **5.5.2 Nf-core inputs**
-nested in this schema is the `input` or samplesheet schema. unfortunately there isn't a nice interface to help you write this schema yet.
-
-- meta: Allows you to predesignate the "key" with in the "meta"
-
-- required: value must be included
-
-- dependency: value is dependant on other value existing in samplesheet (i.e. fastq_2 must imply there is a fastq_1)
-
-
-### **5.6 Nf-core tools for launching**
-
-`create-params-file`
-
-
-### **5.7 Nf-core for pipeline management**
-
-`bump-version` ==> good software management to note down versions
-
-
-
-
-
-## **Contributing to nf-core**
-Full pipelines
-Please see the [nf-core documentation](https://nf-co.re/docs/tutorials/adding_a_pipeline/overview) for a full walkthrough of how to create a new nf-core workflow.
----
-^*This workshop is adapted from [Fundamentals Training](https://training.nextflow.io/basic_training/), [Advanced Training](https://training.nextflow.io/advanced/), [Developer Tutorials](https://nf-co.re/docs/contributing/tutorials/creating_with_nf_core#creating-a-pipeline), [Nextflow Patterns](https://nextflow-io.github.io/patterns/) materials from Nextflow, nf-core [nf-core tools documentation](https://nf-co.re/docs/nf-core-tools) and [nf-validation](https://nextflow-io.github.io/nf-validation/)*^
+Now that we've verified our pipeline template is working, we can add our own modules to the workflow. 
