@@ -247,7 +247,7 @@ Generic options
 ```
 :::
 
-### **3.2.9. Default parameters and configuration fiiles**
+### **1.2.7. Default parameters and configuration fiiles**
 
 Most parameters in a Nextflow pipeline will have a default setting that is defined inside the `nextflow.config` file in the workflow project directory. By default, most parameters are set to `null` or `false` and are only activated by a profile or configuration file.
 
@@ -317,17 +317,12 @@ If your computer has internet access and one of Conda, Singularity, Apptainer, o
 :::
 
 
-### **3.2.6. Parameters in the command line**
+### **1.2.8. Parameters in the command line**
 
 Parameters can be customized using the command line. Any parameter can be configured on the command line by prefixing the parameter name with a double dash (`--`):
 
-::: {.callout-important}
-**TO DO**
-change to singularity/apptainer/etc
-:::
-
 ```default
-nextflow run -r 2.0 nf-core/testpipeline -resume -profile test,<SOFTWARE> --outdir 'output_testpipeline'
+nextflow run -r 2.0 nf-core/testpipeline -resume -profile test,apptainer --outdir 'output_testpipeline'
 ```
 
 In the above example, the Nextflow option `-resume` is used to cache any previously completed processes, allowing the pipeline to be resumed from the last incompleted process. For any previosuly successfully completed processes, they will not need to be re-executed. Another Nextflow option, `-profile`, is used to specify the `test` and software proiles to use when executing the pipeline. Finally, the output directory name is set as `output_testpipeline` using the workflow parameter `--outdir`.
@@ -347,18 +342,13 @@ To change the MultiQC report title, the `--multiqc_title` parameter can be used.
 
 :::
 
-::: {.callout-important}
-**TO DO**
-change to singularity/apptainer/etc
-:::
-
 ::: {.callout-note collapse="true"}
 ### Solution
 
 Add the `--multiqc_title` flag to your command and execute it. Use the `-resume` option to save time:
 
 ```default
-nextflow run -r 2.0 nf-core/testpipeline -resume -profile test,<SOFTWARE> --outdir 'output_testpipeline' --multiqc_title 'koala'
+nextflow run -r 2.0 nf-core/testpipeline -resume -profile test,apptainer --outdir 'output_testpipeline' --multiqc_title 'koala'
 ```
 :::
 
@@ -368,7 +358,7 @@ You can check your parameter has been applied by listing the files created in th
 ls output_testpipeline/multiqc/
 ```
 
-### **3.2.7. Custom configuration files**
+### **1.2.9. Custom configuration files**
 
 Configuration `.config` files contain various workflow properties that can also be specified in the command-line, via the `-c` option:
 
@@ -388,15 +378,10 @@ executor {
 }
 ```
 
-::: {.callout-important}
-**TO DO**
-change to singularity/apptainer/etc
-:::
-
-Similarly, the `<CONTAINER>` scope controls how <CONTAINER> containers are executed by Nextflow. In this example, the <CONTAINER> container software management has been enabled. 
+Similarly, the `apptainer` scope controls how apptainer containers are executed by Nextflow. In this example, the `apptainer` container software management has been enabled. 
 
 ```default
-<CONTAINER> {
+apptainer {
     enabled = true
 }
 ```
@@ -414,10 +399,6 @@ Note that you are no longer required to specify the `multiqc_title` via the comm
 
 :::
 
-::: {.callout-important}
-**TO DO**
-change to singularity/apptainer/etc
-:::
 
 ::: {.callout-note collapse="true"}
 ### Solution
@@ -433,7 +414,7 @@ params {
 Include the custom `.config` file in your execution command with the `-c` option:
 
 ```default
-nextflow run -r 2.0 nf-core/testpipeline -resume -profile test,<SOFTWARE> --outdir 'output_testpipeline' -c custom.config
+nextflow run -r 2.0 nf-core/testpipeline -resume -profile test,apptainer --outdir 'output_testpipeline' -c custom.config
 ```
 :::
 
@@ -452,7 +433,7 @@ We will revisit this at the end of the module
 
 :::
 
-### **3.2.8 Parameter files**
+### **1.2.10 Parameter files**
 Parameter files are used to define the `params` options for a pipeline, generally written in the YAML format. They are added to a pipeline with the flag `-params-file`
 
 Example YAML:
@@ -464,11 +445,6 @@ Example YAML:
 
 **Exercise**: Since the `multiqc_title` parameter could not be set using the `custom.config` file, create a `custom_params.yml` file that sets `multiqc_title` to your favourite colour. Then, rerun the pipeline specifying your parameter file. 
 
-::: {.callout-important}
-**TO DO**
-change to singularity/apptainer/etc
-:::
-
 ::: {.callout-note collapse="true"}
 ### Solution
 
@@ -479,7 +455,7 @@ multiqc_title: "black"
 ```
 
 ```default
-nextflow run -r 2.0 nf-core/testpipeline -resume -profile test,<SOFTWARE> --outdir 'output_testpipeline' -params-file my_params.yml 
+nextflow run -r 2.0 nf-core/testpipeline -resume -profile test,apptainer --outdir 'output_testpipeline' -params-file my_params.yml 
 ```
 :::
 
