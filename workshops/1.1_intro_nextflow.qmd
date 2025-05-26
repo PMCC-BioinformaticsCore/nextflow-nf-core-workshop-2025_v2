@@ -29,7 +29,7 @@ In bioinformatics workflows, each step would commonly comprises of a computation
 
 A simple script like this example above would likely be adequate to prototype a workflow for a once-off analysis. However, there are many other considerations to take into account when turning this into an efficient and scalable computational workflow. For example: 
 
-- How do we remove uneeded intermediate files? 
+- How do we remove unneeded intermediate files? 
 - How do we handle tool installations, versions, and dependencies? 
 - How do we submit each of these jobs into a job scheduler (e.g Slurm) in a High Performance Computing (HPC) cluster? 
 - How do we resume a partially failed workflow, especially if some of the initial completed tasks take long to compute? 
@@ -105,11 +105,11 @@ You can find a full list of supported executors as well as how to configure them
 
 Nextflow provides a robust command line interface for the management and execution of workflows. Nextflow can be used on any POSIX compatible system (Linux, OS X, etc), and requires Bash 3.2 (or later) and Java 11 (or later, up to 18) to be installed.
 
-Nextflow has been pre-installed in our cluster. To load nextflow, ....
+Nextflow has been pre-installed in our workshop environment virtual machines. However, in your institutes' HPC, a command to load nextflow might be different. 
 
-::: {.callout-important}
-**TO DO**
-Add how to load nextflow
+::: {.callout-important collapse="true"}
+##### **Institute specific instructions**
+To load nextflow at Peter Mac HPC for example, you can do `module load nextflow/24.10.5`
 :::
 
 
@@ -193,21 +193,17 @@ You can also use [environment variables](https://www.nextflow.io/docs/latest/con
 
 Since we are using shared storage, we should consider storing shared software in a location that is accessible by all users in the cluster. The key Nextflow environment variables to do this is `NXF_APPTAINER_CACHEDIR` for Apptainer, `NXF_SINGULARITY_CACHEDIR` for Singularity, and `NXF_CONDA_CACHEDIR` for Conda environment managers. 
 
-::: {.callout-important}
-**TO DO**
-Add what we're using
-:::
-
-Today, we will use ...
+For this workshop, we will be using apptainer as our container tool. As all users have their individual VMs, we will set the `NXF_APPTAINER_CACHEDIR` to `~/apptainer_cache`. 
 
 ```default
-export ...
+export NXF_APPTAINER_CACHEDIR="~/apptainer_cache"
 ```
 
-::: {.callout-important}
-**TO DO**
-Add what cache directory we are using
+::: {.callout-important collapse="true"}
+##### **Institute specific instructions**
+At Peter Mac HPC, you would set this variable to `export NXF_APPTAINER_CACHEDIR="/config/binaries/singularity/containers_devel/nextflow`
 :::
+
 
 Images downloaded by workflow executions will now be stored in this directory.
 
@@ -221,7 +217,7 @@ nextflow run foo/bar
 nextflow run http://github.com/foo/bar
 ```
 
-As our first exercise, we will execute the `hello` workflow directly from `nextflow-io` [GitHub](https://github.com/nextflow-io/hello) repository. Start by creating a directory `lesson1.1` and change into it move into it. 
+As our first exercise, we will execute the `hello` workflow directly from `nextflow-io` [GitHub](https://github.com/nextflow-io/hello) repository. Start by creating a directory `lesson1.1`. 
 
 ```default
 mkdir ./lesson1.1 && cd $_
@@ -254,22 +250,20 @@ If you `run` a workflow, it will look for a local file with the workflow name yo
 
 Be aware of what is already in your current working directory where you launch your workflow, if there are other workflows (or configuration files) you may encounter unexpected results.
 
-::: {.callout-important}
-**TO DO**
-Change srun partition command
-:::
-
 
 ::: {.callout-caution}
 #### **Should I be running Nextflow on login node? **{.unlisted}
 
 Short answer, no! Even though nextflow is not performing any heavy computation, without the necessary execution configurations, all the processes within the workflow will be executed locally.
 
-For the remaining sessions, we will run Nextflow in a compute node on an interactive Slurm job. 
+::: {.callout-important collapse="true"}
+##### **Institute specific instructions**
+At Peter Mac HPC, we would run a nextflow job inside an sbatch job; or via an interactive slurm job`
 
 ``` default
 srun --pty -p <PARTITION> --mem 8GB --mincpus 2 -t 0-5:00 bash
 ```
+:::
 :::
 
 

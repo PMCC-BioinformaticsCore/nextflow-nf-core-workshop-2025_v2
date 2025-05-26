@@ -18,7 +18,7 @@ from: markdown+emoji
 
 Introduction to nf-core: Introduce nf-core features and concepts, structures, tools, and example nf-core pipelines
 
-### **3.2.1. What is nf-core?**
+### **1.2.1. What is nf-core?**
 
 nf-core is a **community** effort to collect a curated set of **analysis workflows** built using Nextflow.
 
@@ -47,7 +47,7 @@ nf-core is published in Nature Biotechnology: [Nat Biotechnol 38, 276–278 (202
 - **Cloud-ready**
     - nf-core workflows are tested on AWS
 
-### **3.2.2. Executing an nf-core workflow**
+### **1.2.2. Executing an nf-core workflow**
 
 The [nf-core website](https://nf-co.re/) has a full list of workflows and asssociated documentation to be explored.
 
@@ -98,7 +98,7 @@ When running on your institutional compute remember to follow the requirements o
 2. Loading your required software (i.e. nextflow/singularity/apptainer) 
 :::
 
-### **3.2.3. Workflow structure**
+### **1.2.3. Workflow structure**
 
 nf-core workflows start from a **common template** and follow the same structure. Although you won’t need to edit code in the workflow project directory, having a basic understanding of the project structure and some core terminology will help you understand how to configure its execution.
 
@@ -108,7 +108,7 @@ Let's take a look at the code for the [nf-core/rnaseq](https://nf-co.re/rnaseq/3
 
 Notice that the typical nf-core workflow doesn't contain just one `.nf` file, but instead contains multiple folders that categorise different elements of the workflow. Nf-core workflows typically consists of a main workflow file, [`main.nf`](https://github.com/nf-core/rnaseq/blob/master/main.nf), which launches the analysis workflow file [`workflows/<workflow>.nf`](https://github.com/nf-core/rnaseq/blob/master/workflows/rnaseq/main.nf) that invokes the modules and subworkflows.
 
-### **3.2.4. Modules**
+### **1.2.4. Modules**
 
 The `modules` folder contain both local and nf-core processes, each contained within their own tool folder inside a script called `main.nf`. 
 
@@ -135,7 +135,7 @@ There are two modules in `nf-core/testpipeline`, `fastqc` and `multiqc`. Since t
 :::
 
 
-### **3.2.4. Subworkflows**
+### **1.2.5. Subworkflows**
 A **subworkflow** contains groups of modules that are used in combination with each other and have a common purpose. Subworkflows improve workflow readability and help with the reuse of modules within a workflow. The nf-core community also shares subworkflows in the [nf-core subworkflows GitHub repository](https://github.com/nf-core/modules/tree/master/subworkflows/nf-core). Local subworkflows are workflow specific, and are not shared in the nf-core subworkflows repository.
 
 Let's take a look at the [BAM_STATS_SAMTOOLS](https://github.com/nf-core/rnaseq/tree/3.11.1/subworkflows/nf-core/bam_stats_samtools/main.nf) subworkflow:
@@ -187,7 +187,7 @@ The first input to this subworkflow (as indicated by `take`) is a tuple consisti
 
 Also note that while we have a `process` and `workflow` scope definition, there is **no** `subworkflow` definition -- it is simply defined using `workflow`.
 
-### **3.2.5. Viewing workflow parameters**
+### **1.2.6. Viewing workflow parameters**
 
 Every nf-core workflow has a full list of **parameters** on the nf-core website, in the [Parameters tab](https://nf-co.re/rnaseq/3.18.0/parameters). When viewing these parameters online, you will also be shown a description and the parameter type. Some parameters will have additional text to help you understand when and how a parameter should be used.
 
