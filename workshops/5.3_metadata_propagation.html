@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.7.29">
+<meta name="generator" content="quarto-1.7.25">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -71,7 +71,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-0815c480559380816a4d1ea211a47e91.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-fe31d7bd2deb2a321418d01dba375a64.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="../site_libs/bootstrap/bootstrap-a14e3238c51140e99ccc48519b6ed9ce.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
@@ -138,11 +138,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <ul class="dropdown-menu" aria-labelledby="nav-menu-sessions">    
         <li>
     <a class="dropdown-item" href="../sessions/1_intro_run_nf.html">
- <span class="dropdown-text">Introduction to Nextflow and Nf-core</span></a>
+ <span class="dropdown-text">Day 1: Introduction to Nextflow and Nf-core</span></a>
   </li>  
         <li>
     <a class="dropdown-item" href="../sessions/2_nf_dev_intro.html">
- <span class="dropdown-text">Developing bioinformatics workflows with Nextflow</span></a>
+ <span class="dropdown-text">Day 2: Developing bioinformatics workflows with Nextflow</span></a>
   </li>  
     </ul>
   </li>
@@ -153,47 +153,47 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <ul class="dropdown-menu" aria-labelledby="nav-menu-workshop">    
         <li>
     <a class="dropdown-item" href="../workshops/1.1_intro_nextflow.html">
- <span class="dropdown-text">Introduction to Nextflow</span></a>
+ <span class="dropdown-text">1.1 Introduction to Nextflow</span></a>
   </li>  
         <li>
     <a class="dropdown-item" href="../workshops/1.2_intro_nf_core.html">
- <span class="dropdown-text">Introduction to nf-core</span></a>
+ <span class="dropdown-text">1.2 Introduction to nf-core</span></a>
   </li>  
         <li>
     <a class="dropdown-item" href="../workshops/2.1_customise_and_run.html">
- <span class="dropdown-text">Customising &amp; running nf-core pipelines</span></a>
+ <span class="dropdown-text">2.1 Customising &amp; running nf-core pipelines</span></a>
   </li>  
         <li>
     <a class="dropdown-item" href="../workshops/2.2_troubleshooting.html">
- <span class="dropdown-text">Troubleshooting Nextflow run</span></a>
+ <span class="dropdown-text">2.2 Troubleshooting Nextflow run</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../workshops/2.3_tips_and_tricks.html">
- <span class="dropdown-text">Best practise, tips and tricks</span></a>
+    <a class="dropdown-item" href="../workshops/1.3_processes_and_channels.html">
+ <span class="dropdown-text">3.1 Introduction to processes and channels</span></a>
   </li>  
         <li>
     <a class="dropdown-item" href="../workshops/3.1_creating_a_workflow.html">
- <span class="dropdown-text">Creating a workflow</span></a>
+ <span class="dropdown-text">3.2 Creating a workflow</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../workshops/4.1_modules.html">
- <span class="dropdown-text">Modularisation</span></a>
+    <a class="dropdown-item" href="../workshops/2.3_tips_and_tricks.html">
+ <span class="dropdown-text">3.3 Best practise, tips and tricks</span></a>
   </li>  
         <li>
     <a class="dropdown-item" href="../workshops/5.1_nf_core_template.html">
- <span class="dropdown-text">Nf-core Template</span></a>
+ <span class="dropdown-text">4.1 Creating workflows using nf-core templates</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../workshops/6.1_operators.html">
- <span class="dropdown-text">Nextflow Operators</span></a>
+    <a class="dropdown-item" href="../workshops/5.2_nf_core_modules.html">
+ <span class="dropdown-text">5.1 nf-core modules and subworkflows</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../workshops/7.1_metadata_propagation.html">
- <span class="dropdown-text">Metadata Propagation</span></a>
+    <a class="dropdown-item" href="../workshops/5.3_metadata_propagation.html">
+ <span class="dropdown-text">6.1 Metadata Propagation</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../workshops/8.1_scatter_gather_output.html">
- <span class="dropdown-text">Output, scatter, and Gather</span></a>
+    <a class="dropdown-item" href="../workshops/5.4_pipeline_testing.html">
+ <span class="dropdown-text">7.1 Pipeline version control and additional resources</span></a>
   </li>  
     </ul>
   </li>
@@ -353,21 +353,7 @@ Objectives
 <span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>    ...</span>
 <span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Now, rerun the pipeline, ensuring <code>-resume</code> is specified in the <code>nextflow run</code> command. <strong>Note</strong> ebsure you are no longer inside your pipeline folder.</p>
-<div class="callout callout-style-default callout-important callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Important
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p><strong>TO DO</strong></p>
-<p>Change CONTAINER</p>
-</div>
-</div>
-<div class="sourceCode" id="cb4"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>nextflow run ./nf-core-customrnaseq/main.nf -resume -profile CONTAINER --input ./samplesheet.csv --outdir output</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>nextflow run ./nf-core-customrnaseq/main.nf -resume -profile apptainer --input ./samplesheet.csv --outdir output</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>The channel should have the following structure:</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>[[id:gut, single_end:false], [/.../data/gut_1.fastq.gz, /.../data/gut_2.fastq.gz]]</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>[[id:liver, single_end:false], [/.../data/liver_1.fastq.gz, /.../data/liver_2.fastq.gz]]</span>
@@ -381,7 +367,7 @@ Important
 <p>Notice that the value under the <code>sample</code> column has been assigned as <code>id</code> in the channel metadata. File paths in the <code>fastq_1</code> and <code>fastq_2</code> have been added as the second element in the tuple, which represents the read paths.</p>
 <p>This is defined inside the <code>assets/schema_input.json</code> file. In this file, each “property” represents a column that can be present inside the <code>--input</code> samplesheet. Any required columns are also specified, as the <code>"required"</code> item.</p>
 <div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -390,7 +376,7 @@ assets/schema_input.json
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-4" class="callout-4-contents callout-collapse collapse">
+<div id="callout-3" class="callout-3-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <div class="sourceCode" id="cb7"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>{</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    "$schema": "https://json-schema.org/draft/2020-12/schema",</span>
@@ -548,22 +534,9 @@ Tip
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>        ch_transcript_fasta</span>
 <span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>    )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Rerun the pipeline, specifying the <code>params.yaml</code> file in the <code>nextflow run</code> command</p>
-<div class="callout callout-style-default callout-important callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Important
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p><strong>TO DO</strong> Change CONTAINER</p>
-</div>
-</div>
-<div class="sourceCode" id="cb15"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>nextflow run ./nf-core-customrnaseq/main.nf -resume -profile CONTAINER --input ./samplesheet.csv --outdir output -params-file ./params.yaml </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb15"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>nextflow run ./nf-core-customrnaseq/main.nf -resume -profile apptainer --input ./samplesheet.csv --outdir output -params-file ./params.yaml </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-9-contents" aria-controls="callout-9" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-7-contents" aria-controls="callout-7" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -572,7 +545,7 @@ stdout
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-9" class="callout-9-contents callout-collapse collapse">
+<div id="callout-7" class="callout-7-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <div class="sourceCode" id="cb16"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a> N E X T F L O W   ~  version 24.10.5</span>
@@ -701,7 +674,7 @@ Important
 </div>
 </div>
 <div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-12-contents" aria-controls="callout-12" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-10-contents" aria-controls="callout-10" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -710,7 +683,7 @@ Solution
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-12" class="callout-12-contents callout-collapse collapse">
+<div id="callout-10" class="callout-10-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <ol type="1">
 <li>Inside <code>nf-core-customrnaseq/main.nf</code>, the <code>gtf</code> parameter is added:</li>
@@ -751,7 +724,7 @@ Solution
 </div>
 </div>
 <div class="callout callout-style-default callout-tip callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-13-contents" aria-controls="callout-13" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-11-contents" aria-controls="callout-11" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -760,7 +733,7 @@ nf-core-customrnaseq/main.nf
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-13" class="callout-13-contents callout-collapse collapse">
+<div id="callout-11" class="callout-11-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <div class="sourceCode" id="cb28"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>#!/usr/bin/env nextflow</span>
 <span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>/*</span>
@@ -873,7 +846,7 @@ nf-core-customrnaseq/main.nf
 </div>
 </div>
 <div class="callout callout-style-default callout-tip callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-14-contents" aria-controls="callout-14" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-12-contents" aria-controls="callout-12" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -882,7 +855,7 @@ nf-core-customrnaseq/workflows/customrnaseq.nf
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-14" class="callout-14-contents callout-collapse collapse">
+<div id="callout-12" class="callout-12-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <div class="sourceCode" id="cb29"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>/*</span>
 <span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</span>
@@ -1058,7 +1031,7 @@ Important
 <p>Here, the important specification is <code>"meta"</code>, which will result in parsed samplesheet channel to have an additional metadata value <code>rep</code>, which corresponds to the replicate specified in the samplesheet.</p>
 <p>Now, let’s run the pipeline with the new samplesheet, and <code>view()</code> the <code>ch_samplesheet</code> that has been created:</p>
 <div class="callout callout-style-default callout-warning callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-16-contents" aria-controls="callout-16" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-14-contents" aria-controls="callout-14" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -1067,7 +1040,7 @@ Warning
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-16" class="callout-16-contents callout-collapse collapse">
+<div id="callout-14" class="callout-14-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>Inside the <code>PIPELINE_INITIALISATION</code> workflow, you will need to change the samplesheet parsing to the following:</p>
 <p><code>nf-core-customrnaseq/subworkflows/local/utils_nfcore_customrnaseq_pipeline/main.nf</code>:</p>
@@ -1100,20 +1073,7 @@ Warning
 </div>
 </div>
 </div>
-<div class="callout callout-style-default callout-important callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Important
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p><strong>TO DO</strong> Change CONTAINER</p>
-</div>
-</div>
-<div class="sourceCode" id="cb34"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>nextflow run ./nf-core-customrnaseq/main.nf -resume -profile CONTAINER --input ./samplesheet_replicates.csv --outdir output -params-file ./params.yaml </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb34"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>nextflow run ./nf-core-customrnaseq/main.nf -resume -profile apptainer --input ./samplesheet_replicates.csv --outdir output -params-file ./params.yaml </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>As expected, the new metadata value <code>rep</code> has been added in <code>ch_samplesheet</code>:</p>
 <div class="sourceCode" id="cb35"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>[[id:ERC, rep:1, single_end:false], [/.../HBR_Rep1_read1.fastq.gz, /.../HBR_Rep1_read2.fastq.gz]]</span>
 <span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>[[id:ERC, rep:2, single_end:false], [/.../HBR_Rep2_read1.fastq.gz, /.../HBR_Rep2_read2.fastq.gz]]</span>
@@ -1151,7 +1111,7 @@ Important
 <p>Here, <code>subMap</code> is used to remove <code>rep</code> from the original metadata. In the last line of the <code>map { }</code> function, the updated metadata is returned</p>
 <p><strong>Exercise</strong>: What do you think the new outputs would look like? Add the <code>map { }</code> function to your workflow script to confirm.</p>
 <div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-18-contents" aria-controls="callout-18" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-15-contents" aria-controls="callout-15" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -1160,7 +1120,7 @@ Solution
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-18" class="callout-18-contents callout-collapse collapse">
+<div id="callout-15" class="callout-15-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p><code>rep</code> is removed from the metadata, resulting in only <code>id</code> and <code>single_end</code> keys.</p>
 <div class="sourceCode" id="cb40"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>[[id:ERC, single_end:false], [/.../HBR_Rep1_read1.fastq.gz, /.../HBR_Rep1_read2.fastq.gz]]</span>
@@ -1174,7 +1134,7 @@ Solution
 <p>To group together all FASTQ files containing the same file metadata, <code>groupTuple()</code> can be used.</p>
 <p><strong>Exercise</strong>: Add <code>groupTuple()</code> after your <code>map { }</code> function and view the results. Does the output match what you expect?</p>
 <div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-19-contents" aria-controls="callout-19" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-16-contents" aria-controls="callout-16" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -1183,7 +1143,7 @@ Solution
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-19" class="callout-19-contents callout-collapse collapse">
+<div id="callout-16" class="callout-16-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>Adding <code>groupTuple()</code> after the <code>map { }</code> function and viewing the result:</p>
 <div class="sourceCode" id="cb41"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>    ch_samplesheet</span>
@@ -1202,7 +1162,7 @@ Solution
 <p>In the output, notice that while all FASTQ files that contain the same metadata are grouped together, they are still nested as <code>[ [s1r1, s1r2], [s2r1, s2r2] ]</code>.</p>
 <p><strong>Exercise</strong>: Using the <a href="https://www.nextflow.io/docs/latest/reference/operator.html">nf-core operator documentation</a>, can you find a suitable operator that will un-nest the FASTQ files such that the output structure is <code>[ s1r1, s1r2, s2r1, s2r2 ]</code>? Can you use it in combination with a <strong>new</strong> <code>map { }</code> function to un-nest just the FASTQ files (and not the metadata list)? Test it out by adding it after the <code>groupTuple()</code> operator and view the result.</p>
 <div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-20-contents" aria-controls="callout-20" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-17-contents" aria-controls="callout-17" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -1211,7 +1171,7 @@ Hint
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-20" class="callout-20-contents callout-collapse collapse">
+<div id="callout-17" class="callout-17-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>The following <code>map</code> function structure can be used</p>
 <div class="sourceCode" id="cb43"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>    ch_samplesheet</span>
@@ -1229,7 +1189,7 @@ Hint
 </div>
 </div>
 <div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-21-contents" aria-controls="callout-21" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-18-contents" aria-controls="callout-18" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -1238,7 +1198,7 @@ Solution
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-21" class="callout-21-contents callout-collapse collapse">
+<div id="callout-18" class="callout-18-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>The <a href="https://www.nextflow.io/docs/latest/reference/operator.html#flatten">flatten operator</a> can be used to achieve this.</p>
 <div class="sourceCode" id="cb44"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>    ch_samplesheet</span>

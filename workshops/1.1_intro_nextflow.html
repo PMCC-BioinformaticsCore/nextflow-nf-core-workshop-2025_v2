@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.7.29">
+<meta name="generator" content="quarto-1.7.25">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -71,7 +71,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-0815c480559380816a4d1ea211a47e91.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-fe31d7bd2deb2a321418d01dba375a64.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="../site_libs/bootstrap/bootstrap-a14e3238c51140e99ccc48519b6ed9ce.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
@@ -138,11 +138,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <ul class="dropdown-menu" aria-labelledby="nav-menu-sessions">    
         <li>
     <a class="dropdown-item" href="../sessions/1_intro_run_nf.html">
- <span class="dropdown-text">Introduction to Nextflow and Nf-core</span></a>
+ <span class="dropdown-text">Day 1: Introduction to Nextflow and Nf-core</span></a>
   </li>  
         <li>
     <a class="dropdown-item" href="../sessions/2_nf_dev_intro.html">
- <span class="dropdown-text">Developing bioinformatics workflows with Nextflow</span></a>
+ <span class="dropdown-text">Day 2: Developing bioinformatics workflows with Nextflow</span></a>
   </li>  
     </ul>
   </li>
@@ -153,47 +153,47 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <ul class="dropdown-menu" aria-labelledby="nav-menu-workshop">    
         <li>
     <a class="dropdown-item" href="../workshops/1.1_intro_nextflow.html">
- <span class="dropdown-text">Introduction to Nextflow</span></a>
+ <span class="dropdown-text">1.1 Introduction to Nextflow</span></a>
   </li>  
         <li>
     <a class="dropdown-item" href="../workshops/1.2_intro_nf_core.html">
- <span class="dropdown-text">Introduction to nf-core</span></a>
+ <span class="dropdown-text">1.2 Introduction to nf-core</span></a>
   </li>  
         <li>
     <a class="dropdown-item" href="../workshops/2.1_customise_and_run.html">
- <span class="dropdown-text">Customising &amp; running nf-core pipelines</span></a>
+ <span class="dropdown-text">2.1 Customising &amp; running nf-core pipelines</span></a>
   </li>  
         <li>
     <a class="dropdown-item" href="../workshops/2.2_troubleshooting.html">
- <span class="dropdown-text">Troubleshooting Nextflow run</span></a>
+ <span class="dropdown-text">2.2 Troubleshooting Nextflow run</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../workshops/2.3_tips_and_tricks.html">
- <span class="dropdown-text">Best practise, tips and tricks</span></a>
+    <a class="dropdown-item" href="../workshops/1.3_processes_and_channels.html">
+ <span class="dropdown-text">3.1 Introduction to processes and channels</span></a>
   </li>  
         <li>
     <a class="dropdown-item" href="../workshops/3.1_creating_a_workflow.html">
- <span class="dropdown-text">Creating a workflow</span></a>
+ <span class="dropdown-text">3.2 Creating a workflow</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../workshops/4.1_modules.html">
- <span class="dropdown-text">Modularisation</span></a>
+    <a class="dropdown-item" href="../workshops/2.3_tips_and_tricks.html">
+ <span class="dropdown-text">3.3 Best practise, tips and tricks</span></a>
   </li>  
         <li>
     <a class="dropdown-item" href="../workshops/5.1_nf_core_template.html">
- <span class="dropdown-text">Nf-core Template</span></a>
+ <span class="dropdown-text">4.1 Creating workflows using nf-core templates</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../workshops/6.1_operators.html">
- <span class="dropdown-text">Nextflow Operators</span></a>
+    <a class="dropdown-item" href="../workshops/5.2_nf_core_modules.html">
+ <span class="dropdown-text">5.1 nf-core modules and subworkflows</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../workshops/7.1_metadata_propagation.html">
- <span class="dropdown-text">Metadata Propagation</span></a>
+    <a class="dropdown-item" href="../workshops/5.3_metadata_propagation.html">
+ <span class="dropdown-text">6.1 Metadata Propagation</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../workshops/8.1_scatter_gather_output.html">
- <span class="dropdown-text">Output, scatter, and Gather</span></a>
+    <a class="dropdown-item" href="../workshops/5.4_pipeline_testing.html">
+ <span class="dropdown-text">7.1 Pipeline version control and additional resources</span></a>
   </li>  
     </ul>
   </li>
@@ -256,7 +256,7 @@ Objectives
 <p><img src="media/01_1_2_WorkflowExample.png" class="img-fluid"></p>
 <p>A simple script like this example above would likely be adequate to prototype a workflow for a once-off analysis. However, there are many other considerations to take into account when turning this into an efficient and scalable computational workflow. For example:</p>
 <ul>
-<li>How do we remove uneeded intermediate files?</li>
+<li>How do we remove unneeded intermediate files?</li>
 <li>How do we handle tool installations, versions, and dependencies?</li>
 <li>How do we submit each of these jobs into a job scheduler (e.g Slurm) in a High Performance Computing (HPC) cluster?</li>
 <li>How do we resume a partially failed workflow, especially if some of the initial completed tasks take long to compute?</li>
@@ -269,7 +269,7 @@ Objectives
 <section id="what-is-nextflow" class="level3">
 <h3 class="anchored" data-anchor-id="what-is-nextflow"><strong>1.1.2. What is Nextflow?</strong></h3>
 <p>Nextflow is a commonly used workflow system used to build scalable, portable, and reproducible computational workflows.</p>
-<p>It addresses the considerations that we discussed in the previous sections, providing features such as:</p>
+<p>It addresses the considerations that we discussed, providing features such as:</p>
 <ul>
 <li>Scalability, portability, and reproducibility</li>
 <li>Ease of workflow deployment and sharing</li>
@@ -314,18 +314,21 @@ Objectives
 <section id="nextflow-cli" class="level3">
 <h3 class="anchored" data-anchor-id="nextflow-cli"><strong>1.1.5. Nextflow CLI</strong></h3>
 <p>Nextflow provides a robust command line interface for the management and execution of workflows. Nextflow can be used on any POSIX compatible system (Linux, OS X, etc), and requires Bash 3.2 (or later) and Java 11 (or later, up to 18) to be installed.</p>
-<p>Nextflow has been pre-installed in our cluster. To load nextflow, ….</p>
+<p>Nextflow has been pre-installed in our workshop environment virtual machines. However, in your institutes’ HPC, a command to load nextflow might be different.</p>
 <div class="callout callout-style-default callout-important callout-titled">
-<div class="callout-header d-flex align-content-center">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-Important
+<strong>Institute specific instructions</strong>
 </div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
+<div id="callout-2" class="callout-2-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<p><strong>TO DO</strong> Add how to load nextflow</p>
+<p>To load nextflow at Peter Mac HPC for example, you can do <code>module load nextflow/24.10.5</code></p>
+</div>
 </div>
 </div>
 <div class="callout callout-style-default callout-note callout-titled">
@@ -408,32 +411,23 @@ Important
 <h3 class="anchored" data-anchor-id="managing-your-environment"><strong>1.1.7. Managing your environment</strong></h3>
 <p>You can also use <a href="https://www.nextflow.io/docs/latest/config.html#environment-variables">environment variables</a> to control the Nextflow runtime and the underlying Java virtual machine. These variables can be exported before running a workflow and will be interpreted by Nextflow.</p>
 <p>Since we are using shared storage, we should consider storing shared software in a location that is accessible by all users in the cluster. The key Nextflow environment variables to do this is <code>NXF_APPTAINER_CACHEDIR</code> for Apptainer, <code>NXF_SINGULARITY_CACHEDIR</code> for Singularity, and <code>NXF_CONDA_CACHEDIR</code> for Conda environment managers.</p>
+<p>For this workshop, we will be using apptainer as our container tool. As all users have their individual VMs, we will set the <code>NXF_APPTAINER_CACHEDIR</code> to <code>~/apptainer_cache</code>.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>export NXF_APPTAINER_CACHEDIR="~/apptainer_cache"</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="callout callout-style-default callout-important callout-titled">
-<div class="callout-header d-flex align-content-center">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-Important
+<strong>Institute specific instructions</strong>
 </div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
+<div id="callout-4" class="callout-4-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<p><strong>TO DO</strong> Add what we’re using</p>
+<p>At Peter Mac HPC, you would set this variable to:</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>export NXF_APPTAINER_CACHEDIR="/config/binaries/singularity/containers_devel/nextflow</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-</div>
-<p>Today, we will use …</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>export ...</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="callout callout-style-default callout-important callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Important
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p><strong>TO DO</strong> Add what cache directory we are using</p>
 </div>
 </div>
 <p>Images downloaded by workflow executions will now be stored in this directory.</p>
@@ -441,14 +435,14 @@ Important
 <section id="executing-a-workflow" class="level3">
 <h3 class="anchored" data-anchor-id="executing-a-workflow"><strong>1.1.8. Executing a workflow</strong></h3>
 <p>Nextflow also enables users to run workflows hosted in a remote code repository such as <a href="https://github.com/">GitHub</a>, by specifying the repository URL or its qualified name. For example, if a Nextflow project <code>bar</code> is hosted in a GitHub repository <code>foo</code> at the address <code>http://github.com/foo/bar</code>, it could be run using either:</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>nextflow run foo/bar</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>nextflow run http://github.com/foo/bar</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>As our first exercise, we will execute the <code>hello</code> workflow directly from <code>nextflow-io</code> <a href="https://github.com/nextflow-io/hello">GitHub</a> repository. Start by creating a directory <code>lesson1.1</code> and change into it move into it.</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>mkdir ./lesson1.1 &amp;&amp; cd $_</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>nextflow run foo/bar</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>nextflow run http://github.com/foo/bar</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>As our first exercise, we will execute the <code>hello</code> workflow directly from <code>nextflow-io</code> <a href="https://github.com/nextflow-io/hello">GitHub</a> repository. Start by creating a directory <code>lesson1.1</code>.</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>mkdir ./lesson1.1 &amp;&amp; cd $_</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p><strong>Exercise</strong>: Use the <code>nextflow run</code> command to run the pipeline using the qualified name.</p>
 <div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-6-contents" aria-controls="callout-6" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -457,38 +451,25 @@ Important
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-6" class="callout-6-contents callout-collapse collapse">
+<div id="callout-5" class="callout-5-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<div class="sourceCode" id="cb9"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>nextflow run nextflow-io/hello</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="sourceCode" id="cb10"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>N E X T F L O W  ~  version 23.04.1</span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>Launching `https://github.com/nextflow-io/hello` [deadly_hoover] DSL2 - revision: 1d71f857bb [master]</span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>executor &gt;  local (4)</span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>[a2/9c17c8] process &gt; sayHello (2) [100%] 4 of 4 ✔</span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>Hello world!</span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>Bonjour world!</span>
-<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>Hola world!</span>
-<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>Ciao world!</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>nextflow run nextflow-io/hello</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb11"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>N E X T F L O W  ~  version 23.04.1</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>Launching `https://github.com/nextflow-io/hello` [deadly_hoover] DSL2 - revision: 1d71f857bb [master]</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>executor &gt;  local (4)</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>[a2/9c17c8] process &gt; sayHello (2) [100%] 4 of 4 ✔</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>Hello world!</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>Bonjour world!</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>Hola world!</span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>Ciao world!</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 </div>
 <p>If you <code>run</code> a workflow, it will look for a local file with the workflow name you’ve specified. If that file does not exist, it will look for a public repository with the same name on GitHub (unless otherwise specified). If it is found, Nextflow will automatically <code>pull</code> the workflow to your global cache and execute it.</p>
 <p>Be aware of what is already in your current working directory where you launch your workflow, if there are other workflows (or configuration files) you may encounter unexpected results.</p>
-<div class="callout callout-style-default callout-important callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Important
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p><strong>TO DO</strong> Change srun partition command</p>
-</div>
-</div>
 <div class="callout callout-style-default callout-caution callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -500,8 +481,23 @@ Important
 </div>
 <div class="callout-body-container callout-body">
 <p>Short answer, no! Even though nextflow is not performing any heavy computation, without the necessary execution configurations, all the processes within the workflow will be executed locally.</p>
-<p>For the remaining sessions, we will run Nextflow in a compute node on an interactive Slurm job.</p>
-<div class="sourceCode" id="cb11"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>srun --pty -p &lt;PARTITION&gt; --mem 8GB --mincpus 2 -t 0-5:00 bash</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="callout callout-style-default callout-caution callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-6-contents" aria-controls="callout-6" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<strong>Institute specific instructions</strong>
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-6" class="callout-6-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>At Peter Mac HPC, we would run a nextflow job inside an sbatch job; or via an interactive slurm job`</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>srun --pty -p &lt;PARTITION&gt; --mem 8GB --mincpus 2 -t 0-5:00 bash</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+</div>
 </div>
 </div>
 <div class="callout callout-style-default callout-tip callout-titled">
@@ -521,8 +517,18 @@ Important
 </ul>
 </div>
 </div>
+<p><br></p>
+</section>
+<section id="next-chapter-introduction-to-nf-core" class="level3">
+<h3 class="anchored" data-anchor-id="next-chapter-introduction-to-nf-core"><strong>Next Chapter: <a href="./1.2_intro_nf_core.html">Introduction to nf-core</a></strong></h3>
+<p><br></p>
 <hr>
-<p><sup><em>These materials are adapted from <a href="https://sydney-informatics-hub.github.io/customising-nfcore-workshop/notebooks/1.2_nfcore.html">Customising Nf-Core Workshop</a> by Sydney Informatics Hub</em></sup></p>
+<p>This workshop is adapted from various nextflow training materials, including:</p>
+<ul>
+<li><a href="https://training.nextflow.io">Nextflow Training Materials</a></li>
+<li><a href="https://sydney-informatics-hub.github.io/customising-nfcore-workshop">Customising Nf-Core Workshop</a></li>
+<li><a href="https://sydney-informatics-hub.github.io/hello-nextflow/">Hello Nextflow Workshop</a></li>
+</ul>
 
 
 </section>

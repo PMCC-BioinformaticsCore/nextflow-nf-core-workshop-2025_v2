@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.7.29">
+<meta name="generator" content="quarto-1.7.25">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -71,7 +71,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-0815c480559380816a4d1ea211a47e91.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-fe31d7bd2deb2a321418d01dba375a64.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="../site_libs/bootstrap/bootstrap-a14e3238c51140e99ccc48519b6ed9ce.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
@@ -138,11 +138,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <ul class="dropdown-menu" aria-labelledby="nav-menu-sessions">    
         <li>
     <a class="dropdown-item" href="../sessions/1_intro_run_nf.html">
- <span class="dropdown-text">Introduction to Nextflow and Nf-core</span></a>
+ <span class="dropdown-text">Day 1: Introduction to Nextflow and Nf-core</span></a>
   </li>  
         <li>
     <a class="dropdown-item" href="../sessions/2_nf_dev_intro.html">
- <span class="dropdown-text">Developing bioinformatics workflows with Nextflow</span></a>
+ <span class="dropdown-text">Day 2: Developing bioinformatics workflows with Nextflow</span></a>
   </li>  
     </ul>
   </li>
@@ -153,47 +153,47 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <ul class="dropdown-menu" aria-labelledby="nav-menu-workshop">    
         <li>
     <a class="dropdown-item" href="../workshops/1.1_intro_nextflow.html">
- <span class="dropdown-text">Introduction to Nextflow</span></a>
+ <span class="dropdown-text">1.1 Introduction to Nextflow</span></a>
   </li>  
         <li>
     <a class="dropdown-item" href="../workshops/1.2_intro_nf_core.html">
- <span class="dropdown-text">Introduction to nf-core</span></a>
+ <span class="dropdown-text">1.2 Introduction to nf-core</span></a>
   </li>  
         <li>
     <a class="dropdown-item" href="../workshops/2.1_customise_and_run.html">
- <span class="dropdown-text">Customising &amp; running nf-core pipelines</span></a>
+ <span class="dropdown-text">2.1 Customising &amp; running nf-core pipelines</span></a>
   </li>  
         <li>
     <a class="dropdown-item" href="../workshops/2.2_troubleshooting.html">
- <span class="dropdown-text">Troubleshooting Nextflow run</span></a>
+ <span class="dropdown-text">2.2 Troubleshooting Nextflow run</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../workshops/2.3_tips_and_tricks.html">
- <span class="dropdown-text">Best practise, tips and tricks</span></a>
+    <a class="dropdown-item" href="../workshops/1.3_processes_and_channels.html">
+ <span class="dropdown-text">3.1 Introduction to processes and channels</span></a>
   </li>  
         <li>
     <a class="dropdown-item" href="../workshops/3.1_creating_a_workflow.html">
- <span class="dropdown-text">Creating a workflow</span></a>
+ <span class="dropdown-text">3.2 Creating a workflow</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../workshops/4.1_modules.html">
- <span class="dropdown-text">Modularisation</span></a>
+    <a class="dropdown-item" href="../workshops/2.3_tips_and_tricks.html">
+ <span class="dropdown-text">3.3 Best practise, tips and tricks</span></a>
   </li>  
         <li>
     <a class="dropdown-item" href="../workshops/5.1_nf_core_template.html">
- <span class="dropdown-text">Nf-core Template</span></a>
+ <span class="dropdown-text">4.1 Creating workflows using nf-core templates</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../workshops/6.1_operators.html">
- <span class="dropdown-text">Nextflow Operators</span></a>
+    <a class="dropdown-item" href="../workshops/5.2_nf_core_modules.html">
+ <span class="dropdown-text">5.1 nf-core modules and subworkflows</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../workshops/7.1_metadata_propagation.html">
- <span class="dropdown-text">Metadata Propagation</span></a>
+    <a class="dropdown-item" href="../workshops/5.3_metadata_propagation.html">
+ <span class="dropdown-text">6.1 Metadata Propagation</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../workshops/8.1_scatter_gather_output.html">
- <span class="dropdown-text">Output, scatter, and Gather</span></a>
+    <a class="dropdown-item" href="../workshops/5.4_pipeline_testing.html">
+ <span class="dropdown-text">7.1 Pipeline version control and additional resources</span></a>
   </li>  
     </ul>
   </li>
@@ -236,22 +236,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <ul>
 <li>Install Visual Studio Code (recommended) or other text editor</li>
 <li>Install the Nextflow and Remote-SSH VSC extensions (below) for VSCode users</li>
-<li>Test your remote connection to the HPC and create a directory <code>/scratch/users/&lt;your-username&gt;/nfWorkshop</code> in your scratch space. This will be our working directory</li>
+<li>Test your remote connection to the HPC and create a directory <code>~/nfWorkshop</code>. This home space <code>~/nfWorkshop</code> will be our working directory.</li>
 </ul>
-<div class="callout callout-style-default callout-important callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Important
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p><strong>TO DO</strong></p>
-<p>Change to scratch dir path</p>
-</div>
-</div>
 <section id="install-and-set-up-visual-studio-code" class="level2">
 <h2 class="anchored" data-anchor-id="install-and-set-up-visual-studio-code">Install and set up Visual Studio Code</h2>
 <p>We recommend Visual Studio Code as a source code editor because it is lightweight and has rich support for extensions and syntax highlighting available across various popular operating system.</p>
@@ -283,22 +269,9 @@ Important
 <li>Select Remote-SSH: Open SSH configuration file and select your .ssh config file</li>
 <li>Add a new entry with your details to login to cluster, and save your .ssh config file:</li>
 </ol>
-<div class="callout callout-style-default callout-important callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Important
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p><strong>TO DO</strong> Change host name + user</p>
-</div>
-</div>
-<div class="sourceCode" id="cb1"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>Host pmac-cluster</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    HostName kvmpr-res-lnode1.unix.petermac.org.au</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    User &lt;your-cluster-user-name&gt;</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>Host pmac-workshop</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    HostName &lt;your-ip-name&gt;</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    User &lt;your-user-name&gt;</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <ol start="4" type="1">
 <li>Type Ctrl+Shift+P and select Remote-SSH: Connect to Host; and pmac-cluster (or whatever you name your host above)</li>
 <li>When prompted, select Linux as the platform of the remote host from the dropdown menu</li>
@@ -309,22 +282,7 @@ Important
 <p>To set up your VS Code window for the workshop:</p>
 <ol type="1">
 <li>Open a new folder in the file explorer panel on the left side of the screen by typing Ctrl + K, Ctrl + O if you’re running Windows or Cmd+K+ Cmd + O for MacOS</li>
-</ol>
-<div class="callout callout-style-default callout-important callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Important
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p><strong>TO DO</strong> Change scratch path</p>
-</div>
-</div>
-<ol start="2" type="1">
-<li>Select <code>/scratch/users/&lt;your-username&gt;/nfWorkshop</code> to open our working directory. If you encountered an error that the directory does not exist, you would need to ssh in to the cluster and create that directory first before attempting this step.</li>
+<li>Select <code>/home/&lt;your-user-name&gt;/nfWorkshop</code> to open our working directory. If you encountered an error that the directory does not exist, you would need to ssh in to the cluster and create that directory first before attempting this step.</li>
 <li>When prompted, select the box for Trust the authors of all files in the parent folder ‘home’ then click Yes, I trust the authors</li>
 <li>You can dismiss the warning message saying our cluster’s git version is outdated</li>
 <li>To open a terminal, type Ctrl+J if you’re on a Windows machine or Cmd+J on MacOS</li>

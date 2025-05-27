@@ -138,11 +138,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <ul class="dropdown-menu" aria-labelledby="nav-menu-sessions">    
         <li>
     <a class="dropdown-item" href="../sessions/1_intro_run_nf.html">
- <span class="dropdown-text">Day 1: Introduction to Nextflow and Nf-core</span></a>
+ <span class="dropdown-text">Introduction to Nextflow and Nf-core</span></a>
   </li>  
         <li>
     <a class="dropdown-item" href="../sessions/2_nf_dev_intro.html">
- <span class="dropdown-text">Day 2: Developing bioinformatics workflows with Nextflow</span></a>
+ <span class="dropdown-text">Developing bioinformatics workflows with Nextflow</span></a>
   </li>  
     </ul>
   </li>
@@ -153,47 +153,47 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <ul class="dropdown-menu" aria-labelledby="nav-menu-workshop">    
         <li>
     <a class="dropdown-item" href="../workshops/1.1_intro_nextflow.html">
- <span class="dropdown-text">1.1 Introduction to Nextflow</span></a>
+ <span class="dropdown-text">Introduction to Nextflow</span></a>
   </li>  
         <li>
     <a class="dropdown-item" href="../workshops/1.2_intro_nf_core.html">
- <span class="dropdown-text">1.2 Introduction to nf-core</span></a>
+ <span class="dropdown-text">Introduction to nf-core</span></a>
   </li>  
         <li>
     <a class="dropdown-item" href="../workshops/2.1_customise_and_run.html">
- <span class="dropdown-text">2.1 Customising &amp; running nf-core pipelines</span></a>
+ <span class="dropdown-text">Customising &amp; running nf-core pipelines</span></a>
   </li>  
         <li>
     <a class="dropdown-item" href="../workshops/2.2_troubleshooting.html">
- <span class="dropdown-text">2.2 Troubleshooting Nextflow run</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="../workshops/1.3_processes_and_channels.html">
- <span class="dropdown-text">3.1 Introduction to processes and channels</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="../workshops/3.1_creating_a_workflow.html">
- <span class="dropdown-text">3.2 Creating a workflow</span></a>
+ <span class="dropdown-text">Troubleshooting Nextflow run</span></a>
   </li>  
         <li>
     <a class="dropdown-item" href="../workshops/2.3_tips_and_tricks.html">
- <span class="dropdown-text">3.3 Best practise, tips and tricks</span></a>
+ <span class="dropdown-text">Best practise, tips and tricks</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../workshops/3.1_creating_a_workflow.html">
+ <span class="dropdown-text">Creating a workflow</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../workshops/4.1_modules.html">
+ <span class="dropdown-text">Modularisation</span></a>
   </li>  
         <li>
     <a class="dropdown-item" href="../workshops/5.1_nf_core_template.html">
- <span class="dropdown-text">4.1 Creating workflows using nf-core templates</span></a>
+ <span class="dropdown-text">Nf-core Template</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../workshops/5.2_nf_core_modules.html">
- <span class="dropdown-text">5.1 nf-core modules and subworkflows</span></a>
+    <a class="dropdown-item" href="../workshops/6.1_operators.html">
+ <span class="dropdown-text">Nextflow Operators</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../workshops/5.3_metadata_propagation.html">
- <span class="dropdown-text">6.1 Metadata Propagation</span></a>
+    <a class="dropdown-item" href="../workshops/7.1_metadata_propagation.html">
+ <span class="dropdown-text">Metadata Propagation</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../workshops/5.4_pipeline_testing.html">
- <span class="dropdown-text">7.1 Pipeline version control and additional resources</span></a>
+    <a class="dropdown-item" href="../workshops/8.1_scatter_gather_output.html">
+ <span class="dropdown-text">Output, scatter, and Gather</span></a>
   </li>  
     </ul>
   </li>
@@ -231,23 +231,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<div class="callout callout-style-default callout-tip callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Objectives
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<ul>
-<li>Learn basic troubleshooting of nextflow log</li>
-<li>Learn the structure of nextflow work directory</li>
-<li>Examine the run command stitched together by nextflow for manual debugging</li>
-</ul>
-</div>
-</div>
 <section id="nextflow-log" class="level3">
 <h3 class="anchored" data-anchor-id="nextflow-log"><strong>2.2.1. Nextflow log</strong></h3>
 <p>It is important to keep a record of the commands you have used to generate your results. Nextflow helps with this by creating and storing metadata and logs about the run in hidden files and folders in your current directory (unless otherwise specified). This data can be used by Nextflow to generate reports. It can also be queried using the Nextflow <code>log</code> command:</p>
@@ -262,7 +245,7 @@ Objectives
 <div class="sourceCode" id="cb5"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>nextflow log -l</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p><strong>Exercise</strong>: Use the <code>log</code> command to view with <code>process</code>, <code>hash</code>, and <code>script</code> fields for your tasks from your most recent Nextflow execution.</p>
 <div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -271,53 +254,48 @@ Solution
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-2" class="callout-2-contents callout-collapse collapse">
+<div id="callout-1" class="callout-1-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>First, use the <code>log</code> command to get a list of your recent executions:</p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>nextflow log</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="sourceCode" id="cb7"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>TIMESTAMP           DURATION    RUN NAME            STATUS  REVISION ID SESSION ID                              COMMAND                                                                                                                 </span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>2025-05-27 15:23:39 2m 16s      hopeful_dubinsky    OK      b89fac3265  54c06115-6867-45e3-86b3-8566a69f7406    nextflow run nf-core/rnaseq -r 3.14.0 -profile apptainer -params-file ./workshop-params.yaml                            </span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>2025-05-27 15:56:36 37.1s       tiny_bartik         OK      b89fac3265  54c06115-6867-45e3-86b3-8566a69f7406    nextflow run nf-core/rnaseq -r 3.14.0 -profile apptainer -params-file ./workshop-params.yaml -resume                    </span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>2025-05-27 15:57:23 35.6s       angry_mcclintock    OK      b89fac3265  54c06115-6867-45e3-86b3-8566a69f7406    nextflow run nf-core/rnaseq -r 3.14.0 -profile apptainer -params-file ./workshop-params.yaml -resume --outdir my_results</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>TIMESTAMP           DURATION    RUN NAME            STATUS  REVISION ID SESSION ID                              COMMAND </span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>2023-11-21 22:43:14 14m 17s     jovial_angela       OK      3bec2331ca  319751c3-25a6-4085-845c-6da28cd771df    nextflow run nf-core/rnaseq</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>2023-11-21 23:05:49 1m 36s      marvelous_shannon   OK      3bec2331ca  319751c3-25a6-4085-845c-6da28cd771df    nextflow run nf-core/rnaseq</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>2023-11-21 23:10:00 1m 35s      deadly_babbage      OK      3bec2331ca  319751c3-25a6-4085-845c-6da28cd771df    nextflow run nf-core/rnaseq</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Query the process, hash, and script using the <code>-f</code> option for the most recent run:</p>
 <div class="sourceCode" id="cb8"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>nextflow log marvelous_shannon -f process,hash,script</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="sourceCode" id="cb9"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>[... truncated ...]</span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>NFCORE_RNASEQ:RNASEQ:QUANTIFY_PSEUDO_ALIGNMENT:SALMON_QUANT d7/01e251   </span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>    salmon quant \</span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>        --geneMap genome.filtered.gtf \</span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>        --threads 2 \</span>
-<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>        --libType=ISR \</span>
-<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>        --index salmon \</span>
-<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>        -1 SRR6357071_1_val_1.fq.gz -2 SRR6357071_2_val_2.fq.gz \</span>
-<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>         \</span>
-<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>        -o SRR6357071</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>NFCORE_RNASEQ:RNASEQ:SUBREAD_FEATURECOUNTS  7c/f936d4   </span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>    featureCounts \</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>        -B -C -g gene_biotype -t exon \</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>        -p \</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>        -T 2 \</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>        -a chr22_with_ERCC92.gtf \</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>        -s 2 \</span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>        -o HBR_Rep1_ERCC.featureCounts.txt \</span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>        HBR_Rep1_ERCC.markdup.sorted.bam</span>
 <span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>    if [ -f SRR6357071/aux_info/meta_info.json ]; then</span>
-<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>        cp SRR6357071/aux_info/meta_info.json "SRR6357071_meta_info.json"</span>
-<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>    fi</span>
-<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>    cat &lt;&lt;-END_VERSIONS &gt; versions.yml</span>
-<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a>    "NFCORE_RNASEQ:RNASEQ:QUANTIFY_PSEUDO_ALIGNMENT:SALMON_QUANT":</span>
-<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a>        salmon: $(echo $(salmon --version) | sed -e "s/salmon //g")</span>
-<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a>    END_VERSIONS</span>
-<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a>[... truncated ... ]</span>
-<span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-25"><a href="#cb9-25" aria-hidden="true" tabindex="-1"></a>NFCORE_RNASEQ:RNASEQ:MULTIQC    7c/b0bbc5   </span>
-<span id="cb9-26"><a href="#cb9-26" aria-hidden="true" tabindex="-1"></a>    multiqc \</span>
-<span id="cb9-27"><a href="#cb9-27" aria-hidden="true" tabindex="-1"></a>        -n multiqc_report.html \</span>
-<span id="cb9-28"><a href="#cb9-28" aria-hidden="true" tabindex="-1"></a>        -f \</span>
-<span id="cb9-29"><a href="#cb9-29" aria-hidden="true" tabindex="-1"></a>         \</span>
-<span id="cb9-30"><a href="#cb9-30" aria-hidden="true" tabindex="-1"></a>         \</span>
-<span id="cb9-31"><a href="#cb9-31" aria-hidden="true" tabindex="-1"></a>        .</span>
-<span id="cb9-32"><a href="#cb9-32" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-33"><a href="#cb9-33" aria-hidden="true" tabindex="-1"></a>    cat &lt;&lt;-END_VERSIONS &gt; versions.yml</span>
-<span id="cb9-34"><a href="#cb9-34" aria-hidden="true" tabindex="-1"></a>    "NFCORE_RNASEQ:RNASEQ:MULTIQC":</span>
-<span id="cb9-35"><a href="#cb9-35" aria-hidden="true" tabindex="-1"></a>        multiqc: $( multiqc --version | sed -e "s/multiqc, version //g" )</span>
-<span id="cb9-36"><a href="#cb9-36" aria-hidden="true" tabindex="-1"></a>    END_VERSIONS</span>
-<span id="cb9-37"><a href="#cb9-37" aria-hidden="true" tabindex="-1"></a>    </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>    cat &lt;&lt;-END_VERSIONS &gt; versions.yml</span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>    "NFCORE_RNASEQ:RNASEQ:SUBREAD_FEATURECOUNTS":</span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>        subread: $( echo $(featureCounts -v 2&gt;&amp;1) | sed -e "s/featureCounts v//g")</span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>    END_VERSIONS</span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a>[... truncated ... ]</span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a>NFCORE_RNASEQ:RNASEQ:MULTIQC    7a/8449d7   </span>
+<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a>    multiqc \</span>
+<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a>        -f \</span>
+<span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a>         \</span>
+<span id="cb9-25"><a href="#cb9-25" aria-hidden="true" tabindex="-1"></a>         \</span>
+<span id="cb9-26"><a href="#cb9-26" aria-hidden="true" tabindex="-1"></a>        .</span>
+<span id="cb9-27"><a href="#cb9-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-28"><a href="#cb9-28" aria-hidden="true" tabindex="-1"></a>    cat &lt;&lt;-END_VERSIONS &gt; versions.yml</span>
+<span id="cb9-29"><a href="#cb9-29" aria-hidden="true" tabindex="-1"></a>    "NFCORE_RNASEQ:RNASEQ:MULTIQC":</span>
+<span id="cb9-30"><a href="#cb9-30" aria-hidden="true" tabindex="-1"></a>        multiqc: $( multiqc --version | sed -e "s/multiqc, version //g" )</span>
+<span id="cb9-31"><a href="#cb9-31" aria-hidden="true" tabindex="-1"></a>    END_VERSIONS</span>
+<span id="cb9-32"><a href="#cb9-32" aria-hidden="true" tabindex="-1"></a>    </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 </div>
@@ -327,41 +305,57 @@ Solution
 <p>Task execution <strong>caching</strong> is an essential feature of modern workflow managers. As such, Nextflow provides an automated caching mechanism for every execution. When using the Nextflow <code>-resume</code> option, successfully completed tasks from previous executions are skipped and the previously cached results are used in downstream tasks.</p>
 <p>Nextflow caching mechanism works by assigning a unique ID to each task. The task unique ID is generated as a 128-bit hash value composing the the complete file path, file size, and last modified timestamp. These ID’s are used to create a separate execution directory where the tasks are executed and the outputs are stored. Nextflow will take care of the inputs and outputs in these folders for you.</p>
 <p>You can re-launch the previously executed <code>nf-core/rnaseq</code> workflow again using <code>-resume</code>, and observe the progress. Change the output directory to be <code>my_results</code>. Notice the time it takes to complete the workflow.</p>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Important
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>TO DO</strong> Change CONTAINER</p>
+</div>
+</div>
 <div class="sourceCode" id="cb10"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>nextflow run nf-core/rnaseq -r 3.14.0 \</span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>    -profile apptainer \</span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    -params-file ./workshop-params.yaml \</span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    -resume \</span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>    --outdir my_results</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="sourceCode" id="cb11"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>[6d/10f0b4] process &gt; NFCORE_RNASEQ:RNASEQ:PREPARE_GENOME:GTF_FILTER (genome.fasta)                      [100%] 1 of 1, cached: 1 ✔</span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>[77/74cbf2] process &gt; NFCORE_RNASEQ:RNASEQ:PREPARE_GENOME:GTF2BED (genome.filtered.gtf)                  [100%] 1 of 1, cached: 1 ✔</span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>[02/f7e668] process &gt; NFCORE_RNASEQ:RNASEQ:PREPARE_GENOME:MAKE_TRANSCRIPTS_FASTA (rsem/genome.fasta)     [100%] 1 of 1, cached: 1 ✔</span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>...</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  -resume </span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  -profile &lt;CONTAINER&gt; \</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  -c my_resources.config \</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>  -params-file workshop-params.yaml \</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>  --outdir my_results \</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb11"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>[80/ec6ff8] process &gt; NFCORE_RNASEQ:RNASEQ:PREPARE_GENOME:GTF2BED (chr22_with_ERCC92.gtf)                  [100%] 1 of 1, cached: 1 ✔</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>[1a/7bec9c] process &gt; NFCORE_RNASEQ:RNASEQ:PREPARE_GENOME:GTF_GENE_FILTER (chr22_with_ERCC92.fa)           [100%] 1 of 1, cached: 1 ✔</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Executing this workflow will create a <code>my_results</code> directory that contain selected results files, as well as the <code>work</code> directory, which contains further sub-directories.</p>
-<p>In the schematic above, the hexadecimal numbers, such as <code>6d/10f0b4</code>, identify the unique task execution. These numbers are also the prefix of the <code>work</code> subdirectories where each task is executed.</p>
+<p>In the schematic above, the hexadecimal numbers, such as <code>80/ec6ff8</code>, identify the unique task execution. These numbers are also the prefix of the <code>work</code> subdirectories where each task is executed.</p>
 <p>You can inspect the files produced by a task by looking inside the <code>work</code> directory and using these numbers to find the task-specific execution path. Use <code>tab</code> to autocomplete the full file path:</p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>ls work/6d/10f0b4d0e6cf920e35657ce78feb1d/</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb12"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>ls work/80/ec6ff8ba69a8b5b8eede3679e9f978/</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>If you look inside the <code>work</code> directory of a <code>FASTQC</code> process, you will find the files that were staged and created when this task was executed:</p>
 <div class="sourceCode" id="cb13"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>ls -la  work/e9/60b2e80b2835a3e1ad595d55ac5bf5/ </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="sourceCode" id="cb14"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>total 1940</span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>drwxrwxr-x 2 larigan larigan   4096 May 27 15:24 .</span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>drwxrwxr-x 3 larigan larigan   4096 May 27 15:23 ..</span>
-<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>-rw-rw-r-- 1 larigan larigan      0 May 27 15:24 .command.begin</span>
-<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>-rw-rw-r-- 1 larigan larigan      0 May 27 15:24 .command.err</span>
-<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>-rw-rw-r-- 1 larigan larigan     34 May 27 15:24 .command.log</span>
-<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>-rw-rw-r-- 1 larigan larigan     34 May 27 15:24 .command.out</span>
-<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>-rw-rw-r-- 1 larigan larigan  10394 May 27 15:24 .command.run</span>
-<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>-rw-rw-r-- 1 larigan larigan    468 May 27 15:24 .command.sh</span>
-<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>-rw-rw-r-- 1 larigan larigan    261 May 27 15:24 .command.trace</span>
-<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>-rw-rw-r-- 1 larigan larigan      1 May 27 15:24 .exitcode</span>
-<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>-rw-rw-r-- 1 larigan larigan 598884 May 27 15:24 SRR6357071_1_fastqc.html</span>
-<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>-rw-rw-r-- 1 larigan larigan 365752 May 27 15:24 SRR6357071_1_fastqc.zip</span>
-<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>lrwxrwxrwx 1 larigan larigan     66 May 27 15:24 SRR6357071_1.fastq.gz -&gt; /home/larigan/rnaseq_data/testdata/GSE110004/SRR6357071_1.fastq.gz</span>
-<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a>lrwxrwxrwx 1 larigan larigan     21 May 27 15:24 SRR6357071_1.gz -&gt; SRR6357071_1.fastq.gz</span>
-<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a>-rw-rw-r-- 1 larigan larigan 604569 May 27 15:24 SRR6357071_2_fastqc.html</span>
-<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a>-rw-rw-r-- 1 larigan larigan 355487 May 27 15:24 SRR6357071_2_fastqc.zip</span>
-<span id="cb14-18"><a href="#cb14-18" aria-hidden="true" tabindex="-1"></a>lrwxrwxrwx 1 larigan larigan     66 May 27 15:24 SRR6357071_2.fastq.gz -&gt; /home/larigan/rnaseq_data/testdata/GSE110004/SRR6357071_2.fastq.gz</span>
-<span id="cb14-19"><a href="#cb14-19" aria-hidden="true" tabindex="-1"></a>lrwxrwxrwx 1 larigan larigan     21 May 27 15:24 SRR6357071_2.gz -&gt; SRR6357071_2.fastq.gz</span>
-<span id="cb14-20"><a href="#cb14-20" aria-hidden="true" tabindex="-1"></a>-rw-rw-r-- 1 larigan larigan     83 May 27 15:24 versions.yml</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb14"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>total 15895</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>drwxrwxr-x 2 rlupat rlupat    4096 Nov 22 03:39 .</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>drwxrwxr-x 4 rlupat rlupat    4096 Nov 22 03:38 ..</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>-rw-rw-r-- 1 rlupat rlupat       0 Nov 22 03:39 .command.begin</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>-rw-rw-r-- 1 rlupat rlupat    9509 Nov 22 03:39 .command.err</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>-rw-rw-r-- 1 rlupat rlupat    9609 Nov 22 03:39 .command.log</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>-rw-rw-r-- 1 rlupat rlupat     100 Nov 22 03:39 .command.out</span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>-rw-rw-r-- 1 rlupat rlupat   10914 Nov 22 03:39 .command.run</span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>-rw-rw-r-- 1 rlupat rlupat     671 Nov 22 03:39 .command.sh</span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>-rw-rw-r-- 1 rlupat rlupat     231 Nov 22 03:39 .command.trace</span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>-rw-rw-r-- 1 rlupat rlupat       1 Nov 22 03:39 .exitcode</span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>lrwxrwxrwx 1 rlupat rlupat      63 Nov 22 03:39 HBR_Rep1_ERCC_1.fastq.gz -&gt; HBR_Rep1_ERCC-Mix2_Build37-ErccTranscripts-chr22.read1.fastq.gz</span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>-rw-rw-r-- 1 rlupat rlupat    2368 Nov 22 03:39 HBR_Rep1_ERCC_1.fastq.gz_trimming_report.txt</span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>-rw-rw-r-- 1 rlupat rlupat  697080 Nov 22 03:39 HBR_Rep1_ERCC_1_val_1_fastqc.html</span>
+<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a>-rw-rw-r-- 1 rlupat rlupat  490526 Nov 22 03:39 HBR_Rep1_ERCC_1_val_1_fastqc.zip</span>
+<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a>-rw-rw-r-- 1 rlupat rlupat 6735205 Nov 22 03:39 HBR_Rep1_ERCC_1_val_1.fq.gz</span>
+<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a>lrwxrwxrwx 1 rlupat rlupat      63 Nov 22 03:39 HBR_Rep1_ERCC_2.fastq.gz -&gt; HBR_Rep1_ERCC-Mix2_Build37-ErccTranscripts-chr22.read2.fastq.gz</span>
+<span id="cb14-18"><a href="#cb14-18" aria-hidden="true" tabindex="-1"></a>-rw-rw-r-- 1 rlupat rlupat    2688 Nov 22 03:39 HBR_Rep1_ERCC_2.fastq.gz_trimming_report.txt</span>
+<span id="cb14-19"><a href="#cb14-19" aria-hidden="true" tabindex="-1"></a>-rw-rw-r-- 1 rlupat rlupat  695591 Nov 22 03:39 HBR_Rep1_ERCC_2_val_2_fastqc.html</span>
+<span id="cb14-20"><a href="#cb14-20" aria-hidden="true" tabindex="-1"></a>-rw-rw-r-- 1 rlupat rlupat  485732 Nov 22 03:39 HBR_Rep1_ERCC_2_val_2_fastqc.zip</span>
+<span id="cb14-21"><a href="#cb14-21" aria-hidden="true" tabindex="-1"></a>-rw-rw-r-- 1 rlupat rlupat 7088948 Nov 22 03:39 HBR_Rep1_ERCC_2_val_2.fq.gz</span>
+<span id="cb14-22"><a href="#cb14-22" aria-hidden="true" tabindex="-1"></a>lrwxrwxrwx 1 rlupat rlupat     102 Nov 22 03:39 HBR_Rep1_ERCC-Mix2_Build37-ErccTranscripts-chr22.read1.fastq.gz -&gt; /data/seqliner/test-data/rna-seq/fastq/HBR_Rep1_ERCC-Mix2_Build37-ErccTranscripts-chr22.read1.fastq.gz</span>
+<span id="cb14-23"><a href="#cb14-23" aria-hidden="true" tabindex="-1"></a>lrwxrwxrwx 1 rlupat rlupat     102 Nov 22 03:39 HBR_Rep1_ERCC-Mix2_Build37-ErccTranscripts-chr22.read2.fastq.gz -&gt; /data/seqliner/test-data/rna-seq/fastq/HBR_Rep1_ERCC-Mix2_Build37-ErccTranscripts-chr22.read2.fastq.gz</span>
+<span id="cb14-24"><a href="#cb14-24" aria-hidden="true" tabindex="-1"></a>-rw-rw-r-- 1 rlupat rlupat     109 Nov 22 03:39 versions.yml</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>The <code>FASTQC</code> process runs twice, executing in a different work directories for each set of inputs. Therefore, in the previous example, the work directory <code>[e9/60b2e8]</code> represents just one of the two sets of input data that was processed.</p>
 <p>It’s very likely you will execute a workflow multiple times as you find the parameters that best suit your data. You can save a lot of storage space (and time) by <strong>resuming</strong> a workflow from the last step that was completed successfully and/or unmodified.</p>
 <p>In practical terms, the workflow is executed from the beginning. However, before launching the execution of a process, Nextflow uses the unique task ID to check if the work directory already exists and that it contains a valid command exit state with the expected output files. If this condition is satisfied, the task execution is skipped and previously computed results are saved in the output directory.</p>
@@ -381,16 +375,17 @@ Solution
 <div class="callout-body-container callout-body">
 <p>Execute the workflow for the first time (if you have not already).</p>
 <p>Use the task ID shown for the <code>FASTQC</code> process and use it to find and <code>touch</code> a <code>.fastq.gz</code> file:</p>
-<div class="sourceCode" id="cb15"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>touch work/ff/21abfa87cc7cdec037ce4f36807d32/SRR6357071_1.fastq.gz</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb15"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>touch work/ff/21abfa87cc7cdec037ce4f36807d32/HBR_Rep1_ERCC_1.fastq.gz</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Execute the workflow again with the <code>-resume</code> command option:</p>
 <div class="sourceCode" id="cb16"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>nextflow run nf-core/rnaseq -r 3.14.0 \</span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>    -profile apptainer \</span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>    -params-file ./workshop-params.yaml \</span>
-<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>    -resume \</span>
-<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>    --outdir my_results</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  -resume </span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>  -profile &lt;CONTAINER&gt; \</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>  -c my_resources.config \</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>  -params-file workshop-params.yaml \</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>  --outdir my_results \</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>You should see that some task were invalid and were executed again.</p>
 <p><strong>Why did this happen?</strong></p>
-<p>In this example, the caching of one of the two <code>FASTQC</code> tasks were invalid. The fastq file we <code>touch</code> is used by in the pipeline in multiple places. Thus, touching the symbolic link for this file and changing the date of last modification disrupted one of the task execution and its related downstream processes.</p>
+<p>In this example, the caching of the two <code>FASTQC</code> tasks were invalid. The fastq file we <code>touch</code> is used by in the pipeline in multiple places. Thus, touching the symbolic link for this file and changing the date of last modification disrupted two task executions.</p>
 </div>
 </div>
 </div>
@@ -639,35 +634,8 @@ Solution
 <p>If we want to remove the warning message <code>Please check MultiQC report: 2/2 samples failed strandedness check</code>, we will have to change the strandedness fields in our <code>samplesheet.csv</code>. Keep in mind, doing this will invalidate the pipeline’s cache and will cause the pipeline to run from the beginning.</p>
 </div>
 </div>
-<div class="callout callout-style-default callout-tip callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-<strong>Key points</strong>
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<ul>
-<li>Use nextflow log to query the record of commands used in the pipeline</li>
-<li>Use <code>-resume</code> to re-launch previously executed workflows in order to get Nextflow to utilise its task execution caching feature</li>
-<li>Examine the .command.sh to inside the work directory to troubleshoot the command that Nextflow use to run a particular task</li>
-</ul>
-</div>
-</div>
-<p><br></p>
-</section>
-<section id="next-chapter-introduction-to-nextflow-processes-and-channels" class="level3">
-<h3 class="anchored" data-anchor-id="next-chapter-introduction-to-nextflow-processes-and-channels"><strong>Next Chapter: <a href="../workshops/1.3_processes_and_channels.html">Introduction to Nextflow Processes and Channels</a></strong></h3>
-<p><br></p>
 <hr>
-<p>This workshop is adapted from various nextflow training materials, including:</p>
-<ul>
-<li><a href="https://training.nextflow.io">Nextflow Training Materials</a></li>
-<li><a href="https://sydney-informatics-hub.github.io/customising-nfcore-workshop">Customising Nf-Core Workshop</a></li>
-<li><a href="https://sydney-informatics-hub.github.io/hello-nextflow/">Hello Nextflow Workshop</a></li>
-</ul>
+<p><sup><em>These materials are adapted from <a href="https://sydney-informatics-hub.github.io/customising-nfcore-workshop/notebooks/1.2_nfcore.html">Customising Nf-Core Workshop</a> by Sydney Informatics Hub</em></sup></p>
 
 
 </section>
@@ -745,7 +713,7 @@ Solution
     }
       var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
       var mailtoRegex = new RegExp(/^mailto:/);
-        var filterRegex = new RegExp("https:\/\/PMCC-BioinformaticsCore\.github\.io\/nextflow-nf-core-workshop-2025_v2\/");
+        var filterRegex = new RegExp('/' + window.location.host + '/');
       var isInternal = (href) => {
           return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
       }

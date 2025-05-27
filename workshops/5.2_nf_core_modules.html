@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.7.29">
+<meta name="generator" content="quarto-1.7.25">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -71,7 +71,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-0815c480559380816a4d1ea211a47e91.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-fe31d7bd2deb2a321418d01dba375a64.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="../site_libs/bootstrap/bootstrap-a14e3238c51140e99ccc48519b6ed9ce.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
@@ -138,11 +138,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <ul class="dropdown-menu" aria-labelledby="nav-menu-sessions">    
         <li>
     <a class="dropdown-item" href="../sessions/1_intro_run_nf.html">
- <span class="dropdown-text">Introduction to Nextflow and Nf-core</span></a>
+ <span class="dropdown-text">Day 1: Introduction to Nextflow and Nf-core</span></a>
   </li>  
         <li>
     <a class="dropdown-item" href="../sessions/2_nf_dev_intro.html">
- <span class="dropdown-text">Developing bioinformatics workflows with Nextflow</span></a>
+ <span class="dropdown-text">Day 2: Developing bioinformatics workflows with Nextflow</span></a>
   </li>  
     </ul>
   </li>
@@ -153,47 +153,47 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <ul class="dropdown-menu" aria-labelledby="nav-menu-workshop">    
         <li>
     <a class="dropdown-item" href="../workshops/1.1_intro_nextflow.html">
- <span class="dropdown-text">Introduction to Nextflow</span></a>
+ <span class="dropdown-text">1.1 Introduction to Nextflow</span></a>
   </li>  
         <li>
     <a class="dropdown-item" href="../workshops/1.2_intro_nf_core.html">
- <span class="dropdown-text">Introduction to nf-core</span></a>
+ <span class="dropdown-text">1.2 Introduction to nf-core</span></a>
   </li>  
         <li>
     <a class="dropdown-item" href="../workshops/2.1_customise_and_run.html">
- <span class="dropdown-text">Customising &amp; running nf-core pipelines</span></a>
+ <span class="dropdown-text">2.1 Customising &amp; running nf-core pipelines</span></a>
   </li>  
         <li>
     <a class="dropdown-item" href="../workshops/2.2_troubleshooting.html">
- <span class="dropdown-text">Troubleshooting Nextflow run</span></a>
+ <span class="dropdown-text">2.2 Troubleshooting Nextflow run</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../workshops/2.3_tips_and_tricks.html">
- <span class="dropdown-text">Best practise, tips and tricks</span></a>
+    <a class="dropdown-item" href="../workshops/1.3_processes_and_channels.html">
+ <span class="dropdown-text">3.1 Introduction to processes and channels</span></a>
   </li>  
         <li>
     <a class="dropdown-item" href="../workshops/3.1_creating_a_workflow.html">
- <span class="dropdown-text">Creating a workflow</span></a>
+ <span class="dropdown-text">3.2 Creating a workflow</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../workshops/4.1_modules.html">
- <span class="dropdown-text">Modularisation</span></a>
+    <a class="dropdown-item" href="../workshops/2.3_tips_and_tricks.html">
+ <span class="dropdown-text">3.3 Best practise, tips and tricks</span></a>
   </li>  
         <li>
     <a class="dropdown-item" href="../workshops/5.1_nf_core_template.html">
- <span class="dropdown-text">Nf-core Template</span></a>
+ <span class="dropdown-text">4.1 Creating workflows using nf-core templates</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../workshops/6.1_operators.html">
- <span class="dropdown-text">Nextflow Operators</span></a>
+    <a class="dropdown-item" href="../workshops/5.2_nf_core_modules.html">
+ <span class="dropdown-text">5.1 nf-core modules and subworkflows</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../workshops/7.1_metadata_propagation.html">
- <span class="dropdown-text">Metadata Propagation</span></a>
+    <a class="dropdown-item" href="../workshops/5.3_metadata_propagation.html">
+ <span class="dropdown-text">6.1 Metadata Propagation</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../workshops/8.1_scatter_gather_output.html">
- <span class="dropdown-text">Output, scatter, and Gather</span></a>
+    <a class="dropdown-item" href="../workshops/5.4_pipeline_testing.html">
+ <span class="dropdown-text">7.1 Pipeline version control and additional resources</span></a>
   </li>  
     </ul>
   </li>
@@ -250,7 +250,7 @@ Objectives
 </div>
 </div>
 <section id="nf-core-modules" class="level2">
-<h2 class="anchored" data-anchor-id="nf-core-modules"><strong>5.5 <code>nf-core modules</code></strong></h2>
+<h2 class="anchored" data-anchor-id="nf-core-modules"><strong>5.1 <code>nf-core modules</code></strong></h2>
 <p>Previously, we used the <code>nf-core pipelines</code> command to create our initial pipeline template. We can now add modules to this template using <code>nf-core modules</code>. This command also contains subcommands, which can be used to manage modules.</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>                                          ,--./,-.</span>
@@ -317,7 +317,7 @@ Objectives
 <span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>└─────────────┴─────────────────┴─────────────┴────────────────────────────────┴────────────┘</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>To obtain a list of all available <a href="https://nf-co.re/modules">nf-core modules</a> available, <code>nf-core modules list remote</code> can be used.</p>
 <section id="installing-modules-nf-core-modules-install" class="level3">
-<h3 class="anchored" data-anchor-id="installing-modules-nf-core-modules-install"><strong>5.5.1 Installing modules <code>nf-core modules install</code></strong></h3>
+<h3 class="anchored" data-anchor-id="installing-modules-nf-core-modules-install"><strong>5.1.1 Installing modules <code>nf-core modules install</code></strong></h3>
 <p>Previously, we created a simple workflow that indexed the transcriptome file (<code>INDEX</code>), performed quantification (<code>QUANTIFICATION</code>) and FastQC (<code>FASTQC</code>) on the sample FASTQ files. Finally, perfomed MultiQC on both the outputs of <code>QUANTIFICATION</code> and <code>FASTQC</code>.</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>N E X T F L O W  ~  version 23.04.1</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>Launching `rnaseq.nf` [sad_jennings] DSL2 - revision: cfae7ccc0e</span>
@@ -329,21 +329,8 @@ Objectives
 <p>Recall that when we created each process, we manually defined the input(s) and their structure, the output(s) and their structure, the process script, and any containers required to execute the process. This can become time consuming, especially when creating pipelines with many processes.</p>
 <p>Before creating a module ourselves, we should always first check the <a href="https://nf-co.re/modules/">nf-core modules page</a> to see if the module we are interested in exists.</p>
 <p>For our <code>INDEX</code> and <code>QUANTIFICATION</code> processes, let’s check if are already modules that use <code>salmon index</code> and <code>salmon quant</code>.</p>
-<div class="callout callout-style-default callout-important callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Important
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p><strong>TO DO</strong> Change CONTAINER</p>
-</div>
-</div>
 <div class="sourceCode" id="cb5"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>process INDEX {</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    container "&lt;CACHE DIRECTORY&gt;/depot.galaxyproject.org-singularity-salmon-1.10.1--h7e5ed60_0.img"</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    container "https://depot.galaxyproject.org/singularity/salmon:1.10.3--h6dccd9a_2"</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    input:</span>
 <span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    path transcriptome</span>
@@ -357,7 +344,7 @@ Important
 <span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>    """</span>
 <span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="sourceCode" id="cb6"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>process QUANTIFICATION {</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    container "&lt;CACHE DIRECTORY&gt;/depot.galaxyproject.org-singularity-salmon-1.10.1--h7e5ed60_0.img"</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    container "https://depot.galaxyproject.org/singularity/salmon:1.10.3--h6dccd9a_2"</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    input:</span>
 <span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    path salmon_index</span>
@@ -395,7 +382,7 @@ Important
 <span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>                                                                  </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>By default, the example <code>include</code> command provided by running <code>nf-core modules install</code> will provide the <strong>relative output path</strong> from the <strong>analysis workflow file</strong>. Therefore, this can be copied directly into <code>workflows/customrnaseq.nf</code>. Recall that if you are importing the module from within a subworkflow file in the <code>subworkflows</code> folder, you will need to change the relative file path to match the new structure.</p>
 <div class="callout callout-style-default callout-warning callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -404,7 +391,7 @@ Warning
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-3" class="callout-3-contents callout-collapse collapse">
+<div id="callout-2" class="callout-2-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>If you are installing the module <strong>outside</strong> of the nf-core pipeline folder, you may see the below message:</p>
 <div class="sourceCode" id="cb9"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>                                          ,--./,-.</span>
@@ -441,7 +428,7 @@ Warning
 <span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>                └── main.nf.test.snap</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p><strong>Exercise</strong>: Using the <a href="https://nf-co.re/modules/">nf-core modules page</a>, find a module that performs <code>salmon quant</code>. Install it to your pipeline, and check what location it has been added. Then, <code>include</code> the module in your analysis workflow script <code>workflows/customrnaseq.nf</code>.</p>
 <div class="callout callout-style-simple callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -450,7 +437,7 @@ Solution
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-4" class="callout-4-contents callout-collapse collapse">
+<div id="callout-3" class="callout-3-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>The nf-core <code>SALMON_QUANT</code> <a href="https://nf-co.re/modules/salmon_quant/">module</a> can perform <code>salmon quant</code>.</p>
 <p>To install this module, the following command can be ran <strong>inside</strong> my pipeline folder <code>nf-core-customrnaseq</code>:</p>
@@ -517,7 +504,7 @@ Solution
 <h4 class="anchored" data-anchor-id="module-list-modules.json">Module list: <strong><code>modules.json</code></strong></h4>
 <p>The <code>modules.json</code> contains detailed information of all the modules installed in the pipeline, where it was installed from, and the version of the module.</p>
 <div class="callout callout-style-simple callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -526,7 +513,7 @@ modules.json
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-5" class="callout-5-contents callout-collapse collapse">
+<div id="callout-4" class="callout-4-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <div class="sourceCode" id="cb17"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>{</span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>    "name": "nf-core/customrnaseq",</span>
@@ -640,7 +627,7 @@ modules.json
 <p>The SHA version can be specified using the <code>--sha</code> parameter. Since we have already installed the module, the <code>--force</code> parameter will also be required.</p>
 <p><strong>Exercise</strong>: Install the <code>salmon/quant</code> module, for SHA version <code>85b5f8a0d9df9ce7587af50e2ee75b37c97515c6</code>. Use either <code>nf-core modules list local</code> or the <code>modules.json</code> file to verify the correct version was installed.</p>
 <div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-6-contents" aria-controls="callout-6" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -649,7 +636,7 @@ modules.json
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-6" class="callout-6-contents callout-collapse collapse">
+<div id="callout-5" class="callout-5-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>The following command can be used to install <code>salmon/quant</code>, SHA version <code>85b5f8a0d9df9ce7587af50e2ee75b37c97515c6</code>.</p>
 <div class="sourceCode" id="cb26"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>nf-core modules install --sha 85b5f8a0d9df9ce7587af50e2ee75b37c97515c6 --force salmon/quant</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -693,7 +680,7 @@ modules.json
 </section>
 </section>
 <section id="updating-modules-nf-core-modules-update" class="level3">
-<h3 class="anchored" data-anchor-id="updating-modules-nf-core-modules-update"><strong>5.5.2 Updating modules: <code>nf-core modules update</code></strong></h3>
+<h3 class="anchored" data-anchor-id="updating-modules-nf-core-modules-update"><strong>5.1.2 Updating modules: <code>nf-core modules update</code></strong></h3>
 <p>A limitation of <code>nf-core modules install</code> is that it doesn’t explicitly print what has been changed within the module. The <code>nf-core modules update</code> command is an alternative that can do this.</p>
 <p>Let’s update <code>salmon/quant</code></p>
 <div class="sourceCode" id="cb29"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>nf-core modules update salmon/quant</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -751,7 +738,7 @@ modules.json
 <span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>INFO     Updates complete ✨   </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
 <section id="removing-modules" class="level3">
-<h3 class="anchored" data-anchor-id="removing-modules"><strong>5.5.3 Removing modules</strong></h3>
+<h3 class="anchored" data-anchor-id="removing-modules"><strong>5.1.3 Removing modules</strong></h3>
 <p>Previously, we saw that by simply removing the module folder didn’t delete the module from the pipeline. The pipeline automatically searches for missing module files and redownloads them, based on the SHA version specified in <code>modules.json</code>.</p>
 <p>To remove a module from a pipeline, the following can be used:</p>
 <div class="sourceCode" id="cb33"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>nf-core modules remove</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -762,7 +749,7 @@ modules.json
 <li><p>Remove the newly installed module, and ensure it is no longer part of the pipeline</p></li>
 </ol>
 <div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-7-contents" aria-controls="callout-7" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-6-contents" aria-controls="callout-6" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -771,7 +758,7 @@ Solution
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-7" class="callout-7-contents callout-collapse collapse">
+<div id="callout-6" class="callout-6-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <ol type="1">
 <li><p>The module chosen is <a href="https://nf-co.re/modules/samtools_sort/"><code>samtools/sort</code></a>. To install this module, the following command can be used (<strong>inside</strong> the pipeline folder):</p>
@@ -863,7 +850,7 @@ Solution
 </section>
 </section>
 <section id="nf-core-subworkflows" class="level2">
-<h2 class="anchored" data-anchor-id="nf-core-subworkflows"><strong>5.6 <code>nf-core subworkflows</code></strong></h2>
+<h2 class="anchored" data-anchor-id="nf-core-subworkflows"><strong>5.2 <code>nf-core subworkflows</code></strong></h2>
 <p>Like modules, subworkflows can be added to a workflow using the <code>nf-core</code> tools suite.</p>
 <div class="sourceCode" id="cb42"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>nf-core subworkflows</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>The <code>subworkflows</code> command contains similar sub-commands to <code>modules</code></p>
@@ -911,7 +898,7 @@ Solution
 </ul>
 <p><strong>Exercise</strong>: Search the <a href="https://nf-co.re/subworkflows">nf-core subworkflows page</a> for the <code>fastq_subsample_fq_salmon</code> subworkflow. Install it into the workflow, and list all the subworkflows that are installed in the pipeline.</p>
 <div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-8-contents" aria-controls="callout-8" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-7-contents" aria-controls="callout-7" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -920,7 +907,7 @@ Solution
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-8" class="callout-8-contents callout-collapse collapse">
+<div id="callout-7" class="callout-7-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>The <code>fastq_subsample_fq_salmon</code> subworkflow is located in the nf-core subworkflows page <a href="https://nf-co.re/subworkflows/fastq_subsample_fq_salmon/">here</a>. To install the module, the following command can be used:</p>
 <div class="sourceCode" id="cb44"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>nf-core subworkflows install fastq_subsample_fq_salmon</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>

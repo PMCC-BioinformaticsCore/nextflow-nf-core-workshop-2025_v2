@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.7.29">
+<meta name="generator" content="quarto-1.7.25">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -71,7 +71,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-0815c480559380816a4d1ea211a47e91.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-fe31d7bd2deb2a321418d01dba375a64.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="../site_libs/bootstrap/bootstrap-a14e3238c51140e99ccc48519b6ed9ce.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
@@ -138,11 +138,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <ul class="dropdown-menu" aria-labelledby="nav-menu-sessions">    
         <li>
     <a class="dropdown-item" href="../sessions/1_intro_run_nf.html">
- <span class="dropdown-text">Introduction to Nextflow and Nf-core</span></a>
+ <span class="dropdown-text">Day 1: Introduction to Nextflow and Nf-core</span></a>
   </li>  
         <li>
     <a class="dropdown-item" href="../sessions/2_nf_dev_intro.html">
- <span class="dropdown-text">Developing bioinformatics workflows with Nextflow</span></a>
+ <span class="dropdown-text">Day 2: Developing bioinformatics workflows with Nextflow</span></a>
   </li>  
     </ul>
   </li>
@@ -153,47 +153,47 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <ul class="dropdown-menu" aria-labelledby="nav-menu-workshop">    
         <li>
     <a class="dropdown-item" href="../workshops/1.1_intro_nextflow.html">
- <span class="dropdown-text">Introduction to Nextflow</span></a>
+ <span class="dropdown-text">1.1 Introduction to Nextflow</span></a>
   </li>  
         <li>
     <a class="dropdown-item" href="../workshops/1.2_intro_nf_core.html">
- <span class="dropdown-text">Introduction to nf-core</span></a>
+ <span class="dropdown-text">1.2 Introduction to nf-core</span></a>
   </li>  
         <li>
     <a class="dropdown-item" href="../workshops/2.1_customise_and_run.html">
- <span class="dropdown-text">Customising &amp; running nf-core pipelines</span></a>
+ <span class="dropdown-text">2.1 Customising &amp; running nf-core pipelines</span></a>
   </li>  
         <li>
     <a class="dropdown-item" href="../workshops/2.2_troubleshooting.html">
- <span class="dropdown-text">Troubleshooting Nextflow run</span></a>
+ <span class="dropdown-text">2.2 Troubleshooting Nextflow run</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../workshops/2.3_tips_and_tricks.html">
- <span class="dropdown-text">Best practise, tips and tricks</span></a>
+    <a class="dropdown-item" href="../workshops/1.3_processes_and_channels.html">
+ <span class="dropdown-text">3.1 Introduction to processes and channels</span></a>
   </li>  
         <li>
     <a class="dropdown-item" href="../workshops/3.1_creating_a_workflow.html">
- <span class="dropdown-text">Creating a workflow</span></a>
+ <span class="dropdown-text">3.2 Creating a workflow</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../workshops/4.1_modules.html">
- <span class="dropdown-text">Modularisation</span></a>
+    <a class="dropdown-item" href="../workshops/2.3_tips_and_tricks.html">
+ <span class="dropdown-text">3.3 Best practise, tips and tricks</span></a>
   </li>  
         <li>
     <a class="dropdown-item" href="../workshops/5.1_nf_core_template.html">
- <span class="dropdown-text">Nf-core Template</span></a>
+ <span class="dropdown-text">4.1 Creating workflows using nf-core templates</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../workshops/6.1_operators.html">
- <span class="dropdown-text">Nextflow Operators</span></a>
+    <a class="dropdown-item" href="../workshops/5.2_nf_core_modules.html">
+ <span class="dropdown-text">5.1 nf-core modules and subworkflows</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../workshops/7.1_metadata_propagation.html">
- <span class="dropdown-text">Metadata Propagation</span></a>
+    <a class="dropdown-item" href="../workshops/5.3_metadata_propagation.html">
+ <span class="dropdown-text">6.1 Metadata Propagation</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../workshops/8.1_scatter_gather_output.html">
- <span class="dropdown-text">Output, scatter, and Gather</span></a>
+    <a class="dropdown-item" href="../workshops/5.4_pipeline_testing.html">
+ <span class="dropdown-text">7.1 Pipeline version control and additional resources</span></a>
   </li>  
     </ul>
   </li>
@@ -231,68 +231,60 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<section id="environment-setup" class="level3">
-<h3 class="anchored" data-anchor-id="environment-setup"><strong>2.1.1. Environment setup</strong></h3>
-<div class="callout callout-style-default callout-important callout-titled">
+<hr>
+<div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-Important
+Objectives
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p><strong>TO DO</strong></p>
-<p>Partition</p>
-<p>How to load nextflow</p>
-<p>Containers</p>
+<ul>
+<li>Run an nf-core pipeline</li>
+<li>Specify different parameters to customise the running of an nf-core pipeline</li>
+<li>Examine output files from an nf-core pipeline</li>
+<li>Customise config files for running an nf-core pipeline</li>
+</ul>
 </div>
 </div>
-<ol type="1">
-<li><p>Create an interative session:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>srun --pty -p &lt;PARTITION&gt; --mem 8GB --mincpus 2 -t 0-5:00 bash</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
-<li><p>Export the path to our shared software location using the Nextflow environment variable <code>XXXX</code>:</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>export ...</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
-<li><p>Load Nextflow:</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>...</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
-</ol>
+<section id="environment-setup" class="level3">
+<h3 class="anchored" data-anchor-id="environment-setup"><strong>2.1.1. Environment setup</strong></h3>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<strong>Institute specific instructions</strong>
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-2" class="callout-2-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Reminder before starting this session, make sure you follow your institute’s HPC rulebook re: how to run a workflow manager.</p>
+<p>At Peter Mac HPC, this would mean not running the nextflow pipeline on the login node, load the nextflow &amp; apptainer modules, and set the container cache location (or use the institutional config)</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>srun --pty -p &lt;PARTITION&gt; --mem 8GB --mincpus 2 -t 0-5:00 bash</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>module load nextflow/24.10.5</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>export NXF_APPTAINER_CACHEDIR="/config/binaries/singularity/containers_devel/nextflow</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+</div>
+<p>Before we start, please download the test datasets into your home directory</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>git clone --single-branch --branch rnaseq https://github.com/nf-core/test-datasets ~/rnaseq_data</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>And for the purpose of this workshop, we are going to cache the containers by running a test (with a profile) to save time for our processing later</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>export NXF_APPTAINER_CACHEDIR="/home/${USER}/apptainer_cache"</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>nextflow run nf-core/rnaseq -r 3.14.0 -profile test,apptainer --outdir ~/test_rnaseq --max_memory 7.GB --max_cpus 2 </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Please also create a folder inside our work directory called <code>lesson2.1</code> and move into it:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>mkdir ./lesson2.1 &amp;&amp; cd $_</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
-<section id="design-your-run-command" class="level3">
-<h3 class="anchored" data-anchor-id="design-your-run-command"><strong>4.1.2. Design your run command</strong></h3>
-<p>As we learnt in <a href="../workshops/1.2_intro_nf_core.html#viewing-parameters">lesson 1.2.4</a>, all nf-core pipelines have a unique set of <strong>pipeline-specific</strong> parameters that can be used in conjunction with <strong>Nextflow</strong> parameters to configure the workflow. Generally, nf-core pipelines can be customised at a few different levels:</p>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 21%">
-<col style="width: 78%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Level of effect</th>
-<th>Customisation feature</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>The workflow</td>
-<td>When diverging methods are available for a pipeline, you may choose a specific path to follow</td>
-</tr>
-<tr class="even">
-<td>A process</td>
-<td>Where the process is executed and what software version is used</td>
-</tr>
-<tr class="odd">
-<td>A tool</td>
-<td>Apply specific thresholds or optional flags for a tool inside a process</td>
-</tr>
-<tr class="even">
-<td>Compute resources</td>
-<td>Resource allocation thresholds or software execution methods for a workflow or a process</td>
-</tr>
-</tbody>
-</table>
-<p>It is important to remember that nf-core pipelines typically do not include all possible tool parameters. This makes it challenging to piece different sources of information together to determine which parameters you should be using.</p>
-<p>The following sections of the nf-core documentation can be used to understand what a particular pipeline is doing, to inform your choices about aspects of pipeline-specific customisations. We will further investigate <code>rnaseq</code>:</p>
+<section id="understanding-an-nf-core-pipeline" class="level3">
+<h3 class="anchored" data-anchor-id="understanding-an-nf-core-pipeline"><strong>2.1.2. Understanding an nf-core pipeline</strong></h3>
+<p>The following sections of the nf-core documentation can be used to understand what a particular pipeline is doing, to inform your choices about aspects of pipeline-specific customisations. For this section, we will investigate <code>nf-core/rnaseq</code> pipeline.</p>
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -338,24 +330,6 @@ Important
 </tr>
 </tbody>
 </table>
-<p><strong>Exercise</strong>: View the parameters for the <code>nf-core/rnaseq</code> workflow using the command line for the specific version <code>3.14.0</code></p>
-<div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Solution
-</div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
-</div>
-<div id="callout-2" class="callout-2-contents callout-collapse collapse">
-<div class="callout-body-container callout-body">
-<p>The <code>nf-core/rnaseq</code> workflow parameters can be printed using the <code>nextflow run</code> command and the <code>--help</code> option:</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>nextflow run nf-core/rnaseq -r 3.14.0 --help</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-</div>
-</div>
 <section id="pipeline-structure" class="level4">
 <h4 class="anchored" data-anchor-id="pipeline-structure"><strong>Pipeline structure</strong></h4>
 <p>Looking at the nf-core/rnaseq pipeline structure provided in the <a href="https://nf-co.re/rnaseq/3.14.0">introduction</a>, we can see that the developers have:</p>
@@ -365,7 +339,7 @@ Solution
 <li>Provided a choice of tool for some steps</li>
 </ol>
 <p><img src="./media/2.1_pipeline-choice.png" class="img-fluid"></p>
-<p><strong>Exercise</strong>: Observing the diagram above, which statement is true regarding the choice of alignment and quantification methods provided by the nf-core/rnaseq pipeline?</p>
+<p><strong>Quiz</strong>: Observing the diagram above, which statement is true regarding the choice of alignment and quantification methods provided by the nf-core/rnaseq pipeline?</p>
 <p><strong>A.</strong> The pipeline uses a fixed method for read alignment and quantification.<br>
 <strong>B.</strong> Users can choose between several different methods for read alignment and quantification.<br>
 <strong>C.</strong> The pipeline always performs read alignment and quantification using STAR or HISAT2.<br>
@@ -421,262 +395,84 @@ Solution
 <p><strong>Nextflow</strong>-specific parameters use one (<code>-</code>) hyphen, whereas <strong>pipeline</strong>-specific parameters use two (<code>--</code>). In the typical run command above <code>-profile</code> is a <strong>Nextflow</strong> parameter, while <code>--input</code> is a <strong>Nextflow</strong> parameter.</p>
 </div>
 </div>
-<section id="required-input---input" class="level4">
-<h4 class="anchored" data-anchor-id="required-input---input"><strong>Required input: <code>--input</code></strong></h4>
+</section>
+<section id="setting-up-the-run-command" class="level3">
+<h3 class="anchored" data-anchor-id="setting-up-the-run-command"><strong>2.1.3. Setting up the run command</strong></h3>
 <p>Most of us will need to adjust the default run command for our experiments. Today we’ll be adjusting the typical nf-core/rnaseq run command by:</p>
-<div class="callout callout-style-default callout-important callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Important
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p><strong>TO DO</strong> Change CONTAINER</p>
-</div>
-</div>
 <ol type="1">
+<li>Creating a samplesheet csv, based on the requirements of the pipeline</li>
 <li>Providing our own reference files</li>
-<li>Using the <container> software management profile</container></li>
+<li>Using the <code>apptainer</code> software management profile</li>
 <li>Customising the execution of some processes</li>
-<li>Specifying the computing resource limitations of our interactive session (2 CPUs, 8 GB RAM)</li>
+<li>Specifying the computing resource limitations of our session (2 CPUs, 8 GB RAM)</li>
 </ol>
-<p>Our input fastq files (<code>fastq/</code>), reference data (<code>ref/</code>), and full sample sheet (<code>samplesheet.csv</code>) are already available:</p>
-<div class="callout callout-style-default callout-important callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Important
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p><strong>TO DO</strong> Change PATH TO DATA</p>
-</div>
-</div>
-<div class="sourceCode" id="cb6"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>ls &lt;PATH TO DATA&gt;</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="sourceCode" id="cb7"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>ERCC_index  fastq   ref   samplesheet.csv</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>Let’s store the path to our test data in a variable <code>materials</code>, so we can easily access it later.</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>materials=&lt;PATH TO DATA&gt;</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>Since we are only testing the pipeline in this session, we only need to work with a couple of samples. Copy the first two samples from the fully prepared sample sheet to a local version of the file:</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>head -n 3 $materials/samplesheet.csv &gt; ./samplesheet.csv</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="sourceCode" id="cb10"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>cat samplesheet.csv</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="callout callout-style-default callout-important callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Important
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p><strong>TO DO</strong> Change PATH TO DATA in samplesheet</p>
-</div>
-</div>
-<div class="sourceCode" id="cb11"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>sample,fastq_1,fastq_2,strandedness</span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>HBR_Rep1_ERCC,fastq/HBR_Rep1_ERCC-Mix2_Build37-ErccTranscripts-chr22.read1.fastq.gz,fastq/HBR_Rep1_ERCC-Mix2_Build37-ErccTranscripts-chr22.read2.fastq.gz,forward</span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>HBR_Rep2_ERCC,fastq/HBR_Rep2_ERCC-Mix2_Build37-ErccTranscripts-chr22.read1.fastq.gz,fastq/HBR_Rep2_ERCC-Mix2_Build37-ErccTranscripts-chr22.read2.fastq.gz,forward</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>The <a href="https://nf-co.re/rnaseq/3.14.0/">nf-core pipeline documentation</a> will outline what metadata is required in the samplesheet:</p>
+<section id="required-parameter---input" class="level4">
+<h4 class="anchored" data-anchor-id="required-parameter---input"><strong>Required parameter: <code>--input</code></strong></h4>
+<p>We will create a <code>samplesheet.csv</code> based on the documentation provided by <a href="https://nf-co.re/rnaseq/3.14.0/docs/usage/">nf-core/rnaseq</a>.</p>
 <p><img src="./media/2.1_rnaseq_samplesheet.png" class="img-fluid"></p>
 <p>For <code>rnaseq</code>, a <code>sample</code> value that specifies the sample name, path to FASTQ files, and <code>strandedness</code> is required.</p>
+<p>Since we are only testing the pipeline in this session, we only need to work with a couple of samples.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>sample,fastq_1,fastq_2,strandedness</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>SRR6357070,../rnaseq_data/testdata/GSE110004/SRR6357070_1.fastq.gz,../rnaseq_data/testdata/GSE110004/SRR6357070_2.fastq.gz,forward</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>SRR6357071,../rnaseq_data/testdata/GSE110004/SRR6357071_1.fastq.gz,../rnaseq_data/testdata/GSE110004/SRR6357071_2.fastq.gz,forward</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="required-parameter---outdir" class="level4">
+<h4 class="anchored" data-anchor-id="required-parameter---outdir"><strong>Required parameter: <code>--outdir</code></strong></h4>
+<p>Most nf-core pipelines will require user to specified an output directory to dump all the output files to.</p>
+<p>For this exercise, we will set our output directory to:</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>    --outdir ./rnaseq_small_test_outdir</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
 <section id="required-input-reference-data" class="level4">
 <h4 class="anchored" data-anchor-id="required-input-reference-data"><strong>Required input: reference data</strong></h4>
 <p>Many nf-core pipelines have a minimum requirement for reference data inputs. The input reference data requirements for this pipeline are provided in the <a href="https://nf-co.re/rnaseq/3.14.0/docs/usage/#reference-genome-options">usage documentation</a>:</p>
 <p><img src="./media/2.1_reference_files.png" class="img-fluid"></p>
-<p>In the documentation, we see that the recommended method to provide reference files is to explicitly state them using the <code>--fasta</code> and <code>--gtf</code> parameters. This means can replace the <code>--genome</code> flag in the typical run command with our own files. To see all available reference file parameters, rerun the pipeline’s help command to view all the available parameters:</p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>nextflow run nf-core/rnaseq -r 3.14.0 --help</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>In the documentation, we see that the recommended method to provide reference files is to explicitly state them using the <code>--fasta</code> and <code>--gtf</code> parameters. This means we can replace the <code>--genome</code> flag in the typical run command with our own files. To see all available reference file parameters, rerun the pipeline’s help command to view all the available parameters:</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>nextflow run nf-core/rnaseq -r 3.14.0 --help</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>From the <strong><code>Reference genome options</code></strong> parameters, we will provide our own files using:</p>
-<ul>
-<li><code>--fasta $materials/ref/chr22_with_ERCC92.fa</code><br>
-</li>
-<li><code>--gtf $materials/ref/chr22_with_ERCC92.gtf</code></li>
-</ul>
-<div class="callout callout-style-default callout-important callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-<strong>Beware of hidden parameters!</strong>
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>Notice the message at the bottom of the screen:</p>
-<div class="sourceCode" id="cb13"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>!! Hiding 24 params, use --show_hidden_params to show them !!</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>Keep in mind that both this <code>--help</code> command and the nf-core parameters documentation hides less common parameters.</p>
-</div>
-</div>
-<p><strong>Exercise</strong>: Re-run the help command to output the parameters for the <code>nf-core/rnaseq</code> pipeline and including all hidden parameters for version <code>3.14.0</code></p>
-<div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-9-contents" aria-controls="callout-9" aria-expanded="false" aria-label="Toggle callout">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Solution
-</div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
-</div>
-<div id="callout-9" class="callout-9-contents callout-collapse collapse">
-<div class="callout-body-container callout-body">
-<p>Run the following:</p>
-<div class="sourceCode" id="cb14"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>nextflow run nf-core/rnaseq -r 3.14.0 --help --show_hidden_params</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-</div>
-</div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>  --fasta ../rnaseq_data/reference/genome.fasta</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  --gtf ../rnaseq_data/reference/genes.gtf</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
 </section>
 <section id="optional-parameters" class="level3">
 <h3 class="anchored" data-anchor-id="optional-parameters"><strong>Optional parameters</strong></h3>
-<p>Now that we have prepared our input and reference data, we will customise the typical run command by:</p>
-<div class="callout callout-style-default callout-important callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Important
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p><strong>TO DO</strong> Change CONTAINER</p>
-</div>
-</div>
+<p>Now that we have prepared our input and reference data, we will further customise the typical run command by:</p>
 <ol type="1">
-<li>Using Nextflow’s <code>-profile</code> parameter to specify the <container> profile</container></li>
-<li>Adding additional process-specific flags to <a href="https://nf-co.re/rnaseq/3.14.0/parameters#skip_markduplicates">skip duplicate read marking</a>, <a href="https://nf-co.re/rnaseq/3.14.0/parameters#save_trimmed">save trimmed reads</a> and <a href="https://nf-co.re/rnaseq/3.14.0/parameters#save_unaligned">save unaligned reads</a></li>
+<li>Using Nextflow’s <code>-profile</code> parameter to specify the <code>apptainer</code> profile</li>
+<li>Adding additional process-specific flags to <a href="https://nf-co.re/rnaseq/3.14.0/parameters#skip_alignment">skip alignment</a> and only use <a href="https://nf-co.re/rnaseq/3.14.0/parameters#pseudo_aligner">pseudo-aligner</a></li>
 <li>Adding additional max resource flags to specify the <a href="https://nf-co.re/rnaseq/3.14.0/parameters#max_cpus">number of CPUs</a> and <a href="https://nf-co.re/rnaseq/3.14.0/parameters#max_memory">amount of memory</a> available to the pipeline.</li>
 </ol>
-<p><strong>Exercise</strong>: Recall that the default parameters in an nf-core pipeline are stored inside the <code>nextflow.config</code> file. For <a href="https://github.com/nf-core/rnaseq/blob/3.14.0/nextflow.config"><code>rnaseq</code></a>, whar are the default parameters are for skipping markduplicates, saving trimmed reads, and saving unaligned reads?</p>
-<div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-11-contents" aria-controls="callout-11" aria-expanded="false" aria-label="Toggle callout">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Solution
-</div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
-</div>
-<div id="callout-11" class="callout-11-contents callout-collapse collapse">
-<div class="callout-body-container callout-body">
-<p>The default parameters for <code>skip_markduplicates</code>, <code>save_trimmed</code>, <code>save_unaligned</code> are:</p>
-<div class="sourceCode" id="cb15"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>    save_unaligned             = false</span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>    skip_markduplicates        = false</span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    save_trimmed               = false</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-</div>
-</div>
-<p><strong>Exercise</strong>: How can the default reference file parameters be changed using the command line?</p>
-<div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-12-contents" aria-controls="callout-12" aria-expanded="false" aria-label="Toggle callout">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Solution
-</div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
-</div>
-<div id="callout-12" class="callout-12-contents callout-collapse collapse">
-<div class="callout-body-container callout-body">
 <p>Using the command line, the following parameters can be set:</p>
-<div class="sourceCode" id="cb16"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>--skip_markduplicates true</span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>--save_trimmed true</span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>--save_unaligned true</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-</div>
-</div>
-<p><strong>Exercise</strong>: What are the default maximum memory and maximum CPU parameters in the pipeline? How can we change it to <code>2</code> maximum CPUs, and <code>6.GB</code> maximum memory using the command line?</p>
-<div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-13-contents" aria-controls="callout-13" aria-expanded="false" aria-label="Toggle callout">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Solution
-</div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
-</div>
-<div id="callout-13" class="callout-13-contents callout-collapse collapse">
-<div class="callout-body-container callout-body">
+<div class="sourceCode" id="cb10"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>--skip_alignment true</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>--pseudo_aligner salmon</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Inside the <a href="https://github.com/nf-core/rnaseq/blob/3.14.0/nextflow.config"><code>nextflow.config</code></a>, <code>max_memory</code> and <code>max_cpus</code> have been set to the following:</p>
-<div class="sourceCode" id="cb17"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>    max_memory                 = '128.GB'</span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>    max_cpus                   = 16</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb11"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>    max_memory                 = '128.GB'</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>    max_cpus                   = 16</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Using the command line, this can be changed with:</p>
-<div class="sourceCode" id="cb18"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>--max_memory '6.GB'</span>
-<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>--max_cpus 2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-</div>
-</div>
-<div class="callout callout-style-default callout-important callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Important
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p><strong>TO DO</strong> Change CONTAINER</p>
-</div>
-</div>
-<p><strong>Exercise</strong>: Now, let’s specify the output directory <code>--outdir</code> to be <code>lesson2.1</code>, and the software profile to be <container>. Putting all the parameters together, what is the final customised command we will use?</container></p>
-<div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-15-contents" aria-controls="callout-15" aria-expanded="false" aria-label="Toggle callout">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Solution
-</div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
-</div>
-<div id="callout-15" class="callout-15-contents callout-collapse collapse">
-<div class="callout-body-container callout-body">
-<p>The final command will contain our software profile, input samplesheet, output directory, reference files, custom pipeline steps, and custom resources to use.</p>
-<div class="sourceCode" id="cb19"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>nextflow run nf-core/rnaseq -r 3.14.0 \</span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>    -profile &lt;CONAINER&gt; \</span>
-<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>    --input samplesheet.csv \</span>
-<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>    --outdir ./lesson2.1 \</span>
-<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>    --fasta $materials/ref/chr22_with_ERCC92.fa \</span>
-<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>    --gtf $materials/ref/chr22_with_ERCC92.gtf \</span>
-<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>    --skip_markduplicates true \</span>
-<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>    --save_trimmed true \</span>
-<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>    --save_unaligned true \</span>
-<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a>    --max_memory '6.GB' \</span>
-<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a>    --max_cpus 2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>You can see how we’ve customised the typical run command below:</p>
-<div class="sourceCode" id="cb20"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>nextflow run nf-core/rnaseq --input samplesheet.csv --genome GRCh37 -profile docker</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-</div>
-</div>
+<div class="sourceCode" id="cb12"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>--max_memory '6.GB'</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>--max_cpus 2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
-<section id="run-the-pipeline" class="level3">
-<h3 class="anchored" data-anchor-id="run-the-pipeline"><strong>4.1.3. Run the pipeline</strong></h3>
-<p>Before running the pipeline, we will create a separate output directory for this section.</p>
-<div class="callout callout-style-default callout-important callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Important
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p><strong>TO DO</strong> Change SCRATCH PATH</p>
-</div>
-</div>
-<div class="sourceCode" id="cb21"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>cd /scratch/users/&lt;your-username&gt;/nfWorkshop; mkdir ./lesson2 &amp;&amp; cd $_</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<section id="running-the-pipeline" class="level3">
+<h3 class="anchored" data-anchor-id="running-the-pipeline"><strong>2.1.4. Running the pipeline</strong></h3>
+<p>Putting together all the input &amp; parameters that we specified above, the final command will contain our software profile, input samplesheet, output directory, reference files, custom pipeline steps, and custom resources to use.</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>nextflow run nf-core/rnaseq -r 3.14.0 \</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>    -profile apptainer \</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>    --input samplesheet.csv \</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>    --outdir ./rnaseq_small_test_outdir \</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>    --fasta ../rnaseq_data/reference/genome.fasta \</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>    --gtf ../rnaseq_data/reference/genes.gtf \</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>    --skip_alignment true \</span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>    --pseudo_aligner salmon \</span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>    --max_memory '6.GB' \</span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>    --max_cpus 2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>You can see how far we’ve customised the typical run command from the original example of :</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>nextflow run nf-core/rnaseq --input samplesheet.csv --genome GRCh37 -profile docker</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Now that we have prepared our data and chosen which parameters to apply, run the pipeline using the customised command we created above. Take a look at the <code>stdout</code> printed to the screen. Your workflow configuration and parameter customisations are all documented here. You can use this to confirm if your parameters have been correctly passed to the run command:</p>
-<p><img src="./media/2.1_nf-core-stdout.png" class="img-fluid"></p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="./media/2.1_nf-core-stdout.png" class="img-fluid figure-img"></p>
+<figcaption>Note that this screenshot is only demonstrating the different sections, not necessary the parameters that we have specified above</figcaption>
+</figure>
+</div>
 <p>As the workflow starts, you will also see a number of processes that are created underneath this. Recall that processes are executed <strong>independently</strong> and can run in <strong>parallel</strong>. Nextflow manages the data dependencies between processes, ensuring that each process is executed only when its input data is available, and all of its dependencies have been satisfied.</p>
 <p>To understand how this is coordinated, consider the <code>STAR_ALIGN</code> process.</p>
 <p><img src="./media/2.1_nf-core_processes.png" class="img-fluid"></p>
@@ -688,23 +484,11 @@ Important
 <li>Once a <code>TRIMGALORE</code> task is completed for a sample, the <code>STAR_ALIGN</code> task for that sample begins</li>
 <li>When the <code>STAR_ALIGN</code> process starts, it spawns 2 tasks, one for each sample in our samplesheet</li>
 </ul>
+<p><strong>Exercise</strong></p>
 <p>While we can specify parameters to a pipeline using the command line, this can be messy and result in huge <code>nextflow run</code> commands where the parameters we used is not documented. Recall <a href="../workshops/1.2_intro_nf_core.html#parameter-files">earlier</a> that a <code>-params-file</code> Nextflow parameter can be used to supply parameters to the pipeline.</p>
-<p><strong>Exercise</strong>: Create a a parameter file <code>workshop-params.yaml</code>, that contains our customised <strong>pipeline</strong> parameters. How can this file then be used in the <code>nextflow run</code> command? (<em>Note</em>: <strong>Nextflow</strong> parameters can’t be supplied inside a parameter file)</p>
-<div class="callout callout-style-default callout-important callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Important
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p><strong>TO DO</strong> Change PATH TO DATA, CHANGE CONTAINER</p>
-</div>
-</div>
+<p>Your task: Create a a parameter file <code>workshop-params.yaml</code>, that contains our customised <strong>pipeline</strong> parameters. How can this file then be used in the <code>nextflow run</code> command? (<em>Note</em>: <strong>Nextflow</strong> parameters can’t be supplied inside a parameter file)</p>
 <div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-18-contents" aria-controls="callout-18" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -713,26 +497,51 @@ Solution
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-18" class="callout-18-contents callout-collapse collapse">
+<div id="callout-5" class="callout-5-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>The parameter file <code>workshop-params.yaml</code> should contain the following:</p>
-<div class="sourceCode" id="cb22"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>input: "&lt;PATH TO DATA&gt;/samplesheet.csv"</span>
-<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>outdir: "&lt;PATH TO DATA&gt;/lesson2.1"</span>
-<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>fasta: "&lt;PATH TO DATA&gt;/ref/chr22_with_ERCC92.fa"</span>
-<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>gtf: "&lt;PATH TO DATA&gt;/ref/chr22_with_ERCC92.gtf"</span>
-<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>skip_markduplicates: true</span>
-<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>save_trimmed: true</span>
-<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>save_unaligned: true</span>
-<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>max_memory: "6.GB" </span>
-<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>max_cpus: 2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb15"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>input: "./samplesheet.csv"</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>outdir: "./rnaseq_small_test_outdir"</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>fasta: "../rnaseq_data/reference/genome.fasta"</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>gtf: "../rnaseq_data/reference/genes.gtf"</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>skip_alignment: true</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>pseudo_aligner: "salmon"</span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>max_memory: "6.GB"</span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>max_cpus: 2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Note that here the <strong>full</strong> path to our reference files is provided. Since <code>-profile</code> is a <strong>Nextflow</strong> parameter and not a <strong>pipeline</strong> parameter, it’s not listed in the parameter file.</p>
 <p>To run the pipeline using this parameter file, the following command can be used:</p>
-<div class="sourceCode" id="cb23"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>nextflow run nf-core/rnaseq -r 3.14.0 \</span>
-<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>    -profile &lt;CONTAINER&gt; \</span>
-<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>    -params-file ./workshop-params.yaml</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb16"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>nextflow run nf-core/rnaseq -r 3.14.0 \</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>    -profile apptainer \</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>    -params-file ./workshop-params.yaml</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 </div>
+<section id="examine-the-outputs" class="level4">
+<h4 class="anchored" data-anchor-id="examine-the-outputs"><strong>Examine the outputs</strong></h4>
+<p>Once your pipeline has completed, you should see this message printed to your terminal:</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>-[nf-core/rnaseq] Pipeline completed successfully -</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>Completed at: 27-May-2025 15:25:54</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>Duration    : 2m 15s</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>CPU hours   : 0.1</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>Succeeded   : 20</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>The pipeline ran successfully.</p>
+<p>In the meantime, list (<code>ls -a</code>) the contents of your directory, and you’ll see new directories (and a hidden directories/files) have been created:</p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>.  ..  .nextflow  .nextflow.log  .nextflow.log.1  rnaseq_small_test_outdir  samplesheet.csv  work  workshop-params.yaml</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Nextflow has created 2 new output directories, <strong>work</strong> and <strong>rnaseq_small_test_outdir</strong> in the current directory.</p>
+<ul>
+<li><p><strong>The <code>work</code> directory</strong>:</p>
+<ul>
+<li>As each job is ran, a unique sub-directory is created inside the <code>work</code> directory.</li>
+<li>These directories house temporary files and various command logs created by a process. This contains all the information required when troubleshooting a failed process.</li>
+</ul>
+<p>We will talk in more detail about pipeline troubleshooting later in the next section.</p></li>
+<li><p><strong>The <code>rnaseq_small_test_outdir</code> directory</strong></p>
+<ul>
+<li>All final outputs will be presented in a directory specified by the <code>--outdir</code> parameter.</li>
+<li>Inside this directory, you should have the output files grouped into common tools:</li>
+</ul>
+<div class="sourceCode" id="cb19"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>.  ..  fastqc  multiqc  pipeline_info  salmon  trimgalore</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
+</ul>
 <div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -751,459 +560,19 @@ Solution
 </ul>
 </div>
 </div>
-</section>
-<section id="default-nf-core-configuration" class="level3">
-<h3 class="anchored" data-anchor-id="default-nf-core-configuration"><strong>4.1.4. Default nf-core configuration</strong></h3>
-<p>Let’s take a closer look at <strong>configuration settings</strong>, which manage <strong>how the workflow is implemented on your system</strong>.</p>
-<p>Nextflow’s portability is achieved by separating the <strong>workflow implementation</strong> (input data, custom parameters, etc.) from the <strong>configuration settings</strong> (tool access, compute resources, etc.) required to execute it. This portability facilitates <strong>reproducibility</strong>: by applying the same pipeline parameters as a colleague, you can achieve the same results on any machine by adjusting the resource configurations to suit your platform. This means there is no requirement to edit the pipeline code.</p>
-<p>Together, <code>nextflow.config</code> and <code>base.config</code> can be used to define the default execution settings and parameters of an nf-core workflow.</p>
-<p>Inside the <a href="https://github.com/nf-core/rnaseq/blob/3.14.0/conf/base.config">conf/base.config</a> file are the default <strong>compute resource settings</strong> to be used by the processes in the nf-core workflow. It uses process labels, specified with <code>withLabel</code>, to enable different sets of resources to be applied to groups of processes that require similar compute. Processes are labelled within the process <a href="https://github.com/nf-core/rnaseq/blob/3.14.0/modules/nf-core/star/align/main.nf"><code>main.nf</code></a> file:</p>
-<div class="sourceCode" id="cb24"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>process STAR_ALIGN {</span>
-<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>    ...</span>
-<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>    label 'process_high'</span>
-<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>    ...</span>
-<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>We can over-ride these default compute resources using the <strong>command line</strong>, or a <strong>custom configuration file</strong> specifed with <code>-c</code>.</p>
-<p>Now, take a few moments to look through <a href="https://github.com/nf-core/rnaseq/blob/3.14.0/nextflow.config">nextflow.config</a>.</p>
-<p>Recall that this file is more <strong>workflow-specific</strong>, and sets the <strong>defaults for the workflow parameters</strong> such as <code>--max_cpus</code>, <code>--max_memory</code> and <code>--max_time</code>. These are generous values that are expected to be over-ridden with your custom settings, to ensure that no single process attempts to use more resources than you have available on your platform. To over-ride these default parameters, the <strong>command line</strong>, or a <strong>parameters file</strong> specified with <code>-params-file</code> can be used.</p>
-<p>Within <code>conf/base.config</code>, the <code>check_max()</code> function will ensure that a process-specifc resource setting will not exceed the maximum settings as dictated by by <code>--max_cpus</code>, <code>--max_memory</code> and <code>--max_time</code>. If the process setting does exceed any of the maximum CPUs, memory, or time, that value will be over-written to the values in <code>--max_cpus</code>, <code>--max_memory</code> and <code>--max_time</code>.</p>
-<p><img src="./media/2.3_check_max.png" class="img-fluid" style="width:75.0%"></p>
-<p>By default, all published nf-core modules contain a process label that categorises that process based on its resource usage. This means we won’t have to specify the resources for each individual process in the pipeline – we only need to tune these resource usage groups based on our compute infrastructure.</p>
-<p>Also notice that <code>nextflow.config</code> contains the <strong>software profiles</strong> available to use, such as Apptainer, Singulariy, Docker, or Conda. Each process definition script <code>main.nf</code> will define which software can be used – these are usually container managers or Conda environment managers. For <code>STAR_ALIGN</code>:</p>
-<div class="sourceCode" id="cb25"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>process STAR_ALIGN {</span>
-<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>    ...</span>
-<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>    conda "bioconda::star=2.7.10a bioconda::samtools=1.16.1 conda-forge::gawk=5.1.0"</span>
-<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>    container "${ workflow.containerEngine == 'singularity' &amp;&amp; !task.ext.singularity_pull_docker_container ?</span>
-<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>        'https://depot.galaxyproject.org/singularity/mulled-v2-1fa26d1ce03c295fe2fdcf85831a92fbcbd7e8c2:1df389393721fc66f3fd8778ad938ac711951107-0' :</span>
-<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>        'biocontainers/mulled-v2-1fa26d1ce03c295fe2fdcf85831a92fbcbd7e8c2:1df389393721fc66f3fd8778ad938ac711951107-0' }"</span>
-<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a>    ...</span>
-<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>A different container will be ‘pulled’ from a repository if Docker/Singularity/Apptainer is specified, or environment files will be downloaded if Conda has been specified. The default software profile can be over-ridden by specifying <code>-profile</code> on the command line.</p>
-<p><strong>Exercise</strong>: What are the default settings for maximum CPU, memory and time for the <code>STAR_ALIGN</code> module? How have these defaults changed after applying our customisations previously?</p>
-<div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-20-contents" aria-controls="callout-20" aria-expanded="false" aria-label="Toggle callout">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Solution
-</div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
-</div>
-<div id="callout-20" class="callout-20-contents callout-collapse collapse">
-<div class="callout-body-container callout-body">
-<p>First, we need to determine what <strong>process label</strong> has been assigned to the <code>STAR_ALIGN</code> <a href="https://github.com/nf-core/rnaseq/blob/3.14.0/modules/nf-core/star/align/main.nf">module</a>.</p>
-<p><code>STAR_ALIGN</code> has the label <code>process_high</code> which by default sets 12 CPUs, 72GB of memory, 16 hours time limit, as specified in <code>conf/base.config</code>(https://github.com/nf-core/rnaseq/blob/3.14.0/conf/base.config).</p>
-<p>We have previosuly applied <code>--max_cpus 2</code> and <code>--max_memory 6.GB</code>, so the <code>check_max()</code> function would have reduced the final resources given to the STAR alignment process to 2 CPUs and 6GB of memory, while retaining the default maximum walltime.</p>
-</div>
-</div>
-</div>
-</section>
-<section id="when-to-use-a-custom-config-file" class="level3">
-<h3 class="anchored" data-anchor-id="when-to-use-a-custom-config-file"><strong>4.1.5. When to use a custom config file</strong></h3>
-<div class="callout callout-style-default callout-important callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Important
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p><strong>TO DO</strong> Change CONTAINER AND PATH EXPORT</p>
-</div>
-</div>
-<p>In our runs so far, we have avoided the need for a custom resource configuration file by:</p>
-<ul>
-<li>Over-riding the default <container> <strong>profile</strong> that dictates how software tools are accessed
-<ul>
-<li>Without this, our pipeline runs would fail since we do not have each workflow tool (such as <code>STAR_ALIGN</code>) installed localy on our machine</li>
-<li>Additionally, since we use a shared container directory, the path was exported using the command <code>export ...=...</code></li>
-</ul></container></li>
-<li>Over-riding the default values for CPUs and memory set in <code>nextflow.config</code> with <code>--max_cpus 2</code> and <code>--max_memory 6.GB</code> to fit within our interactive sessions
-<ul>
-<li>Without these parameters, our pipeline runs would fail since Nextflow first checks that the requested resources are available before attempting to execute a workflow. When a process requests more resources than available, that process will fail.</li>
-</ul></li>
-</ul>
-<p>However, those are basic configurations. What if:</p>
-<ul>
-<li>We wanted to increase the resources above what is set by default in pipeline process labels, to take advantage of high CPU or high memory infrastructures?</li>
-<li>We wanted to run on an HPC or cloud infrastructure?</li>
-<li>We wanted to execute specific modules on specific partitions on a cluster?</li>
-<li>We wanted to use a non-default software container?</li>
-<li>We wanted to customise outputs beyond what was possible with the nf-core workflow parameters?</li>
-</ul>
-</section>
-<section id="submitting-each-process-as-an-individual-job-to-hpc" class="level3">
-<h3 class="anchored" data-anchor-id="submitting-each-process-as-an-individual-job-to-hpc"><strong>4.1.6</strong> Submitting each process as an individual job to HPC</h3>
-<p>Recall that Nextflow has a number of different <a href="https://www.nextflow.io/docs/latest/config.html"><code>scopes</code></a> that can be included in configuration files. For example the <code>params</code> scope that we tested previously, and the <code>profiles</code> scope that defined software management methods.</p>
-<p>Again, look inside <a href="https://github.com/nf-core/rnaseq/blob/3.14.0/conf/base.config">conf/base.config</a>. Notice that all the resource specifications are wrapped inside the <code>process</code> scope.</p>
-<div class="sourceCode" id="cb26"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>process {</span>
-<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>    cpus   = { check_max( 1    * task.attempt, 'cpus'   ) }</span>
-<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>    memory = { check_max( 6.GB * task.attempt, 'memory' ) }</span>
-<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>    time   = { check_max( 4.h  * task.attempt, 'time'   ) }</span>
-<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a>    ...</span>
-<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>To specify how a process is executed, the <code>process</code> scope can also be used. Currently, all our processes are running locally on our interactive session. These processes are managed by Nextflow, which determines which inputs are available to a particular process, and launches multiple processes in parallel if there are adequate resources available.</p>
-<p>However, instead of launching the processes in parallel locally, we can submit them as individual jobs on our HPC system. This will also execute the processes to run in parallel, but will allow for more resources to be specified beyond what is available locally.</p>
-<div class="callout callout-style-default callout-important callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Important
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p><strong>TO DO</strong> Change to PARTITION and EXECUTOR in nectar. Change MAX LIMITS</p>
-</div>
-</div>
-<p>Let’s create a custom resource file, <code>resources.config</code>. Paste the following into your new file:</p>
-<div class="sourceCode" id="cb27"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>process {</span>
-<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>    executor = 'slurm'</span>
-<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>    queue = 'PARTITION'</span>
-<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>executor {</span>
-<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>    queueSize = 4</span>
-<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>Nextflow is compatible with many <a href="https://www.nextflow.io/docs/latest/executor.html#">executors</a>, including AWS, Azure, PBS, and many more – we will take a closer look later in the session. For our purposes, we are specifying the <code>executor</code> as <code>slurm</code> and the partition to be <code>PARTITION</code>, inside the <code>process</code> scope. Nexflow will submit each process as a separate job using the <code>sbatch</code> command.</p>
-<p>For the purposees of this workshop, we will limit the number of concurrent jobs each user can submit to <code>4</code>. This can be done using the <code>executor</code> scope, along with the <code>queueSize</code> parameter. There are many execution options that can be configured; for a full list see <a href="https://www.nextflow.io/docs/latest/reference/config.html">here</a>.</p>
-<p>Note that we can now adjust the <code>--max_memory</code> and <code>--max_cpus</code> that we specified in our parameter file <code>workshop-params.yaml</code> to suit our HPC system. Change those parameters to the following:</p>
-<div class="sourceCode" id="cb28"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>max_memory: "36.GB" </span>
-<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>max_cpus: 12</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>Now, rerun the pipeline, specifying our new <code>resources.config</code> file, and our updated <code>workshop-params.yaml</code>.</p>
-<div class="callout callout-style-default callout-important callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Important
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p><strong>TO DO</strong> Change to CONTAINER</p>
-</div>
-</div>
-<div class="callout callout-style-default callout-warning callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Warning
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>Make sure the previous Nextflow run has completed. If it has not completed, you can simply cancel it by running <code>control+C</code>. Also, add the <code>-resume</code> option to your <code>nextflow run</code> command. This will cache any already completed processes. We will investigate this functionality later in the workshop.</p>
-</div>
-</div>
-<div class="sourceCode" id="cb29"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>nextflow run nf-core/rnaseq -r 3.14.0 \</span>
-<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>    -resume</span>
-<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>    -profile &lt;CONTAINER&gt; \</span>
-<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>    -params-file ./workshop-params.yaml \</span>
-<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>    -c resources.config</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>Has the executor been updated successfully? If <code>slurm</code> is being used, you should now notice <code>executor &gt; slurm (4)</code>. This indicates that a maximum of 4 concurrent jobs have been submitted, as specified in <code>queueSize</code>.</p>
-<div class="sourceCode" id="cb30"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>executor &gt;  slurm (4)</span>
-<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>[72/1f5082] NFC…ENOME:GTF_FILTER (chr22_with_ERCC92.fa) | 0 of 1</span>
-<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>[-        ] NFCORE_RNASEQ:RNASEQ:PREPARE_GENOME:GTF2BED -</span>
-<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>[-        ] NFC…Q:PREPARE_GENOME:MAKE_TRANSCRIPTS_FASTA -</span>
-<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>[4e/90b642] NFC…OM_GETCHROMSIZES (chr22_with_ERCC92.fa) | 0 of 1</span>
-<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a>[-        ] NFC…ASEQ:PREPARE_GENOME:STAR_GENOMEGENERATE -</span>
-<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a>[-        ] NFCORE_RNASEQ:RNASEQ:CAT_FASTQ              -</span>
-<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a>...</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</section>
-<section id="custom-resource-configuration-using-process-labels" class="level3">
-<h3 class="anchored" data-anchor-id="custom-resource-configuration-using-process-labels"><strong>4.1.7. Custom resource configuration using process labels</strong></h3>
-<p>To achieve optimum computational efficiency on your platform, more granular control may be required beyond what is capable with <code>--max_cpus</code>, <code>--max_memory</code> and <code>--max_time</code>.</p>
-<div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Note
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>If you instead set <code>--max_cpus 16</code> to the nf-core <code>rnaseq</code> workflow, the <code>STAR_ALIGN</code> module would still only utilise 12 CPUs. This is because it has been set with the label <code>process_high</code>, which sets the CPUs to 12. Since 12 does not exceed the maximum allowable CPUs of 16, 12 CPUs will be utilised in the process execution.</p>
-<div class="sourceCode" id="cb31"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>    withLabel:process_high {</span>
-<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>        cpus   = { check_max( 12    * task.attempt, 'cpus'    ) }</span>
-<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>        memory = { check_max( 72.GB * task.attempt, 'memory'  ) }</span>
-<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>        time   = { check_max( 16.h  * task.attempt, 'time'    ) }</span>
-<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>    }</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>However, if we do have 16 CPUs available and there are no ther processes with fulfilled input channels that could make use of the 4 remaining CPUs, those resources would sit idle while the <code>STAR_ALIGN</code> process is completing.</p>
-<p>To optimise the resource allocations for the 16 CPU platform, we might for example set <code>--max_cpus 8</code> so two samples could be aligned concurrently. Another option is to over-ride the CPU resources assigned to the <code>STAR_ALIGN</code> module and increase it to 16.</p>
-</div>
-</div>
-<p>This can be done through the <code>process</code> scope. Let’s now add the following process label resources to our custom resources file, <code>resources.config</code>.</p>
-<div class="sourceCode" id="cb32"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>    withLabel: process_low {</span>
-<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>        cpus = 2</span>
-<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>        memory = 6.GB</span>
-<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>    withLabel: process_medium {</span>
-<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a>        cpus = 4</span>
-<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a>        memory = 12.GB</span>
-<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a>    } </span>
-<span id="cb32-9"><a href="#cb32-9" aria-hidden="true" tabindex="-1"></a>    withLabel: process_high {</span>
-<span id="cb32-10"><a href="#cb32-10" aria-hidden="true" tabindex="-1"></a>        cpus = 12</span>
-<span id="cb32-11"><a href="#cb32-11" aria-hidden="true" tabindex="-1"></a>        memory = 36.GB</span>
-<span id="cb32-12"><a href="#cb32-12" aria-hidden="true" tabindex="-1"></a>    }</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Note
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>For the purposes of our workshop, we are setting small resource limits for our HPC. Consider how this approach can be powerful when taking advantage of the compute resources available on your platform.</p>
-</div>
-</div>
-<p>Save the file then re-run the workflow with our custom configuration.</p>
-<div class="callout callout-style-default callout-important callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Important
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p><strong>TO DO</strong> Change CONTAINER</p>
-</div>
-</div>
-<div class="callout callout-style-default callout-warning callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Warning
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>Make sure the previous Nextflow run has completed. If it has not completed, you can simply cancel it by running <code>control+C</code>. Also, add the <code>-resume</code> option to your <code>nextflow run</code> command. This will cache any already completed processes. We will investigate this functionality later in the workshop.</p>
-</div>
-</div>
-<div class="sourceCode" id="cb33"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>nextflow run nf-core/rnaseq -r 3.14.0 \</span>
-<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>    -resume</span>
-<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>    -profile &lt;CONTAINER&gt; \</span>
-<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>    -params-file ./workshop-params.yaml \</span>
-<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a>    -c resources.config</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<section id="examine-the-outputs" class="level4">
-<h4 class="anchored" data-anchor-id="examine-the-outputs"><strong>Examine the outputs</strong></h4>
-<p>Once your pipeline has completed, you should see this message printed to your terminal:</p>
-<div class="sourceCode" id="cb34"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>-[nf-core/rnaseq] Pipeline completed successfully with skipped sampl(es)-</span>
-<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>-[nf-core/rnaseq] Please check MultiQC report: 2/2 samples failed strandedness check.-</span>
-<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>Completed at: 04-May-2025 15:03:01</span>
-<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>Duration    : 7m 59s</span>
-<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a>CPU hours   : 0.8</span>
-<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a>Succeeded   : 66</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>The pipeline ran successfully. However, note the warning about all samples failing the strandedness check. We’ll explore that further in the next section.</p>
-<p>In the meantime, list (<code>ls -a</code>) the contents of your directory, and you’ll see new directories (and a hidden directories/files) have been created:</p>
-<div class="sourceCode" id="cb35"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>.   ..  lesson2.1   .nextflow   .nextflow.log   .nextflow.log.1   samplesheet.csv   work</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>Nextflow has created 2 new output directories, <strong>work</strong> and <strong>lesson2.1</strong> in the current directory.</p>
-<ul>
-<li><p><strong>The <code>work</code> directory</strong>:</p>
-<ul>
-<li>As each job is ran, a unique sub-directory is created inside the <code>work</code> directory.</li>
-<li>These directories house temporary files and various command logs created by a process. This contains all the information required when troubleshooting a failed process.</li>
-</ul>
-<p>We will talk in more detail about pipeline troubleshooting later in the workshop.</p></li>
-<li><p><strong>The <code>lesson2.1</code> directory</strong></p>
-<ul>
-<li>All final outputs will be presented in a directory specified by the <code>--outdir</code> parameter.</li>
-<li>Inside this directory, you should have the output files grouped into common tools:</li>
-</ul>
-<div class="sourceCode" id="cb36"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>ls -a</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="sourceCode" id="cb37"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>.  ..  fastqc  multiqc  pipeline_info  star_salmon  trimgalore</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
-</ul>
+<p><br></p>
 </section>
 </section>
-<section id="custom-resource-configuration-using-process-names" class="level3">
-<h3 class="anchored" data-anchor-id="custom-resource-configuration-using-process-names"><strong>4.1.8. Custom resource configuration using process names</strong></h3>
-<p>Since process labels can only specifiy resources to groups of processes that share the same label through <code>withLabel</code>, we can achieve greater control using <code>withName</code>, to specify resources for a particular process.</p>
-<p>Similar to <code>withLabel</code>, using <code>withName</code> allows us to adjust the requirements for a specific process without needing to edit any pipeline module code (ie. the <code>main.nf</code> module file). With <code>withName</code>, multiple module names can also be specified using wildcards or <code>or</code> (<code>*</code> or <code>|</code>) notation.</p>
-<p><code>withName</code> has a <a href="https://www.nextflow.io/docs/latest/config.html#selector-priority">higher priority</a> than <code>withLabel</code>, meaning anything contained in <code>withName</code> will over-ride conflicting values in `withLabel’.</p>
-<p>First, let’s ensure we have the specific <strong>path name</strong> for the module that we wish to target. We will be using the <code>MULTIQC</code> module as an example. When the <code>rnaseq</code> pipeline was executed, an <strong>execution file</strong> was created inside the pipeline output folder. This file is located within the <code>pipeline_info</code> folder, and prefixed with <code>execution_trace</code> along with the date of pipeline execution. <strong><em>Note</em></strong>: Change <code>&lt;date_of_pipeline&gt;</code> to the file date that is inside your folder.</p>
-<div class="sourceCode" id="cb38"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>ls lesson2.1/pipeline_info/execution_trace_&lt;date_of_pipeline&gt;.txt</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>This file contains a full log of each process that has ran, along with resources specified to the process and if the execution was successful. To get the full name path for the <code>MULTIQC</code> process, let’s search for this process name inside the execution trace</p>
-<div class="sourceCode" id="cb39"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>grep MULTIQC lesson2.1/pipeline_info/execution_trace_&lt;date_of_pipeline&gt;.txt</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="sourceCode" id="cb40"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>36      f0/731167       23769653        NFCORE_RNASEQ:RNASEQ:MULTIQC_CUSTOM_BIOTYPE (HBR_Rep2_ERCC)  COMPLETED       0       2025-05-04 15:55:44.676 9.7s    0ms     38.2%   3.1 MB  5.4 MB       1.4 MB  2.6 KB</span>
-<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>52      c9/b96b9e       23769667        NFCORE_RNASEQ:RNASEQ:MULTIQC_CUSTOM_BIOTYPE (HBR_Rep1_ERCC)  COMPLETED       0       2025-05-04 15:55:49.699 9.7s    0ms     40.0%   3 MB    5.4 MB       1.4 MB  2.6 KB</span>
-<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a>66      b7/aba0aa       23769685        NFCORE_RNASEQ:RNASEQ:MULTIQC (1)        COMPLETED   02025-05-04 15:57:14.401 1m 35s  1m 18s  198.4%  186.7 MB        1.1 GB  44.1 GB 12.2 MB</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>This search returned three results. For our purposes, we will be using the last result, and the information contained in the fourth column, which provides the full process name <code>NFCORE_RNASEQ:RNASEQ:MULTIQC</code>. This process name indicates what workflows the particular module originated from.</p>
-<p>For <code>MULTIQC</code>, any of the following names can be used:</p>
-<ul>
-<li><code>'NFCORE_RNASEQ:RNASEQ:MULTIQC'</code>: Use the <code>MULTIQC</code> module inside the <code>RNASEQ</code> workflow in <code>NFCORE_RNASEQ</code></li>
-<li><code>'.*:RNASEQ:MULTIQC'</code>: Use the <code>MULTIQC</code> module inside the <code>RNASEQ</code> workflow in any upstream workflows</li>
-<li><code>'.*:MULTIQC'</code>: Use the <code>MULTIQC</code> module in any upstream workflows</li>
-</ul>
-<div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Note
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>If you are running the pipeline for the first time, it can be difficult to determine the full name path to use. If you are unsure of how to build the path, you can look through the <code>modules.config</code> files specified for your pipeline on <a href="https://github.com/nf-core/rnaseq/blob/3.14.0/conf/modules.config">Github</a>. These usually contain module specific parameters that can guide you in creating your own name path.</p>
-</div>
-</div>
-<p>Let’s now add the following to our configuration file <code>resources.config</code>. Inside the <code>process</code> scope, provide the name for the <code>MULTIQC</code> module using the <code>withName</code> selector. Now, we wish to use a specific container when running that module. Change it to <code>'quay.io/biocontainers/multiqc:1.14--pyhdfd78af_0'</code></p>
-<div class="sourceCode" id="cb41"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>process {</span>
-<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>  ...</span>
-<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a>  withName: '.*:MULTIQC' {</span>
-<span id="cb41-6"><a href="#cb41-6" aria-hidden="true" tabindex="-1"></a>    container = 'quay.io/biocontainers/multiqc:1.14--pyhdfd78af_0'</span>
-<span id="cb41-7"><a href="#cb41-7" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb41-8"><a href="#cb41-8" aria-hidden="true" tabindex="-1"></a>} </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="callout callout-style-default callout-important callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Important
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p><strong>TO DO</strong> Change EXECUTOR</p>
-</div>
-</div>
-<div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-31-contents" aria-controls="callout-31" aria-expanded="false" aria-label="Toggle callout">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Completed configuration file
-</div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
-</div>
-<div id="callout-31" class="callout-31-contents callout-collapse collapse">
-<div class="callout-body-container callout-body">
-<div class="sourceCode" id="cb42"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>process {</span>
-<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>    executor = 'slurm'</span>
-<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a>    queue = 'EXECUTOR'</span>
-<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb42-5"><a href="#cb42-5" aria-hidden="true" tabindex="-1"></a>    withLabel: process_low {</span>
-<span id="cb42-6"><a href="#cb42-6" aria-hidden="true" tabindex="-1"></a>        cpus = 2</span>
-<span id="cb42-7"><a href="#cb42-7" aria-hidden="true" tabindex="-1"></a>        memory = 6.GB</span>
-<span id="cb42-8"><a href="#cb42-8" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb42-9"><a href="#cb42-9" aria-hidden="true" tabindex="-1"></a>    withLabel: process_medium {</span>
-<span id="cb42-10"><a href="#cb42-10" aria-hidden="true" tabindex="-1"></a>        cpus = 4</span>
-<span id="cb42-11"><a href="#cb42-11" aria-hidden="true" tabindex="-1"></a>        memory = 12.GB</span>
-<span id="cb42-12"><a href="#cb42-12" aria-hidden="true" tabindex="-1"></a>    } </span>
-<span id="cb42-13"><a href="#cb42-13" aria-hidden="true" tabindex="-1"></a>    withLabel: process_high {</span>
-<span id="cb42-14"><a href="#cb42-14" aria-hidden="true" tabindex="-1"></a>        cpus = 12</span>
-<span id="cb42-15"><a href="#cb42-15" aria-hidden="true" tabindex="-1"></a>        memory = 36.GB</span>
-<span id="cb42-16"><a href="#cb42-16" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb42-17"><a href="#cb42-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb42-18"><a href="#cb42-18" aria-hidden="true" tabindex="-1"></a>    withName: '.*:MULTIQC' {</span>
-<span id="cb42-19"><a href="#cb42-19" aria-hidden="true" tabindex="-1"></a>        container = 'quay.io/biocontainers/multiqc:1.14--pyhdfd78af_0'</span>
-<span id="cb42-20"><a href="#cb42-20" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb42-21"><a href="#cb42-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb42-22"><a href="#cb42-22" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb42-23"><a href="#cb42-23" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb42-24"><a href="#cb42-24" aria-hidden="true" tabindex="-1"></a>executor {</span>
-<span id="cb42-25"><a href="#cb42-25" aria-hidden="true" tabindex="-1"></a>    queueSize = 4</span>
-<span id="cb42-26"><a href="#cb42-26" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-</div>
-</div>
-<div class="callout callout-style-default callout-warning callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-<strong>What if the parameter I want to apply isn’t available?</strong>
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>Recall <a href="../workshops/2.1_customise_and_run.html#custom-configuration-files">earlier</a> that nf-core modules use <code>ext.args</code> to pass additional arguments to a module. This uses a special Nextflow directive <a href="https://www.nextflow.io/docs/latest/process.html#ext"><code>ext</code></a>. If an nf-core pipeline does not have a pre-defined parameter for a process, you may be able to implement <code>ext.args</code>.</p>
-<p>The inclusion of <code>ext.args</code> is currently best practice for all DSL2 nf-core modules where additional parameters may be required to run a process. However, this may not be implemented for all modules in all nf-core pipelines. Depending on the pipeline, these process modules may not have defined the <code>ext.args</code> variable in the script blocks and is thus not available for applying customisation. If that is the case consider submitting a feature request or a making pull request on the pipeline’s GitHub repository to implement this!</p>
-</div>
-</div>
-<p>Save the config then resume your run, setting <code>outdir</code> to <code>lesson2.1_multiqc</code>, along with the resource file <code>resources.config</code> and parameter file <code>workshop-params.yaml</code>:</p>
-<div class="callout callout-style-default callout-important callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Important
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p><strong>TO DO</strong> Change CONTAINER</p>
-</div>
-</div>
-<div class="sourceCode" id="cb43"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>nextflow run nf-core/rnaseq -r 3.14.0 \</span>
-<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>  -resume </span>
-<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a>  -profile &lt;CONTAINER&gt; \</span>
-<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a>  -c my_resources.config \</span>
-<span id="cb43-5"><a href="#cb43-5" aria-hidden="true" tabindex="-1"></a>  -params-file workshop-params.yaml \</span>
-<span id="cb43-6"><a href="#cb43-6" aria-hidden="true" tabindex="-1"></a>  --outdir lesson2.1_multiqc \</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>If your execution path for the <code>MULTIQC</code> module was <strong>not</strong> specified correctly, a pipeline warning would be printed, such as:</p>
-<div class="sourceCode" id="cb44"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>WARN: There's no process matching config selector: ...</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Configuration order of priority
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>Previously, we saw that <code>withName</code> has a higher priority than <code>withLabel</code>. There are additional <a href="https://www.nextflow.io/docs/latest/config.html#configuration-file">configuration priorities</a> managed by Nextflow, when conflicting parameters are provided.</p>
-<p>The settings specific with <code>-c resources.config</code> will over-ride those that appear in the default nf-core configurations <code>nextflow.config</code> and <code>conf/base.config</code>.</p>
-<p>Additionally, any parameters provided in the command line will over-ride those in the <code>-c</code> configuration file.</p>
-<p>To avoid confusion, it is best not to name your custom configuration files <code>nextflow.config</code>!</p>
-</div>
-</div>
-<div class="callout callout-style-default callout-tip callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-<strong>Key points</strong>
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<ul>
-<li>nf-core workflows work ‘out of the box’ but there are compute and software configurations we can customise to optimise the pipeline execution on our compute infrastructure</li>
-<li>nf-core uses the default parameters in <code>nextflow.config</code> and <code>conf/base.config</code>, both of which are automatically used by the pipeline</li>
-<li>A custom configuration can be applied using <code>-c</code>, and will over-ride settings in the default configs</li>
-<li>Customisations can be targeted to either groups of processes, or specific processes using <code>withLabel</code> or <code>withName</code></li>
-<li>Workflow parameters can be specific in <code>-params-file</code> and not <code>-c</code></li>
-</ul>
-</div>
-</div>
+<section id="next-chapter-troubleshooting-a-nextflow-pipeline-run" class="level3">
+<h3 class="anchored" data-anchor-id="next-chapter-troubleshooting-a-nextflow-pipeline-run"><strong>Next Chapter: <a href="../workshops/2.2_troubleshooting.html">Troubleshooting a nextflow pipeline run</a></strong></h3>
+<p><br></p>
 <hr>
-<p><sup><em>These materials are adapted from <a href="https://sydney-informatics-hub.github.io/customising-nfcore-workshop/notebooks/1.2_nfcore.html">Customising Nf-Core Workshop</a> by Sydney Informatics Hub</em></sup></p>
+<p>This workshop is adapted from various nextflow training materials, including:</p>
+<ul>
+<li><a href="https://training.nextflow.io">Nextflow Training Materials</a></li>
+<li><a href="https://sydney-informatics-hub.github.io/customising-nfcore-workshop">Customising Nf-Core Workshop</a></li>
+<li><a href="https://sydney-informatics-hub.github.io/hello-nextflow/">Hello Nextflow Workshop</a></li>
+</ul>
 
 
 </section>

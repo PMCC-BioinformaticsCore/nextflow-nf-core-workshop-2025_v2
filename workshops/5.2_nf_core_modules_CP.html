@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.7.29">
+<meta name="generator" content="quarto-1.7.25">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -71,7 +71,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-0815c480559380816a4d1ea211a47e91.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-fe31d7bd2deb2a321418d01dba375a64.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="../site_libs/bootstrap/bootstrap-a14e3238c51140e99ccc48519b6ed9ce.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
@@ -138,11 +138,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <ul class="dropdown-menu" aria-labelledby="nav-menu-sessions">    
         <li>
     <a class="dropdown-item" href="../sessions/1_intro_run_nf.html">
- <span class="dropdown-text">Introduction to Nextflow and Nf-core</span></a>
+ <span class="dropdown-text">Day 1: Introduction to Nextflow and Nf-core</span></a>
   </li>  
         <li>
     <a class="dropdown-item" href="../sessions/2_nf_dev_intro.html">
- <span class="dropdown-text">Developing bioinformatics workflows with Nextflow</span></a>
+ <span class="dropdown-text">Day 2: Developing bioinformatics workflows with Nextflow</span></a>
   </li>  
     </ul>
   </li>
@@ -153,47 +153,47 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <ul class="dropdown-menu" aria-labelledby="nav-menu-workshop">    
         <li>
     <a class="dropdown-item" href="../workshops/1.1_intro_nextflow.html">
- <span class="dropdown-text">Introduction to Nextflow</span></a>
+ <span class="dropdown-text">1.1 Introduction to Nextflow</span></a>
   </li>  
         <li>
     <a class="dropdown-item" href="../workshops/1.2_intro_nf_core.html">
- <span class="dropdown-text">Introduction to nf-core</span></a>
+ <span class="dropdown-text">1.2 Introduction to nf-core</span></a>
   </li>  
         <li>
     <a class="dropdown-item" href="../workshops/2.1_customise_and_run.html">
- <span class="dropdown-text">Customising &amp; running nf-core pipelines</span></a>
+ <span class="dropdown-text">2.1 Customising &amp; running nf-core pipelines</span></a>
   </li>  
         <li>
     <a class="dropdown-item" href="../workshops/2.2_troubleshooting.html">
- <span class="dropdown-text">Troubleshooting Nextflow run</span></a>
+ <span class="dropdown-text">2.2 Troubleshooting Nextflow run</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../workshops/2.3_tips_and_tricks.html">
- <span class="dropdown-text">Best practise, tips and tricks</span></a>
+    <a class="dropdown-item" href="../workshops/1.3_processes_and_channels.html">
+ <span class="dropdown-text">3.1 Introduction to processes and channels</span></a>
   </li>  
         <li>
     <a class="dropdown-item" href="../workshops/3.1_creating_a_workflow.html">
- <span class="dropdown-text">Creating a workflow</span></a>
+ <span class="dropdown-text">3.2 Creating a workflow</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../workshops/4.1_modules.html">
- <span class="dropdown-text">Modularisation</span></a>
+    <a class="dropdown-item" href="../workshops/2.3_tips_and_tricks.html">
+ <span class="dropdown-text">3.3 Best practise, tips and tricks</span></a>
   </li>  
         <li>
     <a class="dropdown-item" href="../workshops/5.1_nf_core_template.html">
- <span class="dropdown-text">Nf-core Template</span></a>
+ <span class="dropdown-text">4.1 Creating workflows using nf-core templates</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../workshops/6.1_operators.html">
- <span class="dropdown-text">Nextflow Operators</span></a>
+    <a class="dropdown-item" href="../workshops/5.2_nf_core_modules.html">
+ <span class="dropdown-text">5.1 nf-core modules and subworkflows</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../workshops/7.1_metadata_propagation.html">
- <span class="dropdown-text">Metadata Propagation</span></a>
+    <a class="dropdown-item" href="../workshops/5.3_metadata_propagation.html">
+ <span class="dropdown-text">6.1 Metadata Propagation</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../workshops/8.1_scatter_gather_output.html">
- <span class="dropdown-text">Output, scatter, and Gather</span></a>
+    <a class="dropdown-item" href="../workshops/5.4_pipeline_testing.html">
+ <span class="dropdown-text">7.1 Pipeline version control and additional resources</span></a>
   </li>  
     </ul>
   </li>
@@ -250,7 +250,7 @@ Objectives
 </div>
 </div>
 <section id="nf-core-modules" class="level2">
-<h2 class="anchored" data-anchor-id="nf-core-modules"><strong>5.5 <code>nf-core modules</code></strong></h2>
+<h2 class="anchored" data-anchor-id="nf-core-modules"><strong>5.1 <code>nf-core modules</code></strong></h2>
 <p>Previously, we used the <code>nf-core pipelines</code> command to create our initial pipeline template. We can now add modules to this template using <code>nf-core modules</code>. This command also contains subcommands, which can be used to manage modules.</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>                                          ,--./,-.</span>
@@ -318,7 +318,7 @@ Objectives
 <span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>└─────────────┴─────────────────┴─────────────┴────────────────────────────────┴────────────┘</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>To obtain a list of all available <a href="https://nf-co.re/modules">nf-core modules</a> available, <code>nf-core modules list remote</code> can be used.</p>
 <section id="installing-modules-nf-core-modules-install" class="level3">
-<h3 class="anchored" data-anchor-id="installing-modules-nf-core-modules-install"><strong>5.5.1 Installing modules <code>nf-core modules install</code></strong></h3>
+<h3 class="anchored" data-anchor-id="installing-modules-nf-core-modules-install"><strong>5.1.1 Installing modules <code>nf-core modules install</code></strong></h3>
 <p>Previously, we created a simple workflow that indexed the transcriptome file (<code>INDEX</code>), performed quantification (<code>QUANTIFICATION</code>) and FastQC (<code>FASTQC</code>) on the sample FASTQ files. Finally, perfomed MultiQC on both the outputs of <code>QUANTIFICATION</code> and <code>FASTQC</code>.</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>N E X T F L O W  ~  version 23.04.1</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>Launching `rnaseq.nf` [sad_jennings] DSL2 - revision: cfae7ccc0e</span>
@@ -696,7 +696,7 @@ modules.json
 </section>
 </section>
 <section id="updating-modules-nf-core-modules-update" class="level3">
-<h3 class="anchored" data-anchor-id="updating-modules-nf-core-modules-update"><strong>5.5.2 Updating modules: <code>nf-core modules update</code></strong></h3>
+<h3 class="anchored" data-anchor-id="updating-modules-nf-core-modules-update"><strong>5.1.2 Updating modules: <code>nf-core modules update</code></strong></h3>
 <p>A limitation of <code>nf-core modules install</code> is that it doesn’t explicitly print what has been changed within the module. The <code>nf-core modules update</code> command is an alternative that can do this.</p>
 <p>Let’s update <code>salmon/quant</code></p>
 <div class="sourceCode" id="cb29"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>nf-core modules update salmon/quant</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -755,7 +755,7 @@ modules.json
 <span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>INFO     Updates complete ✨   </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
 <section id="removing-modules" class="level3">
-<h3 class="anchored" data-anchor-id="removing-modules"><strong>5.5.3 Removing modules</strong></h3>
+<h3 class="anchored" data-anchor-id="removing-modules"><strong>5.1.3 Removing modules</strong></h3>
 <p>Previously, we saw that by simply removing the module folder didn’t delete the module from the pipeline. The pipeline automatically searches for missing module files and redownloads them, based on the SHA version specified in <code>modules.json</code>.</p>
 <p>To remove a module from a pipeline, the following can be used:</p>
 <p>For <code>nf-core</code> to no longer register the module is to be distributed with your pipeline you need to use:</p>
@@ -799,7 +799,7 @@ Caution
 </div>
 </section>
 <section id="writing-modules-with-nf-core-template" class="level3">
-<h3 class="anchored" data-anchor-id="writing-modules-with-nf-core-template"><strong>5.5.4 Writing modules with nf-core template</strong></h3>
+<h3 class="anchored" data-anchor-id="writing-modules-with-nf-core-template"><strong>5.1.4 Writing modules with nf-core template</strong></h3>
 <p>For this section we are going to refer to the <a href="https://nf-co.re/docs/guidelines/components/modules">nf-core guidelines for modules</a>.</p>
 <p>While these are the full guidelines for <em>contributing</em> back to nf-core, there are still some general components that are good practice even if you are NOT planning to contribute.</p>
 <div class="callout callout-style-default callout-note callout-titled">
@@ -1058,7 +1058,7 @@ Caution
 </section>
 </section>
 <section id="nf-core-schema-and-input-validation" class="level2">
-<h2 class="anchored" data-anchor-id="nf-core-schema-and-input-validation"><strong>5.5 Nf-core schema and input validation</strong></h2>
+<h2 class="anchored" data-anchor-id="nf-core-schema-and-input-validation"><strong>5.1 Nf-core schema and input validation</strong></h2>
 <p>Relies on <code>plugins</code> written by nf-core community</p>
 <p>In particular <a href="https://github.com/nextflow-io/nf-validation"><code>nf-validation</code></a></p>
 <p><code>nextflow_schmea.json</code> is for pipeline parameters</p>
@@ -1097,7 +1097,7 @@ Caution
 </div>
 </div>
 <section id="nf-core-inputs" class="level3">
-<h3 class="anchored" data-anchor-id="nf-core-inputs"><strong>5.5.2 Nf-core inputs</strong></h3>
+<h3 class="anchored" data-anchor-id="nf-core-inputs"><strong>5.1.2 Nf-core inputs</strong></h3>
 <p>nested in this schema is the <code>input</code> or samplesheet schema. unfortunately there isn’t a nice interface to help you write this schema yet.</p>
 <ul>
 <li><p>meta: Allows you to predesignate the “key” with in the “meta”</p></li>
@@ -1117,7 +1117,7 @@ Caution
 </section>
 </section>
 <section id="test-profile" class="level2">
-<h2 class="anchored" data-anchor-id="test-profile"><strong>5.5 Test Profile</strong></h2>
+<h2 class="anchored" data-anchor-id="test-profile"><strong>5.1 Test Profile</strong></h2>
 <p>nf-core tries to encourage software engineering concepts such as minimal test sets, this can be set up using the <code>conf/test.config</code> and <code>conf/test_full.config</code></p>
 <p>For the duration of this workshop we will be making use of the <code>conf/test.config</code>, to test our pipeline.</p>
 <p>Let’s take a look at what is currently in the <code>conf/test.config</code>.</p>

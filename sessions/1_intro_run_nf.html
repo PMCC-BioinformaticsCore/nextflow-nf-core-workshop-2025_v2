@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.7.29">
+<meta name="generator" content="quarto-1.7.25">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -36,7 +36,7 @@ ul.task-list li input[type="checkbox"] {
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-0815c480559380816a4d1ea211a47e91.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-fe31d7bd2deb2a321418d01dba375a64.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="../site_libs/bootstrap/bootstrap-a14e3238c51140e99ccc48519b6ed9ce.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
@@ -103,11 +103,11 @@ ul.task-list li input[type="checkbox"] {
     <ul class="dropdown-menu" aria-labelledby="nav-menu-sessions">    
         <li>
     <a class="dropdown-item" href="../sessions/1_intro_run_nf.html">
- <span class="dropdown-text">Introduction to Nextflow and Nf-core</span></a>
+ <span class="dropdown-text">Day 1: Introduction to Nextflow and Nf-core</span></a>
   </li>  
         <li>
     <a class="dropdown-item" href="../sessions/2_nf_dev_intro.html">
- <span class="dropdown-text">Developing bioinformatics workflows with Nextflow</span></a>
+ <span class="dropdown-text">Day 2: Developing bioinformatics workflows with Nextflow</span></a>
   </li>  
     </ul>
   </li>
@@ -118,47 +118,47 @@ ul.task-list li input[type="checkbox"] {
     <ul class="dropdown-menu" aria-labelledby="nav-menu-workshop">    
         <li>
     <a class="dropdown-item" href="../workshops/1.1_intro_nextflow.html">
- <span class="dropdown-text">Introduction to Nextflow</span></a>
+ <span class="dropdown-text">1.1 Introduction to Nextflow</span></a>
   </li>  
         <li>
     <a class="dropdown-item" href="../workshops/1.2_intro_nf_core.html">
- <span class="dropdown-text">Introduction to nf-core</span></a>
+ <span class="dropdown-text">1.2 Introduction to nf-core</span></a>
   </li>  
         <li>
     <a class="dropdown-item" href="../workshops/2.1_customise_and_run.html">
- <span class="dropdown-text">Customising &amp; running nf-core pipelines</span></a>
+ <span class="dropdown-text">2.1 Customising &amp; running nf-core pipelines</span></a>
   </li>  
         <li>
     <a class="dropdown-item" href="../workshops/2.2_troubleshooting.html">
- <span class="dropdown-text">Troubleshooting Nextflow run</span></a>
+ <span class="dropdown-text">2.2 Troubleshooting Nextflow run</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../workshops/2.3_tips_and_tricks.html">
- <span class="dropdown-text">Best practise, tips and tricks</span></a>
+    <a class="dropdown-item" href="../workshops/1.3_processes_and_channels.html">
+ <span class="dropdown-text">3.1 Introduction to processes and channels</span></a>
   </li>  
         <li>
     <a class="dropdown-item" href="../workshops/3.1_creating_a_workflow.html">
- <span class="dropdown-text">Creating a workflow</span></a>
+ <span class="dropdown-text">3.2 Creating a workflow</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../workshops/4.1_modules.html">
- <span class="dropdown-text">Modularisation</span></a>
+    <a class="dropdown-item" href="../workshops/2.3_tips_and_tricks.html">
+ <span class="dropdown-text">3.3 Best practise, tips and tricks</span></a>
   </li>  
         <li>
     <a class="dropdown-item" href="../workshops/5.1_nf_core_template.html">
- <span class="dropdown-text">Nf-core Template</span></a>
+ <span class="dropdown-text">4.1 Creating workflows using nf-core templates</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../workshops/6.1_operators.html">
- <span class="dropdown-text">Nextflow Operators</span></a>
+    <a class="dropdown-item" href="../workshops/5.2_nf_core_modules.html">
+ <span class="dropdown-text">5.1 nf-core modules and subworkflows</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../workshops/7.1_metadata_propagation.html">
- <span class="dropdown-text">Metadata Propagation</span></a>
+    <a class="dropdown-item" href="../workshops/5.3_metadata_propagation.html">
+ <span class="dropdown-text">6.1 Metadata Propagation</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../workshops/8.1_scatter_gather_output.html">
- <span class="dropdown-text">Output, scatter, and Gather</span></a>
+    <a class="dropdown-item" href="../workshops/5.4_pipeline_testing.html">
+ <span class="dropdown-text">7.1 Pipeline version control and additional resources</span></a>
   </li>  
     </ul>
   </li>
@@ -222,7 +222,8 @@ ul.task-list li input[type="checkbox"] {
 <ul>
 <li>Gain exposure to key concepts and terminology in Nextflow and nf-core pipelines.</li>
 <li>Understand the foundational knowledge required to navigate and customize the code base of nf-core pipelines.</li>
-<li>Develop basic troubleshooting and customization skills necessary for responsibly applying nf-core pipelines to your own research data.</li>
+<li>Develop basic troubleshooting and customization skills necessary for responsibly applying nf-core pipelines to your own research data</li>
+<li>Develop basic nextflow workflow</li>
 </ul>
 </section>
 <section id="set-up-requirements" class="level3">
@@ -254,54 +255,59 @@ ul.task-list li input[type="checkbox"] {
 <tr class="odd">
 <td><a href="../workshops/1.1_intro_nextflow.html">Introduction to Nextflow</a></td>
 <td>Introduction to Nextflow: Introduce nextflow’s core features and concepts; including CLI and how to run it on cluster</td>
-<td>10:10 - 10:20</td>
+<td>10:10 - 10:25</td>
 </tr>
 <tr class="even">
-<td><a href="../workshops/1.3_processes_and_channels.html">Introduction to processes and channels</a></td>
-<td>Introduction to Nextflow channels types and process structure</td>
-<td>10:20 - 10:30</td>
+<td><a href="../workshops/1.2_intro_nf_core.html">Introduction to nf-core</a></td>
+<td>Key nf-core features and concepts, structures, tools, and example nf-core pipelines</td>
+<td>10:25 - 10:50</td>
 </tr>
 <tr class="odd">
-<td><a href="../workshops/3.1_creating_a_workflow.html">Creating a basic Nextflow workflow</a></td>
-<td>Introduction to nextflow channels, processes, data types and workflows</td>
-<td>10:20 - 10.50</td>
-</tr>
-<tr class="even">
 <td>Break</td>
 <td>Break</td>
 <td>10:50 - 11:00</td>
 </tr>
-<tr class="odd">
-<td><a href="../workshops/1.2_intro_nf_core.html">Introduction to nf-core</a></td>
-<td>Key nf-core features and concepts, structures, tools, and example nf-core pipelines</td>
-<td>11:00 - 11:30</td>
-</tr>
 <tr class="even">
 <td><a href="../workshops/2.1_customise_and_run.html">Customising and running nf-core pipelines</a></td>
 <td>Customising &amp; running nf-core pipelines: Discuss pipelines’ required inputs, optional inputs, outputs, parameters file and configurations files</td>
-<td>11:30 - 12:15</td>
+<td>11:00 - 11:30</td>
 </tr>
 <tr class="odd">
-<td>Lunch Break</td>
-<td>Break</td>
-<td>12:15 - 13:00</td>
-</tr>
-<tr class="even">
 <td><a href="../workshops/2.2_troubleshooting.html">Troubleshooting a Nextflow run</a></td>
 <td>Troubleshooting nextflow run: Discuss Nextflow logging, caching, task execution directory, dependencies, and manual troubleshooting</td>
-<td>13:00 - 13:30</td>
+<td>11:30 - 12:00</td>
+</tr>
+<tr class="even">
+<td>Lunch Break</td>
+<td>Break</td>
+<td>12:00 - 12:45</td>
+</tr>
+<tr class="odd">
+<td><a href="../workshops/1.3_processes_and_channels.html">Introduction to processes and channels</a></td>
+<td>Introduction to Nextflow channels types and process structure</td>
+<td>12:45 - 13:00</td>
+</tr>
+<tr class="even">
+<td><a href="../workshops/3.1_creating_a_workflow.html">Creating a basic Nextflow workflow</a></td>
+<td>Introduction to nextflow channels, processes, data types and workflows</td>
+<td>13.00 - 13.45</td>
 </tr>
 <tr class="odd">
 <td><a href="../workshops/2.3_tips_and_tricks.html">Best practise and Q&amp;A</a></td>
 <td>Best practise, tips &amp; tricks for running nextflow pipelines</td>
-<td>13.30 - 14:00</td>
+<td>13.45 - 14:00</td>
 </tr>
 </tbody>
 </table>
 </section>
 <section id="credits-and-acknowledgement" class="level3">
 <h3 class="anchored" data-anchor-id="credits-and-acknowledgement">Credits and acknowledgement</h3>
-<p><sup><em>This workshop is adapted from <a href="https://sydney-informatics-hub.github.io/customising-nfcore-workshop">Customising Nf-Core Workshop</a> materials from Sydney Informatics Hub</em></sup></p>
+<p>This workshop is adapted from various nextflow training materials, including:</p>
+<ul>
+<li><a href="https://training.nextflow.io">Nextflow Training Materials</a></li>
+<li><a href="https://sydney-informatics-hub.github.io/customising-nfcore-workshop">Customising Nf-Core Workshop</a></li>
+<li><a href="https://sydney-informatics-hub.github.io/hello-nextflow/">Hello Nextflow Workshop</a></li>
+</ul>
 
 
 </section>
