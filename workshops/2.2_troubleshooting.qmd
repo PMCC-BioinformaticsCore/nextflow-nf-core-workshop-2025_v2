@@ -7,6 +7,16 @@ output:
 from: markdown+emoji
 ---
 
+::: callout-tip
+
+### Objectives{.unlisted}
+
+- Learn basic troubleshooting of nextflow log
+- Learn the structure of nextflow work directory
+- Examine the run command stitched together by nextflow for manual debugging
+
+:::
+
 ### **2.2.1. Nextflow log**
 
 It is important to keep a record of the commands you have used to generate your results. Nextflow helps with this by creating and storing metadata and logs about the run in hidden files and folders in your current directory (unless otherwise specified). This data can be used by Nextflow to generate reports. It can also be queried using the Nextflow `log` command:
@@ -52,10 +62,10 @@ nextflow log
 ```
 
 ```default
-TIMESTAMP          	DURATION	RUN NAME         	STATUS	REVISION ID	SESSION ID                          	COMMAND 
-2023-11-21 22:43:14	14m 17s 	jovial_angela    	OK    	3bec2331ca 	319751c3-25a6-4085-845c-6da28cd771df	nextflow run nf-core/rnaseq
-2023-11-21 23:05:49	1m 36s  	marvelous_shannon	OK    	3bec2331ca 	319751c3-25a6-4085-845c-6da28cd771df	nextflow run nf-core/rnaseq
-2023-11-21 23:10:00	1m 35s  	deadly_babbage   	OK    	3bec2331ca 	319751c3-25a6-4085-845c-6da28cd771df	nextflow run nf-core/rnaseq
+TIMESTAMP          	DURATION	RUN NAME        	STATUS	REVISION ID	SESSION ID                          	COMMAND                                                                                                                 
+2025-05-27 15:23:39	2m 16s  	hopeful_dubinsky	OK    	b89fac3265 	54c06115-6867-45e3-86b3-8566a69f7406	nextflow run nf-core/rnaseq -r 3.14.0 -profile apptainer -params-file ./workshop-params.yaml                            
+2025-05-27 15:56:36	37.1s   	tiny_bartik     	OK    	b89fac3265 	54c06115-6867-45e3-86b3-8566a69f7406	nextflow run nf-core/rnaseq -r 3.14.0 -profile apptainer -params-file ./workshop-params.yaml -resume                    
+2025-05-27 15:57:23	35.6s   	angry_mcclintock	OK    	b89fac3265 	54c06115-6867-45e3-86b3-8566a69f7406	nextflow run nf-core/rnaseq -r 3.14.0 -profile apptainer -params-file ./workshop-params.yaml -resume --outdir my_results
 ```
 
 Query the process, hash, and script using the `-f` option for the most recent run:
@@ -68,25 +78,30 @@ nextflow log marvelous_shannon -f process,hash,script
 
 [... truncated ...]
 
-NFCORE_RNASEQ:RNASEQ:SUBREAD_FEATURECOUNTS	7c/f936d4	
-    featureCounts \
-        -B -C -g gene_biotype -t exon \
-        -p \
-        -T 2 \
-        -a chr22_with_ERCC92.gtf \
-        -s 2 \
-        -o HBR_Rep1_ERCC.featureCounts.txt \
-        HBR_Rep1_ERCC.markdup.sorted.bam
+NFCORE_RNASEQ:RNASEQ:QUANTIFY_PSEUDO_ALIGNMENT:SALMON_QUANT	d7/01e251	
+    salmon quant \
+        --geneMap genome.filtered.gtf \
+        --threads 2 \
+        --libType=ISR \
+        --index salmon \
+        -1 SRR6357071_1_val_1.fq.gz -2 SRR6357071_2_val_2.fq.gz \
+         \
+        -o SRR6357071
+
+    if [ -f SRR6357071/aux_info/meta_info.json ]; then
+        cp SRR6357071/aux_info/meta_info.json "SRR6357071_meta_info.json"
+    fi
 
     cat <<-END_VERSIONS > versions.yml
-    "NFCORE_RNASEQ:RNASEQ:SUBREAD_FEATURECOUNTS":
-        subread: $( echo $(featureCounts -v 2>&1) | sed -e "s/featureCounts v//g")
+    "NFCORE_RNASEQ:RNASEQ:QUANTIFY_PSEUDO_ALIGNMENT:SALMON_QUANT":
+        salmon: $(echo $(salmon --version) | sed -e "s/salmon //g")
     END_VERSIONS
 
 [... truncated ... ]
 
-NFCORE_RNASEQ:RNASEQ:MULTIQC	7a/8449d7	
+NFCORE_RNASEQ:RNASEQ:MULTIQC	7c/b0bbc5	
     multiqc \
+        -n multiqc_report.html \
         -f \
          \
          \
@@ -108,34 +123,30 @@ Nextflow caching mechanism works by assigning a unique ID to each task. The task
 
 You can re-launch the previously executed `nf-core/rnaseq` workflow again using `-resume`, and observe the progress. Change the output directory to be `my_results`. Notice the time it takes to complete the workflow. 
 
-::: {.callout-important}
-**TO DO**
-Change CONTAINER
-:::
-
 ```default
 nextflow run nf-core/rnaseq -r 3.14.0 \
-  -resume 
-  -profile <CONTAINER> \
-  -c my_resources.config \
-  -params-file workshop-params.yaml \
-  --outdir my_results \
+    -profile apptainer \
+    -params-file ./workshop-params.yaml \
+    -resume \
+    --outdir my_results
 ```
 
 ```default
-[80/ec6ff8] process > NFCORE_RNASEQ:RNASEQ:PREPARE_GENOME:GTF2BED (chr22_with_ERCC92.gtf)                  [100%] 1 of 1, cached: 1 ✔
-[1a/7bec9c] process > NFCORE_RNASEQ:RNASEQ:PREPARE_GENOME:GTF_GENE_FILTER (chr22_with_ERCC92.fa)           [100%] 1 of 1, cached: 1 ✔
+[6d/10f0b4] process > NFCORE_RNASEQ:RNASEQ:PREPARE_GENOME:GTF_FILTER (genome.fasta)                      [100%] 1 of 1, cached: 1 ✔
+[77/74cbf2] process > NFCORE_RNASEQ:RNASEQ:PREPARE_GENOME:GTF2BED (genome.filtered.gtf)                  [100%] 1 of 1, cached: 1 ✔
+[02/f7e668] process > NFCORE_RNASEQ:RNASEQ:PREPARE_GENOME:MAKE_TRANSCRIPTS_FASTA (rsem/genome.fasta)     [100%] 1 of 1, cached: 1 ✔
+...
 
 ```
 
 Executing this workflow will create a `my_results` directory that contain selected results files, as well as the `work` directory, which contains further sub-directories. 
 
-In the schematic above, the hexadecimal numbers, such as `80/ec6ff8`, identify the unique task execution. These numbers are also the prefix of the `work` subdirectories where each task is executed.
+In the schematic above, the hexadecimal numbers, such as `6d/10f0b4`, identify the unique task execution. These numbers are also the prefix of the `work` subdirectories where each task is executed.
 
 You can inspect the files produced by a task by looking inside the `work` directory and using these numbers to find the task-specific execution path. Use `tab` to autocomplete the full file path:
 
 ```default
-ls work/80/ec6ff8ba69a8b5b8eede3679e9f978/
+ls work/6d/10f0b4d0e6cf920e35657ce78feb1d/
 ```
 
 If you look inside the `work` directory of a `FASTQC` process, you will find the files that were staged and created when this task was executed:
@@ -145,30 +156,26 @@ ls -la  work/e9/60b2e80b2835a3e1ad595d55ac5bf5/
 ```
 
 ```default
-total 15895
-drwxrwxr-x 2 rlupat rlupat    4096 Nov 22 03:39 .
-drwxrwxr-x 4 rlupat rlupat    4096 Nov 22 03:38 ..
--rw-rw-r-- 1 rlupat rlupat       0 Nov 22 03:39 .command.begin
--rw-rw-r-- 1 rlupat rlupat    9509 Nov 22 03:39 .command.err
--rw-rw-r-- 1 rlupat rlupat    9609 Nov 22 03:39 .command.log
--rw-rw-r-- 1 rlupat rlupat     100 Nov 22 03:39 .command.out
--rw-rw-r-- 1 rlupat rlupat   10914 Nov 22 03:39 .command.run
--rw-rw-r-- 1 rlupat rlupat     671 Nov 22 03:39 .command.sh
--rw-rw-r-- 1 rlupat rlupat     231 Nov 22 03:39 .command.trace
--rw-rw-r-- 1 rlupat rlupat       1 Nov 22 03:39 .exitcode
-lrwxrwxrwx 1 rlupat rlupat      63 Nov 22 03:39 HBR_Rep1_ERCC_1.fastq.gz -> HBR_Rep1_ERCC-Mix2_Build37-ErccTranscripts-chr22.read1.fastq.gz
--rw-rw-r-- 1 rlupat rlupat    2368 Nov 22 03:39 HBR_Rep1_ERCC_1.fastq.gz_trimming_report.txt
--rw-rw-r-- 1 rlupat rlupat  697080 Nov 22 03:39 HBR_Rep1_ERCC_1_val_1_fastqc.html
--rw-rw-r-- 1 rlupat rlupat  490526 Nov 22 03:39 HBR_Rep1_ERCC_1_val_1_fastqc.zip
--rw-rw-r-- 1 rlupat rlupat 6735205 Nov 22 03:39 HBR_Rep1_ERCC_1_val_1.fq.gz
-lrwxrwxrwx 1 rlupat rlupat      63 Nov 22 03:39 HBR_Rep1_ERCC_2.fastq.gz -> HBR_Rep1_ERCC-Mix2_Build37-ErccTranscripts-chr22.read2.fastq.gz
--rw-rw-r-- 1 rlupat rlupat    2688 Nov 22 03:39 HBR_Rep1_ERCC_2.fastq.gz_trimming_report.txt
--rw-rw-r-- 1 rlupat rlupat  695591 Nov 22 03:39 HBR_Rep1_ERCC_2_val_2_fastqc.html
--rw-rw-r-- 1 rlupat rlupat  485732 Nov 22 03:39 HBR_Rep1_ERCC_2_val_2_fastqc.zip
--rw-rw-r-- 1 rlupat rlupat 7088948 Nov 22 03:39 HBR_Rep1_ERCC_2_val_2.fq.gz
-lrwxrwxrwx 1 rlupat rlupat     102 Nov 22 03:39 HBR_Rep1_ERCC-Mix2_Build37-ErccTranscripts-chr22.read1.fastq.gz -> /data/seqliner/test-data/rna-seq/fastq/HBR_Rep1_ERCC-Mix2_Build37-ErccTranscripts-chr22.read1.fastq.gz
-lrwxrwxrwx 1 rlupat rlupat     102 Nov 22 03:39 HBR_Rep1_ERCC-Mix2_Build37-ErccTranscripts-chr22.read2.fastq.gz -> /data/seqliner/test-data/rna-seq/fastq/HBR_Rep1_ERCC-Mix2_Build37-ErccTranscripts-chr22.read2.fastq.gz
--rw-rw-r-- 1 rlupat rlupat     109 Nov 22 03:39 versions.yml
+total 1940
+drwxrwxr-x 2 larigan larigan   4096 May 27 15:24 .
+drwxrwxr-x 3 larigan larigan   4096 May 27 15:23 ..
+-rw-rw-r-- 1 larigan larigan      0 May 27 15:24 .command.begin
+-rw-rw-r-- 1 larigan larigan      0 May 27 15:24 .command.err
+-rw-rw-r-- 1 larigan larigan     34 May 27 15:24 .command.log
+-rw-rw-r-- 1 larigan larigan     34 May 27 15:24 .command.out
+-rw-rw-r-- 1 larigan larigan  10394 May 27 15:24 .command.run
+-rw-rw-r-- 1 larigan larigan    468 May 27 15:24 .command.sh
+-rw-rw-r-- 1 larigan larigan    261 May 27 15:24 .command.trace
+-rw-rw-r-- 1 larigan larigan      1 May 27 15:24 .exitcode
+-rw-rw-r-- 1 larigan larigan 598884 May 27 15:24 SRR6357071_1_fastqc.html
+-rw-rw-r-- 1 larigan larigan 365752 May 27 15:24 SRR6357071_1_fastqc.zip
+lrwxrwxrwx 1 larigan larigan     66 May 27 15:24 SRR6357071_1.fastq.gz -> /home/larigan/rnaseq_data/testdata/GSE110004/SRR6357071_1.fastq.gz
+lrwxrwxrwx 1 larigan larigan     21 May 27 15:24 SRR6357071_1.gz -> SRR6357071_1.fastq.gz
+-rw-rw-r-- 1 larigan larigan 604569 May 27 15:24 SRR6357071_2_fastqc.html
+-rw-rw-r-- 1 larigan larigan 355487 May 27 15:24 SRR6357071_2_fastqc.zip
+lrwxrwxrwx 1 larigan larigan     66 May 27 15:24 SRR6357071_2.fastq.gz -> /home/larigan/rnaseq_data/testdata/GSE110004/SRR6357071_2.fastq.gz
+lrwxrwxrwx 1 larigan larigan     21 May 27 15:24 SRR6357071_2.gz -> SRR6357071_2.fastq.gz
+-rw-rw-r-- 1 larigan larigan     83 May 27 15:24 versions.yml
 ```
 
 The `FASTQC` process runs twice, executing in a different work directories for each set of inputs. Therefore, in the previous example, the work directory `[e9/60b2e8]` represents just one of the two sets of input data that was processed.
@@ -189,25 +196,24 @@ Execute the workflow for the first time (if you have not already).
 Use the task ID shown for the `FASTQC` process and use it to find and `touch` a `.fastq.gz` file:
 
 ```default
-touch work/ff/21abfa87cc7cdec037ce4f36807d32/HBR_Rep1_ERCC_1.fastq.gz
+touch work/ff/21abfa87cc7cdec037ce4f36807d32/SRR6357071_1.fastq.gz
 ```
 
 Execute the workflow again with the `-resume` command option:
 
 ```default
 nextflow run nf-core/rnaseq -r 3.14.0 \
-  -resume 
-  -profile <CONTAINER> \
-  -c my_resources.config \
-  -params-file workshop-params.yaml \
-  --outdir my_results \
+    -profile apptainer \
+    -params-file ./workshop-params.yaml \
+    -resume \
+    --outdir my_results
 ```
 
 You should see that some task were invalid and were executed again.
 
 **Why did this happen?**
 
-In this example, the caching of the two `FASTQC` tasks were invalid. The fastq file we `touch` is used by in the pipeline in multiple places. Thus, touching the symbolic link for this file and changing the date of last modification disrupted two task executions.
+In this example, the caching of one of the two `FASTQC` tasks were invalid. The fastq file we `touch` is used by in the pipeline in multiple places. Thus, touching the symbolic link for this file and changing the date of last modification disrupted one of the task execution and its related downstream processes.
 ::: 
 
 ### **2.2.3. Troubleshoot warning and error messages**
@@ -460,6 +466,24 @@ The tool is working as we expect!
 If we want to remove the warning message `Please check MultiQC report: 2/2 samples failed strandedness check`, we will have to change the strandedness fields in our `samplesheet.csv`. Keep in mind, doing this will invalidate the pipeline's cache and will cause the pipeline to run from the beginning.  
 :::
 
+::: {.callout-tip}
+### **Key points**
+- Use nextflow log to query the record of commands used in the pipeline
+- Use `-resume` to re-launch previously executed workflows in order to get Nextflow to utilise its task execution caching feature 
+- Examine the .command.sh to inside the work directory to troubleshoot the command that Nextflow use to run a particular task
+:::
+
+</br>
+
+### **Next Chapter: [Introduction to Nextflow Processes and Channels](./1.3_processes_and_channels.qmd)** 
+
+</br>
+
 ---
-^*These materials are adapted from [Customising Nf-Core Workshop](https://sydney-informatics-hub.github.io/customising-nfcore-workshop/notebooks/1.2_nfcore.html) by Sydney Informatics Hub*^
+
+This workshop is adapted from various nextflow training materials, including:
+
+- [Nextflow Training Materials](https://training.nextflow.io)
+- [Customising Nf-Core Workshop](https://sydney-informatics-hub.github.io/customising-nfcore-workshop)
+- [Hello Nextflow Workshop](https://sydney-informatics-hub.github.io/hello-nextflow/)
 

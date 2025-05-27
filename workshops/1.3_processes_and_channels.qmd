@@ -1,5 +1,5 @@
 ---
-title: "**Introduction to Nextflow**"
+title: "**Nextflow Channels and Processes**"
 output:
   html_document:
     toc: false
@@ -7,7 +7,7 @@ output:
 from: markdown+emoji
 ---
 
-## **Nextflow Channels and Processes**
+---
 
 ::: callout-tip
 
@@ -529,4 +529,4 @@ The use of the `tuple` qualifier is especially important when the output of a pr
 
 
 ---
-^*This workshop is adapted from [Fundamentals Training](https://training.nextflow.io/basic_training/), [Advanced Training](https://training.nextflow.io/advanced/), [Developer Tutorials](https://nf-co.re/docs/contributing/tutorials/creating_with_nf_core#creating-a-pipeline), and [Nextflow Patterns](https://nextflow-io.github.io/patterns/) materials from Nextflow and nf-core*^
+This workshop is adapted from [Fundamentals Training](https://training.nextflow.io/basic_training/), [Advanced Training](https://training.nextflow.io/advanced/), [Developer Tutorials](https://nf-co.re/docs/contributing/tutorials/creating_with_nf_core#creating-a-pipeline), and [Nextflow Patterns](https://nextflow-io.github.io/patterns/) materials from Nextflow and nf-core*^
