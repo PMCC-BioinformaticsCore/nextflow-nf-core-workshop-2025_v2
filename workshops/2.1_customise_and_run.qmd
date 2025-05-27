@@ -67,14 +67,14 @@ The following sections of the nf-core documentation can be used to understand wh
 | [Introduction](https://nf-co.re/rnaseq/3.14.0)             |  Workflow summary | - workflow          |
 |                                                            |                   | - process           |
 +------------------------------------------------------------+-------------------+---------------------+
-| [Usage](https://nf-co.re/rnaseq/3.14.0/usage)              | Inputs and options| - workflow          |
+| [Usage](https://nf-co.re/rnaseq/3.14.0/docs/usage)         | Inputs and options| - workflow          |
 |                                                            |                   | - process           |
 +------------------------------------------------------------+-------------------+---------------------+
 | [Parameters](https://nf-co.re/rnaseq/3.14.0/parameters)    | Available flags   | - workflow          |
 |                                                            |                   | - process           |
 |                                                            |                   | - compute resources |
 +------------------------------------------------------------+-------------------+---------------------+
-| [Output](https://nf-co.re/rnaseq/3.14.0/output)            | Files from all    | - workflow          |
+| [Output](https://nf-co.re/rnaseq/3.14.0/docs/output)       | Files from all    | - workflow          |
 |                                                            | processes         | - process           |
 |                                                            | processes         | - tool              |
 +------------------------------------------------------------+-------------------+---------------------+
