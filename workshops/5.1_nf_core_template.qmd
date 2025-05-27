@@ -16,66 +16,7 @@ from: markdown+emoji
 - Read data of different types into a Nextflow workflow
 :::
 
-## **Environment Setup**
-
-Set up an interactive shell to run our Nextflow workflow: 
-
-::: {.callout-important}
-**TO DO**
-Change partition
-:::
-
-``` default
-srun --pty -p <PARTITION> --mem 8GB --mincpus 2 -t 0-5:00 bash
-```
-
-Load the required modules to run Nextflow:
-
-::: {.callout-important}
-**TO DO**
-Module loading required? / Version?
-:::
-
-``` default
-module load nextflow/<VERSION>
-module load singularity/<VERSION>
-```
-
-Set the singularity cache environment variable:
-
-::: {.callout-important}
-**TO DO**
-Change path to cache env
-:::
-
-
-```default
-export NXF_SINGULARITY_CACHEDIR=<PATH_TO_CACHE>
-```
-
-Singularity images downloaded by workflow executions will now be stored in this directory.
-
-You may want to include these, or other environmental variables, in your `.bashrc` file (or alternate) that is loaded when you log in so you don’t need to export variables every session. A complete list of environment variables can be found [here](https://www.nextflow.io/docs/latest/config.html#environment-variables).
-
-Set up a python virtual environment with [nf-core/tools](https://nf-co.re/docs/nf-core-tools) installed:
-
-::: {.callout-important}
-If nf-core is already downloaded, then don't need this step.
-
-**TO DO**
-Change file paths
-:::
-
-```default
-module load python/<VERSION>
-python -m venv /scratch/users/${USER}/nfcorevenv
-
-source /scratch/users/${USER}/nfcorevenv/bin/activate
-
-pip install nf-core==3.2.0
-```
-
-## **5.1 Recap: nf-core**
+## **4.1 Recap: nf-core**
 #### **What is nf-core?**
 
 nf-core provides a standardised set of **analysis workflows** that are **modular**, **scalable**, and **portable**. These workflows follow **best practices**, and allow researchers from around the world to collaborate on workflow **development** and **maintainence**, all of which are **tested** and **peer reviewed**. Ultimately, this helps increase the reliability and reproducibility of bioinformatics analysis.  
@@ -101,9 +42,9 @@ The main folders and files we will focus on today:
 - A schema file `assets/schema_input.json`, used to specify required values in the **input samplesheet**. This can be used to build sample metadata
 - A schema file `nextflow_schema.json`, used to specify required parameters to the **pipeline**
 
-## **5.2 Pipeline syntax**
+## **4.2 Pipeline syntax**
 
-### **5.2.1 Module file and process structure**
+### **4.2.1 Module file and process structure**
 
 In nf-core pipelines, each process is separated into a separate module file. For example, RNASEQ's `fastqc` [module file](https://github.com/nf-core/rnaseq/blob/3.14.0/modules/nf-core/fastqc/main.nf) contains just one process -- `FASTQC`. 
 
@@ -382,7 +323,7 @@ The script starts by defnining local variables that can be accessed within the e
 - A singular back-slash in Bash is also escaped, resulting in `\\`
 - A `versions.yml` file is created, which tracks the tool versions used in the pipeline
 
-### **5.2.2 Importing modules into a Nextflow script**
+### **4.2.2 Importing modules into a Nextflow script**
 
 Since processes are stored as separate Nextflow files, they need to be imported to a workflow script before they can be called inside a `workflow` scope. 
 
@@ -431,7 +372,7 @@ If we wish to include the `FASTQC` module from inside `workflows/rnaseq/main.nf`
 '../../modules/nf-core/fastqc/main'
 ```
 
-### **5.2.3 Workflow scopes**
+### **4.2.3 Workflow scopes**
 
 In Nextflow, a `workflow` can be used to define what processes are executed, and the flow of data from one process to another. 
 
@@ -727,7 +668,7 @@ Similar to a module, the [included subworkflow](https://github.com/nf-core/rnase
 
 Similar to how inputs to processes can be specified, inputs to workflows are specified positionally. To access the outputs of the `FASTQ_FASTQC_UMITOOLS_FASTP` subworkflow, the `.out` attribute can be used, along with the desired output declared in `emit`. 
 
-## **5.3 `nf-core tools`**
+## **4.3 `nf-core tools`**
 `nf-core` is a python package that contain tools for both building and running workflows.
 
 Take a look at what is available within with the `nf-core/tools` suite
@@ -812,7 +753,7 @@ nf-core pipelines
 
 For users who wish to run existing nf-core pipelines, the commands `list`, `launch`, `download`, and `create-params-file` are available. To build a workflow following the standardised nf-core template structure, `developer` tools can be used. We will focus on the developer commands.
 
-## **5.4 `nf-core pipelines create`**
+## **4.4 `nf-core pipelines create`**
 
 Let's start by creating a pipeline:
 
@@ -937,7 +878,7 @@ This newly created pipeline folder contains the same strucure as `nf-core/rnaseq
 
 :::
 
-### **5.4.1 Workflow script `main.nf`**
+### **4.4.1 Workflow script `main.nf`**
 
 Let's take a look inside `./nf-core-customrnaseq/main.nf`:
 
@@ -1088,7 +1029,7 @@ workflow {
 ```
 :::
 
-### **5.4.2 Analysis workflow script `workflows/customrnaseq.nf`**
+### **4.4.2 Analysis workflow script `workflows/customrnaseq.nf`**
 
 Now, let's look inside the main analysis script `./nf-core-customrnaseq/workflows/customrnaseq.nf`.
 
@@ -1203,7 +1144,7 @@ workflow CUSTOMRNASEQ {
 
 This initial pipeline will use the samples defined in the samplesheet, run FastQC and MultiQC, and save any software versions used. 
 
-### **5.4.3 Samplesheet `assets/samplesheet.csv`**
+### **4.4.3 Samplesheet `assets/samplesheet.csv`**
 
 Before we can run the pipeline, we have to create a samplesheet with our data. The file `./nf-core-customrnaseq/assets/samplesheet.csv` contains an example samplesheet which we can adapt. 
 
@@ -1219,18 +1160,10 @@ Copy this samplesheet into your folder, one level higher than the pipeline folde
 cp ./nf-core-customrnaseq/assets/samplesheet.csv .
 ```
 
-Also copy the following test data to your folder. 
-
-::: {.callout-important}
-**TO DO**
-
-Copy test data to your directory
-
-**TRANSCRIPTOME FILE**
-:::
+Also download the following test data to your folder:
 
 ```default
-cp -r <PATH TO TEST DATA> .
+git clone -b rnaseq https://github.com/nf-core/test-datasets.git
 ```
 
 This test dataset consists of two paired-end samples `gut`, `liver`, and `lung`, as well as a transcriptome file. 
@@ -1264,7 +1197,7 @@ liver,<full_path>/data/liver_1.fastq.gz,<full_path>/data/liver_2.fastq.gz
 lung,<full_path>/data/lung_1.fastq.gz,<full_path>/data/lung_2.fastq.gz
 ```
 
-### **5.4.4 Running the pipeline**
+### **4.4.4 Running the pipeline**
 
 Previously, we used a singularity profile, which allowed nextflow to store downloaded containers in a shared location. This location was defined using the bash command below:
 

@@ -123,14 +123,8 @@ workflow CUSTOMRNASEQ {
 
 Now, rerun the pipeline, ensuring `-resume` is specified in the `nextflow run` command. **Note** ebsure you are no longer inside your pipeline folder. 
 
-::: {.callout-important}
-**TO DO**
-
-Change CONTAINER
-:::
-
 ```default
-nextflow run ./nf-core-customrnaseq/main.nf -resume -profile CONTAINER --input ./samplesheet.csv --outdir output
+nextflow run ./nf-core-customrnaseq/main.nf -resume -profile apptainer --input ./samplesheet.csv --outdir output
 ```
 
 The channel should have the following structure:
@@ -323,13 +317,8 @@ The newly created channels `ch_genome_fasta` and `ch_transcript_fasta` match the
 
 Rerun the pipeline, specifying the `params.yaml` file in the `nextflow run` command
 
-::: {.callout-important}
-**TO DO**
-Change CONTAINER
-:::
-
 ```default
-nextflow run ./nf-core-customrnaseq/main.nf -resume -profile CONTAINER --input ./samplesheet.csv --outdir output -params-file ./params.yaml 
+nextflow run ./nf-core-customrnaseq/main.nf -resume -profile apptainer --input ./samplesheet.csv --outdir output -params-file ./params.yaml 
 ```
 :::{.callout-note collapse="true"}
 ## stdout
@@ -850,13 +839,8 @@ When the full command is used, this can cause unexpected behaviour, especially w
 :::
 
 
-::: {.callout-important}
-**TO DO**
-Change CONTAINER 
-:::
-
 ```default
-nextflow run ./nf-core-customrnaseq/main.nf -resume -profile CONTAINER --input ./samplesheet_replicates.csv --outdir output -params-file ./params.yaml 
+nextflow run ./nf-core-customrnaseq/main.nf -resume -profile apptainer --input ./samplesheet_replicates.csv --outdir output -params-file ./params.yaml 
 ```
 
 As expected, the new metadata value `rep` has been added in `ch_samplesheet`:

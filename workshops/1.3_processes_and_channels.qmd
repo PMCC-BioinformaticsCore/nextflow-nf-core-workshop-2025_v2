@@ -228,10 +228,10 @@ workflow {
 
 #### **Vals**
 
-The `val` qualifier allows any data type to be received as input to the process. In the example below, the `num` queue channel is created from integers `1`, `2` and `3`, and input into the `BASICEXAMPLE` process, where it is declared with the qualifier `val` and assigned to the local variable `x`. Within this process, this input is referred to and accessed locally by the specified variable name `x`, prepended with `$`. 
+The `val` qualifier allows any data type to be received as input to the process. In the example below, the `num` queue channel is created from integers `1` and `2`, and string `Hello`, and input into the `BASICEXAMPLE` process, where it is declared with the qualifier `val` and assigned to the local variable `x`. Within this process, this input is referred to and accessed locally by the specified variable name `x`, prepended with `$`. 
 
 ```default
-num = Channel.of(1, 2, 3)
+num = Channel.of(1, 2, "Hello")
 
 process BASICEXAMPLE {
     input:
@@ -254,15 +254,21 @@ workflow {
 In the above example the process is executed three times, for each element in the channel `num`. Thus, it results in an output similar to the one shown below:
 
 ```default
+ N E X T F L O W   ~  version 24.10.5
+
+Launching `training/nf-training/snippet.nf` [jovial_austin] DSL2 - revision: 9227a67fbc
+
 process job 1
 process job 2
-process job 3
+process job Hello
 ```
 
-The `val` qualifier can also be used to specify the process output. In this example, the `Hello World!` string is implicitly converted into a channel that is input to the `FOO` process. This process saves the input to a file `file.txt`, then returns the same input value as the output. 
+The `val` qualifier can also be used to specify the process output. 
 
 ```default
-process FOO {
+num = Channel.of(1, 2, "Hello")
+
+process BASICEXAMPLE {
     input:
     val x
 
@@ -271,24 +277,27 @@ process FOO {
 
     script:
     """
-    echo $x > file.txt
+    echo process job $x > file.txt
     """
 }
 
 workflow {
-    FOO("Hello world!").view()
+    BASICEXAMPLE(num).view()
 }
 ```
-The output from `FOO` is assigned to `out_ch`, and its contents printed using the `view()` channel operator. 
+
+In this example, each element of `num` is printed to a file `file.txt`. The same input value is then returned as the output. Its contents are printed using the `view()` channel operator. 
 
 ```default
  N E X T F L O W   ~  version 24.10.5
 
 Launching `training/nf-training/snippet.nf` [jovial_austin] DSL2 - revision: 9227a67fbc
 
-executor >  local (1)
-[25/ad30de] FOO | 1 of 1 ✔
-Hello world!
+executor >  local (3)
+[52/d66b4d] process > BASICEXAMPLE (3) [100%] 3 of 3 ✔
+2
+1
+Hello
 
 ```
 

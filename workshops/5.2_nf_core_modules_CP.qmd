@@ -16,7 +16,7 @@ from: markdown+emoji
 - Read data of different types into a Nextflow workflow
 :::
 
-## **5.5 `nf-core modules`**
+## **5.1 `nf-core modules`**
 
 Previously, we used the `nf-core pipelines` command to create our initial pipeline template. We can now add modules to this template using `nf-core modules`. This command also contains subcommands, which can be used to manage modules. 
 
@@ -97,7 +97,7 @@ INFO     Modules installed in '.':
 
 To obtain a list of all available [nf-core modules](https://nf-co.re/modules) available, `nf-core modules list remote` can be used. 
 
-### **5.5.1 Installing modules `nf-core modules install`**
+### **5.1.1 Installing modules `nf-core modules install`**
 
 Previously, we created a simple workflow that indexed the transcriptome file (`INDEX`), performed quantification (`QUANTIFICATION`) and FastQC (`FASTQC`) on the sample FASTQ files. Finally, perfomed MultiQC on both the outputs of `QUANTIFICATION` and `FASTQC`. 
 
@@ -525,7 +525,7 @@ INFO     Modules installed in '.':
 ```
 :::
 
-### **5.5.2 Updating modules: `nf-core modules update`**
+### **5.1.2 Updating modules: `nf-core modules update`**
 
 A limitation of `nf-core modules install` is that it doesn't explicitly print what has been changed within the module. The `nf-core modules update` command is an alternative that can do this. 
 
@@ -600,7 +600,7 @@ INFO     Updating 'nf-core/salmon/quant'
 INFO     Updates complete ✨   
 ```
 
-### **5.5.3 Removing modules**
+### **5.1.3 Removing modules**
 
 Previously, we saw that by simply removing the module folder didn't delete the module from the pipeline. The pipeline automatically searches for missing module files and redownloads them, based on the SHA version specified in `modules.json`. 
 
@@ -640,7 +640,7 @@ include { TRIMGALORE } from '../modules/nf-core/trimgalore/main'
 :::
 
 
-### **5.5.4 Writing modules with nf-core template**
+### **5.1.4 Writing modules with nf-core template**
 For this section we are going to refer to the [nf-core guidelines for modules](https://nf-co.re/docs/guidelines/components/modules).
 
 While these are the full guidelines for *contributing* back to nf-core, there are still some general components that are good practice even if you are NOT planning to contribute.
@@ -863,7 +863,7 @@ nf-core subworkflows install fastq_subsample_fq_salmon
 Write up the `QC_WF` subworkflow from last week.
 :::
 
-## **5.5 Nf-core schema and input validation**
+## **5.1 Nf-core schema and input validation**
 Relies on `plugins` written by nf-core community
 
 In particular [`nf-validation`](https://github.com/nextflow-io/nf-validation)
@@ -907,7 +907,7 @@ We are going add the input parameter for the `transcript.fa`
 Then install `salmon/index` and write up `quant_wf` subworkflow from last week.git 
 :::
 
-### **5.5.2 Nf-core inputs**
+### **5.1.2 Nf-core inputs**
 nested in this schema is the `input` or samplesheet schema. unfortunately there isn't a nice interface to help you write this schema yet.
 
 - meta: Allows you to predesignate the "key" with in the "meta"
@@ -938,7 +938,7 @@ They are also the "key word" used by the `nf-core lint`.
 
 
 
-## **5.5 Test Profile**
+## **5.1 Test Profile**
 nf-core tries to encourage software engineering concepts such as minimal test sets, this can be set up using the `conf/test.config` and `conf/test_full.config`
 
 For the duration of this workshop we will be making use of the `conf/test.config`, to test our pipeline.
