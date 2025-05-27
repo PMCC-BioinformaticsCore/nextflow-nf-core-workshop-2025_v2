@@ -381,7 +381,7 @@ You will notice that inside your `work` directory, there are six folders, one co
 Inside the `FOO` execution directory (ie. `./work/1f/a01f11...`), the input file has been staged (symbolically linked) under just the file name, allowing the script to access the file within the execution directory without requiring the full path.
 
 ```default
->>> ll ./work/1f/a01f11...
+>>> ls -l ./work/1f/a01f11...
 gut_2.fq -> /.../training/nf-training/data/ggal/gut_2.fq
 ```
 
