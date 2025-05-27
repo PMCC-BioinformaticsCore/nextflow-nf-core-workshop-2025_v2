@@ -218,7 +218,7 @@ In this example, the caching of one of the two `FASTQC` tasks were invalid. The 
 
 ### **2.2.3. Troubleshoot warning and error messages**
 
-While our previous workflow execution completed successfully, there were a couple of warning messages that may be cause for concern:
+If we go back to our last exercise (`exercise_rnaseq` output), you might recall that while that workflow execution completed successfully, there were a couple of warning messages that may be cause for concern:
 
 ```default
 -[nf-core/rnaseq] Pipeline completed successfully with skipped sampl(es)-
@@ -234,10 +234,10 @@ Succeeded   : 66
 The first warning message isn't very descriptive (see this [pull request](https://github.com/nf-core/rnaseq/pull/963)). You might come across issues like this when running nf-core pipelines, too. Bug reports and user feedback is very important to open source software communities like nf-core. If you come across any issues, submit a GitHub issue or start a discussion in the relevant nf-core Slack channel so others are aware and it can be addressed by the pipeline's developers.
 :::
 
-&#x27A4; Take a look at the MultiQC report, as directed by the second message. You can find the MultiQC report in the `my_results` directory: 
+&#x27A4; Take a look at the MultiQC report, as directed by the second message. You can find the MultiQC report in the `exercise_rnaseq` directory: 
 
 ```default
-ls -la my_results/multiqc/star_salmon/
+ls -la exercise_rnaseq/multiqc/star_salmon/
 ```
 
 ```default
@@ -317,18 +317,15 @@ nextflow log ${run_name} | while read line;
 This will list all process `.command.sh` scripts containing the word 'salmon'. Notice that there are a few different processes that run Salmon to perform other steps in the workflow. We are looking for Salmon quant which performs the read quantification:
 
 ```default
-/scratch/users/rlupat/nfWorkshop/lesson2.1/work/57/fba8f9a2385dac5fa31688ba1afa9b/.command.sh
-/scratch/users/rlupat/nfWorkshop/lesson2.1/work/30/0113a58c14ca8d3099df04ebf388f3/.command.sh
-/scratch/users/rlupat/nfWorkshop/lesson2.1/work/ec/95d6bd12d578c3bce22b5de4ed43fe/.command.sh
-/scratch/users/rlupat/nfWorkshop/lesson2.1/work/49/6fedcb09e666432ae6ddf8b1e8f488/.command.sh
-/scratch/users/rlupat/nfWorkshop/lesson2.1/work/b4/2ca8d05b049438262745cde92955e9/.command.sh
-/scratch/users/rlupat/nfWorkshop/lesson2.1/work/38/875d68dae270504138bb3d72d511a7/.command.sh
-/scratch/users/rlupat/nfWorkshop/lesson2.1/work/72/776810a99695b1c114cbb103f4a0e6/.command.sh
-/scratch/users/rlupat/nfWorkshop/lesson2.1/work/1c/dc3f54cc7952bf55e6742dd4783392/.command.sh
-/scratch/users/rlupat/nfWorkshop/lesson2.1/work/f3/5116a5b412bde7106645671e4c6ffb/.command.sh
-/scratch/users/rlupat/nfWorkshop/lesson2.1/work/17/fb0c791810f42a438e812d5c894ebf/.command.sh
-/scratch/users/rlupat/nfWorkshop/lesson2.1/work/4c/931a9b60b2f3cf770028854b1c673b/.command.sh
-/scratch/users/rlupat/nfWorkshop/lesson2.1/work/91/e1c99d8acb5adf295b37fd3bbc86a5/.command.sh
+/home/larigan/lesson2.1/work/9c/9cdaec01c009a4fef6de3b50b0d2c9/.command.sh
+/home/larigan/lesson2.1/work/d9/e696aa3903f2f7bef3ead3852a7d51/.command.sh
+/home/larigan/lesson2.1/work/57/95f7806c62313c5788780d1fadc89a/.command.sh
+/home/larigan/lesson2.1/work/2f/bef610318ab85c7fdbb3a773c568d5/.command.sh
+/home/larigan/lesson2.1/work/ec/d8a46743dc73214b04e09c7ae9ecb4/.command.sh
+/home/larigan/lesson2.1/work/f2/cc71ed58bbfba78ea034a26bd48370/.command.sh
+/home/larigan/lesson2.1/work/3b/0a2737be44be977e4b695c5bade23f/.command.sh
+/home/larigan/lesson2.1/work/8d/fed78effdd1b28435a698d8a6efb7a/.command.sh
+/home/larigan/lesson2.1/work/65/bd7329a29aaf2136f25173a22918ae/.command.sh
 ```
 
 Compared with the salmon quant `main.nf` file, we get a lot more fine scale details from the `.command.sh` process scripts: 
@@ -348,13 +345,13 @@ salmon quant \\
 `.command.sh`:
 ```default
 salmon quant \
-    --geneMap chr22_with_ERCC92.gtf \
+    --geneMap genome.filtered.gtf \
     --threads 2 \
     --libType=ISF \
     -t genome.transcripts.fa \
-    -a HBR_Rep1_ERCC.Aligned.toTranscriptome.out.bam \
+    -a SRR6357071.Aligned.toTranscriptome.out.bam \
      \
-    -o HBR_Rep1_ERCC
+    -o SRR6357071
 ```
 
 From `.command.sh`, we see that `--libType` has been set to `ISF` (ie. forward strandedness), based on our samplesheet. 
@@ -384,7 +381,7 @@ From the previous section we learn that Nextflow can accept a `yaml` parameter f
 `workshop-params.yaml` should now contain one additional parameter:
 
 ```default
-salmon_quant_libtype: "A" 
+salmon_quant_libtype: "ISR" 
 ```
 :::
 
@@ -393,10 +390,9 @@ salmon_quant_libtype: "A"
 ```default
 nextflow run nf-core/rnaseq -r 3.14.0 \
   -resume 
-  -profile <CONTAINER> \
-  -c my_resources.config \
+  -profile apptainer \
   -params-file workshop-params.yaml \
-  --outdir my_results \
+  --outdir exercise_rnaseq 
 ```
 
 As the workflow runs a second time, you will notice 4 things:
@@ -409,11 +405,11 @@ As the workflow runs a second time, you will notice 4 things:
 ```default
 -[nf-core/rnaseq] Pipeline completed successfully with skipped sampl(es)-
 -[nf-core/rnaseq] Please check MultiQC report: 2/2 samples failed strandedness check.-
-Completed at: 04-May-2025 17:28:40
-Duration    : 3m 59s
-CPU hours   : 0.6 (66.3% cached)
+Completed at: 27-May-2025 17:13:48
+Duration    : 1m 55s
+CPU hours   : 0.2 (70.8% cached)
 Succeeded   : 11
-Cached      : 55
+Cached      : 41
 ```
 
 We still seem to be getting the warning `Please check MultiQC report: 2/2 samples failed strandedness check.-`. Let's check what `--libType` has been used inside the salmon process.
@@ -426,13 +422,13 @@ We still seem to be getting the warning `Please check MultiQC report: 2/2 sample
 In the Nextflow output, the following line provides the hexadeximal for a `SALMON_QUANT` process. 
 
 ```default
-[04/d742db] NFC…TAR_SALMON:SALMON_QUANT (HBR_Rep2_ERCC) | 2 of 2 ✔
+[d9/69e2a7] process > NFCORE_RNASEQ:RNASEQ:QUANTIFY_STAR_SALMON:SALMON_QUANT (SRR6357071)                                       [100%] 2 of 2 ✔
 ```
 
 The `work` execution directory for this process is located in (using `tab` to autocomplete the folder name):
 
 ```default
-ls -a work/04/d742db4c1760d0c4581fb7790a71a9/
+ls -a work/d9/69e2a7563de5e6046f140a1317c1d2/
 ```
 
 Inside the `.command.sh` file, the `--libType` parameter matches the one specified in our parameter file:
@@ -440,16 +436,16 @@ Inside the `.command.sh` file, the `--libType` parameter matches the one specifi
 ```default
 #!/bin/bash -euo pipefail
 salmon quant \
-    --geneMap chr22_with_ERCC92.filtered.gtf \
-    --threads 4 \
+    --geneMap genome.filtered.gtf \
+    --threads 2 \
     --libType=ISR \
     -t genome.transcripts.fa \
-    -a HBR_Rep2_ERCC.Aligned.toTranscriptome.out.bam \
+    -a SRR6357071.Aligned.toTranscriptome.out.bam \
      \
-    -o HBR_Rep2_ERCC
+    -o SRR6357071
 
-if [ -f HBR_Rep2_ERCC/aux_info/meta_info.json ]; then
-    cp HBR_Rep2_ERCC/aux_info/meta_info.json "HBR_Rep2_ERCC_meta_info.json"
+if [ -f SRR6357071/aux_info/meta_info.json ]; then
+    cp SRR6357071/aux_info/meta_info.json "SRR6357071_meta_info.json"
 fi
 
 cat <<-END_VERSIONS > versions.yml
@@ -458,7 +454,7 @@ cat <<-END_VERSIONS > versions.yml
 END_VERSIONS
 ```
 
-The tool is working as we expect!
+The tool is working as we expected!
 :::
 
 ::: callout-note

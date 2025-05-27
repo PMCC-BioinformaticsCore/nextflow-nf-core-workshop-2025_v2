@@ -321,6 +321,88 @@ Nextflow has created 2 new output directories, **work** and **rnaseq_small_test_
   .  ..  fastqc  multiqc  pipeline_info  salmon  trimgalore
   ```
 
+**Exercise**
+
+In the previous exercise we have been skipping alignment and only do pseudo-aligner. For this final exercise, your task is to run the same sample but through a different path of the nf-core/rnaseq pipeline. We would use a different output directory for this task `exercise_rnaseq`. 
+
+The additional setting that we need to aim for: 
+
+- Skip picard MarkDuplicates step
+- Skip bigwig file creation
+- Skip stringtie
+- Skip dupradar
+- Not doing pseudo alignment
+- But keep the alignment step this time 
+
+::: {.callout-note collapse="true"}
+### Solution
+
+```default
+nextflow run nf-core/rnaseq -r 3.14.0 \
+    -profile apptainer \
+    --input samplesheet.csv \
+    --outdir ./exercise_rnaseq \
+    --fasta ../rnaseq_data/reference/genome.fasta \
+    --gtf ../rnaseq_data/reference/genes.gtf \
+    --skip_pseudo_alignment \
+    --skip_markduplicates \
+    --skip_bigwig \
+    --skip_stringtie \
+    --skip_dupradar \
+    --max_memory '6.GB' \
+    --max_cpus 2 \
+    -resume
+```
+
+With the following message on stdout:
+```default
+[c0/9d81c8] process > NFCORE_RNASEQ:RNASEQ:PREPARE_GENOME:GTF_FILTER (genome.fasta)                                             [100%] 1 of 1 ✔
+[ea/3069ab] process > NFCORE_RNASEQ:RNASEQ:PREPARE_GENOME:GTF2BED (genome.filtered.gtf)                                         [100%] 1 of 1 ✔
+[3a/994844] process > NFCORE_RNASEQ:RNASEQ:PREPARE_GENOME:MAKE_TRANSCRIPTS_FASTA (rsem/genome.fasta)                            [100%] 1 of 1 ✔
+[04/d57b99] process > NFCORE_RNASEQ:RNASEQ:PREPARE_GENOME:CUSTOM_GETCHROMSIZES (genome.fasta)                                   [100%] 1 of 1 ✔
+[fd/b1edb9] process > NFCORE_RNASEQ:RNASEQ:PREPARE_GENOME:STAR_GENOMEGENERATE (genome.fasta)                                    [100%] 1 of 1 ✔
+[-        ] process > NFCORE_RNASEQ:RNASEQ:CAT_FASTQ                                                                            -
+[dd/9efa41] process > NFCORE_RNASEQ:RNASEQ:FASTQ_FASTQC_UMITOOLS_TRIMGALORE:FASTQC (SRR6357071)                                 [100%] 2 of 2 ✔
+[e3/a17aba] process > NFCORE_RNASEQ:RNASEQ:FASTQ_FASTQC_UMITOOLS_TRIMGALORE:TRIMGALORE (SRR6357071)                             [100%] 2 of 2 ✔
+[-        ] process > NFCORE_RNASEQ:RNASEQ:FASTQ_SUBSAMPLE_FQ_SALMON:SALMON_INDEX                                               -
+[-        ] process > NFCORE_RNASEQ:RNASEQ:FASTQ_SUBSAMPLE_FQ_SALMON:FQ_SUBSAMPLE                                               -
+[-        ] process > NFCORE_RNASEQ:RNASEQ:FASTQ_SUBSAMPLE_FQ_SALMON:SALMON_QUANT                                               -
+[2c/d49991] process > NFCORE_RNASEQ:RNASEQ:ALIGN_STAR:STAR_ALIGN (SRR6357071)                                                   [100%] 2 of 2 ✔
+[be/9af502] process > NFCORE_RNASEQ:RNASEQ:ALIGN_STAR:BAM_SORT_STATS_SAMTOOLS:SAMTOOLS_SORT (SRR6357071)                        [100%] 2 of 2 ✔
+[18/579c2a] process > NFCORE_RNASEQ:RNASEQ:ALIGN_STAR:BAM_SORT_STATS_SAMTOOLS:SAMTOOLS_INDEX (SRR6357071)                       [100%] 2 of 2 ✔
+[06/c64a64] process > NFCORE_RNASEQ:RNASEQ:ALIGN_STAR:BAM_SORT_STATS_SAMTOOLS:BAM_STATS_SAMTOOLS:SAMTOOLS_STATS (SRR6357071)    [100%] 2 of 2 ✔
+[56/efc898] process > NFCORE_RNASEQ:RNASEQ:ALIGN_STAR:BAM_SORT_STATS_SAMTOOLS:BAM_STATS_SAMTOOLS:SAMTOOLS_FLAGSTAT (SRR6357071) [100%] 2 of 2 ✔
+[28/44e581] process > NFCORE_RNASEQ:RNASEQ:ALIGN_STAR:BAM_SORT_STATS_SAMTOOLS:BAM_STATS_SAMTOOLS:SAMTOOLS_IDXSTATS (SRR6357071) [100%] 2 of 2 ✔
+[97/95c8d8] process > NFCORE_RNASEQ:RNASEQ:QUANTIFY_STAR_SALMON:SALMON_QUANT (SRR6357071)                                       [100%] 2 of 2 ✔
+[6b/29f71d] process > NFCORE_RNASEQ:RNASEQ:QUANTIFY_STAR_SALMON:TX2GENE (genome.filtered.gtf)                                   [100%] 1 of 1 ✔
+[9d/99d8aa] process > NFCORE_RNASEQ:RNASEQ:QUANTIFY_STAR_SALMON:TXIMPORT                                                        [100%] 1 of 1 ✔
+[b6/1662ea] process > NFCORE_RNASEQ:RNASEQ:QUANTIFY_STAR_SALMON:SE_GENE (tx2gene.tsv)                                           [100%] 1 of 1 ✔
+[a8/6e7986] process > NFCORE_RNASEQ:RNASEQ:QUANTIFY_STAR_SALMON:SE_GENE_LENGTH_SCALED (tx2gene.tsv)                             [100%] 1 of 1 ✔
+[32/955831] process > NFCORE_RNASEQ:RNASEQ:QUANTIFY_STAR_SALMON:SE_GENE_SCALED (tx2gene.tsv)                                    [100%] 1 of 1 ✔
+[72/c648dd] process > NFCORE_RNASEQ:RNASEQ:QUANTIFY_STAR_SALMON:SE_TRANSCRIPT (tx2gene.tsv)                                     [100%] 1 of 1 ✔
+[40/6e5a0d] process > NFCORE_RNASEQ:RNASEQ:DESEQ2_QC_STAR_SALMON                                                                [100%] 1 of 1 ✔
+[f8/4f4df4] process > NFCORE_RNASEQ:RNASEQ:SUBREAD_FEATURECOUNTS (SRR6357071)                                                   [100%] 2 of 2 ✔
+[f4/216288] process > NFCORE_RNASEQ:RNASEQ:MULTIQC_CUSTOM_BIOTYPE (SRR6357071)                                                  [100%] 2 of 2 ✔
+[ed/d5fc22] process > NFCORE_RNASEQ:RNASEQ:QUALIMAP_RNASEQ (SRR6357071)                                                         [100%] 2 of 2 ✔
+[1c/c7c8e2] process > NFCORE_RNASEQ:RNASEQ:BAM_RSEQC:RSEQC_BAMSTAT (SRR6357071)                                                 [100%] 2 of 2 ✔
+[16/449e9a] process > NFCORE_RNASEQ:RNASEQ:BAM_RSEQC:RSEQC_INNERDISTANCE (SRR6357071)                                           [100%] 2 of 2 ✔
+[dc/8d178e] process > NFCORE_RNASEQ:RNASEQ:BAM_RSEQC:RSEQC_INFEREXPERIMENT (SRR6357071)                                         [100%] 2 of 2 ✔
+[43/4f82d7] process > NFCORE_RNASEQ:RNASEQ:BAM_RSEQC:RSEQC_JUNCTIONANNOTATION (SRR6357071)                                      [100%] 2 of 2 ✔
+[6c/e6dc04] process > NFCORE_RNASEQ:RNASEQ:BAM_RSEQC:RSEQC_JUNCTIONSATURATION (SRR6357071)                                      [100%] 2 of 2 ✔
+[a0/2cc99b] process > NFCORE_RNASEQ:RNASEQ:BAM_RSEQC:RSEQC_READDISTRIBUTION (SRR6357071)                                        [100%] 2 of 2 ✔
+[b5/2ad65c] process > NFCORE_RNASEQ:RNASEQ:BAM_RSEQC:RSEQC_READDUPLICATION (SRR6357071)                                         [100%] 2 of 2 ✔
+[6b/6657bb] process > NFCORE_RNASEQ:RNASEQ:CUSTOM_DUMPSOFTWAREVERSIONS (1)                                                      [100%] 1 of 1 ✔
+[73/528544] process > NFCORE_RNASEQ:RNASEQ:MULTIQC (1)                                                                          [100%] 1 of 1 ✔
+-[nf-core/rnaseq] Pipeline completed successfully with skipped sampl(es)-
+-[nf-core/rnaseq] Please check MultiQC report: 2/2 samples failed strandedness check.-
+Completed at: 27-May-2025 17:09:36
+Duration    : 6m 15s
+CPU hours   : 0.2
+Succeeded   : 52
+
+```
+
+:::
 
 ::: {.callout-tip}
 ### **Key points**
