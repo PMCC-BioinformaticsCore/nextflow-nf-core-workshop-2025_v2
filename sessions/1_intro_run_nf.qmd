@@ -12,7 +12,9 @@ This workshop is designed to provide participants with a foundational understand
 
 ### Course Helpers
 
-TO DO
+- Emma Gail, Melbourne Bioinformatics
+- Sanduni Rajapaksa, Research Computing Facility, Peter Mac
+- Adam Taranto, WEHI
 
 ### Prerequisites
 
