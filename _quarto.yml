@@ -11,34 +11,33 @@ website:
         text: Setup
       - text: Sessions
         menu:
-        - text: "Introduction to Nextflow and Nf-core"
+        - text: "Day 1: Introduction to Nextflow and Nf-core"
           href: sessions/1_intro_run_nf.html
-        - text: "Developing bioinformatics workflows with Nextflow" 
+        - text: "Day 2: Developing bioinformatics workflows with Nextflow" 
           href: sessions/2_nf_dev_intro.html
       - text: Workshop
         menu:
-        - text: "Introduction to Nextflow"
+        - text: "1.1 Introduction to Nextflow"
           href: workshops/1.1_intro_nextflow.html
-        - text: "Introduction to nf-core"
+        - text: "1.2 Introduction to nf-core"
           href: workshops/1.2_intro_nf_core.html
-        - text: "Customising & running nf-core pipelines"
+        - text: "2.1 Customising & running nf-core pipelines"
           href: workshops/2.1_customise_and_run.html
-        - text: "Troubleshooting Nextflow run"
+        - text: "2.2 Troubleshooting Nextflow run"
           href: workshops/2.2_troubleshooting.html
-        - text: "Best practise, tips and tricks"
-          href: workshops/2.3_tips_and_tricks.html
-        - text: "Creating a workflow"
+        - text: "3.1 Introduction to processes and channels"
+          href: workshops/1.3_processes_and_channels.html
+        - text: "3.2 Creating a workflow"
           href: workshops/3.1_creating_a_workflow.html
-        - text: "Modularisation"
-          href: workshops/4.1_modules.html
-        - text: "Nf-core Template"
+        - text: "3.3 Best practise, tips and tricks"
+          href: workshops/2.3_tips_and_tricks.html
+        - text: "4.1 Creating workflows using nf-core templates"
           href: workshops/5.1_nf_core_template.html
-        - text: "Nextflow Operators"
-          href: workshops/6.1_operators.html
-        - text: "Metadata Propagation"
-          href: workshops/7.1_metadata_propagation.html
-        - text: "Output, scatter, and Gather"
-          href: workshops/8.1_scatter_gather_output.html
-
+        - text: "5.1 nf-core modules and subworkflows"
+          href: workshops/5.2_nf_core_modules.html
+        - text: "6.1 Metadata Propagation"
+          href: workshops/5.3_metadata_propagation.html
+        - text: "7.1 Pipeline version control and additional resources"
+          href: workshops/5.4_pipeline_testing.html
 
 
