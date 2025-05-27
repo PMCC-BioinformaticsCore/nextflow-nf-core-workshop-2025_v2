@@ -43,7 +43,7 @@ Some of these considerations are the primary reasons why people choose to use a 
 
 Nextflow is a commonly used workflow system used to build scalable, portable, and reproducible computational workflows. 
 
-It addresses the considerations that we discussed in the previous sections, providing features such as: 
+It addresses the considerations that we discussed, providing features such as: 
 
 - Scalability, portability, and reproducibility
 - Ease of workflow deployment and sharing
@@ -201,7 +201,11 @@ export NXF_APPTAINER_CACHEDIR="~/apptainer_cache"
 
 ::: {.callout-important collapse="true"}
 ##### **Institute specific instructions**
-At Peter Mac HPC, you would set this variable to `export NXF_APPTAINER_CACHEDIR="/config/binaries/singularity/containers_devel/nextflow`
+At Peter Mac HPC, you would set this variable to:
+
+```default
+export NXF_APPTAINER_CACHEDIR="/config/binaries/singularity/containers_devel/nextflow
+```
 :::
 
 
@@ -256,7 +260,7 @@ Be aware of what is already in your current working directory where you launch y
 
 Short answer, no! Even though nextflow is not performing any heavy computation, without the necessary execution configurations, all the processes within the workflow will be executed locally.
 
-::: {.callout-important collapse="true"}
+::: {.callout-caution collapse="true"}
 ##### **Institute specific instructions**
 At Peter Mac HPC, we would run a nextflow job inside an sbatch job; or via an interactive slurm job`
 
@@ -274,6 +278,11 @@ srun --pty -p <PARTITION> --mem 8GB --mincpus 2 -t 0-5:00 bash
 - The command `nextflow run` can be used to execute a workflow 
 :::
 
+</br>
+
+### **Next Chapter: [Introduction to nf-core](./1.2_intro_nf_core.html)** 
+
+</br>
 
 ---
 ^*These materials are adapted from [Customising Nf-Core Workshop](https://sydney-informatics-hub.github.io/customising-nfcore-workshop/notebooks/1.2_nfcore.html) by Sydney Informatics Hub*^

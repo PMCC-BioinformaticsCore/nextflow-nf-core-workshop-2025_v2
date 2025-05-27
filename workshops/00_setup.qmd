@@ -13,14 +13,7 @@ Before joining the workshop, please complete the following checklist:
 
 - Install Visual Studio Code (recommended) or other text editor
 - Install the Nextflow and Remote-SSH VSC extensions (below) for VSCode users
-- Test your remote connection to the HPC and create a directory `/scratch/users/<your-username>/nfWorkshop` in your scratch space. This will be our working directory
-
-::: {.callout-important}
-**TO DO**
-
-Change to scratch dir path
-:::
-
+- Test your remote connection to the HPC and create a directory `~/nfWorkshop`. This home space `~/nfWorkshop` will be our working directory.
 
 ## Install and set up Visual Studio Code
 
@@ -62,16 +55,10 @@ Connect to your instance with VS code by adding the host details to your .ssh co
 2. Select Remote-SSH: Open SSH configuration file and select your .ssh config file
 3. Add a new entry with your details to login to cluster, and save your .ssh config file:
 
-::: {.callout-important}
-**TO DO**
-Change host name + user
-:::
-
-
 ```default 
-Host pmac-cluster
-	HostName kvmpr-res-lnode1.unix.petermac.org.au
-	User <your-cluster-user-name>
+Host pmac-workshop
+	HostName <your-ip-name>
+	User <your-user-name>
 ```
 
 4. Type Ctrl+Shift+P and select Remote-SSH: Connect to Host; and pmac-cluster (or whatever you name your host above)
@@ -85,13 +72,7 @@ Having successfully logged in, you should see a small blue or green box in the b
 To set up your VS Code window for the workshop:
 
 1. Open a new folder in the file explorer panel on the left side of the screen by typing Ctrl + K, Ctrl + O if you’re running Windows or Cmd+K+ Cmd + O for MacOS
-
-::: {.callout-important}
-**TO DO**
-Change scratch path
-:::
-
-2. Select `/scratch/users/<your-username>/nfWorkshop` to open our working directory. If you encountered an error that the directory does not exist, you would need to ssh in to the cluster and create that directory first before attempting this step. 
+2. Select `/home/<your-user-name>/nfWorkshop` to open our working directory. If you encountered an error that the directory does not exist, you would need to ssh in to the cluster and create that directory first before attempting this step. 
 3. When prompted, select the box for Trust the authors of all files in the parent folder ‘home’ then click Yes, I trust the authors
 4. You can dismiss the warning message saying our cluster's git version is outdated
 5. To open a terminal, type Ctrl+J if you’re on a Windows machine or Cmd+J on MacOS

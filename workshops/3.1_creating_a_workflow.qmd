@@ -1,5 +1,5 @@
 ---
-title: "**Nextflow Development - Creating a Nextflow workflow**"
+title: "**Introduction to Nextflow**"
 output:
   html_document:
     toc: false
@@ -19,7 +19,13 @@ from: markdown+emoji
 
 :::
 
-### **4.1.1. Define Workflow Input Parameters**
+### **3.2.1. Define Workflow Input Parameters**
+
+Let's first create a folder inside our work directory called `lesson3.2` and move into it:
+
+```default
+mkdir ./lesson3.2 && cd $_
+```
 
 Let's create a Nextflow script `rnaseq.nf` for a RNA-seq workflow. The code begins with a shebang, which declares Nextflow as the interpreter. 
 
@@ -27,15 +33,9 @@ Let's create a Nextflow script `rnaseq.nf` for a RNA-seq workflow. The code begi
 #!/usr/bin/env nextflow
 ```
 
-::: {.callout-important}
-**TO DO**
-Change PATH TO DATA
-:::
-
-
 We will use the following data:
 ```default
-ls PATH TO DATA
+ls ../training/nf-training/data/ggal
 ```
 
 ```default
@@ -46,22 +46,22 @@ This dataset contains three paired FASTQ samples, `gut`, `liver`, and `lung`, al
 
 One way to define these to Nextflow is inside the workflow a Nextflow script. Copy the following into `rnaseq.nf`:
 
-::: {.callout-important}
-**TO DO**
-Change PATH TO DATA
-:::
-
 ```default
-params.reads = "/.../<PATH TO DATA>/*_{1,2}.fq"
-params.transcriptome_file = "/.../<PATH TO DATA>/transcriptome.fa"
-params.multiqc = "/.../<PATH TO DATA>/training/nf-training/multiqc"
+params.reads = "/.../training/nf-training/data/ggal/*_{1,2}.fq"
+params.transcriptome_file = "/.../training/nf-training/data/ggal/transcriptome.fa"
 ```
+
+::: {.callout-caution}
+
+Make sure to put the full path to the location of your data. If relative paths are used, this can cause file value errors. 
+
+:::
 
 Workflow parameters can be defined and accessed inside the Nextflow script by prepending the prefix `params` to a variable name, separated by a dot character, eg. `params.reads`.
 
-In the example above, the `reads` parameter is defined as multiple `.fq` files, using the `*` wildcard and `{ }` -- this notation will search for all files with `.fq` file extension, preceeded by either `_1` or `_2`. The `transcriptome_file` parameter is defined as one file, `/.../<PATH TO DATA>/transcriptome.fa`. The `multiqc` parameter is defined as a directory, `/.../<PATH TO DATA>/multiqc`. 
+In the example above, the `reads` parameter is defined as multiple `.fq` files, using the `*` wildcard and `{ }` -- this notation will search for all files with `.fq` file extension, preceeded by either `_1` or `_2`. The `transcriptome_file` parameter is defined as one file, `/.../training/nf-training/data/ggal/transcriptome.fa`. 
 
-### **4.1.2. Create a transcriptome index file**
+### **3.2.2. Create a transcriptome index file**
 
 In Nextflow, commands or scripts can be executed inside a `process`.
 
@@ -128,7 +128,7 @@ When a process execution exits with a non-zero exit status, the workflow will be
 Let's first look inside the process execution directory:
 
 ```default
-ls -a /.../work/85/495a21afcaaf5f94780aff6b2a964c 
+ls -a work/85/495a21afcaaf5f94780aff6b2a964c 
 ```
 
 ```default
@@ -141,26 +141,23 @@ We can see that the input file `transcriptome.fa` has been staged inside this pr
 Inside the `.command.err` script, we can see that the `salmon` command was not found, resulting in the termination of the Nextflow workflow. 
 
 
-::: {.callout-important}
-**TO DO**
-Change CONTAINER and CACHE DIRECTORY
-:::
-
 Containers can be used to execute the process within an environment that contains the package of interest. Create a config file `nextflow.config` containing the following:
 
 ```default
-<CONTAINER> {
+apptainer {
   enabled = true
   autoMounts = true
-  cacheDir = "<CACHE DIRECTORY>"
+  cacheDir = "/home/<username>/apptainer_cache"
 }
 ```
+
+This will download any containers to the directory `/home/<username>/apptainer_cache`. Before a process is executed, this folder will be 
 
 The `container` process directive can be used to specify the required container:
 
 ```default
 process INDEX {
-    container "<CACHE DIRECTORY>/depot.galaxyproject.org-singularity-salmon-1.10.1--h7e5ed60_0.img"
+    container "https://depot.galaxyproject.org/singularity/salmon:1.10.3--h6dccd9a_2"
 
     input:
     path transcriptome
@@ -181,7 +178,7 @@ nextflow run rnaseq.nf
 ```
 
 ```default
-N E X T F L O W  ~  version 23.04.1
+N E X T F L O W  ~  version 23.03.2
 Launching `rnaseq.nf` [distraught_goldwasser] DSL2 - revision: bdebf34e16
 executor >  local (1)
 [37/7ef8f0] process > INDEX [100%] 1 of 1 ✔
@@ -189,19 +186,15 @@ executor >  local (1)
 
 The newly created `nextflow.config` file does not need to be specified in the `nextflow run` command. This file is automatically searched for and used by Nextflow. 
 
-### **4.1.3. Collect Read Files By Pairs**
+### **3.2.3. Collect Read Files By Pairs**
 
 Previously, we have defined the `reads` parameter to be the following:
 ```default
-params.reads = "/.../<TODO_nxfdata>/*_{1,2}.fq"
+params.reads = "/.../training/nf-training/data/ggal/*_{1,2}.fq"
 ```
 
 **Exercise:** Convert the `reads` parameter into a tuple channel called `reads_ch`, where the first element is a unique grouping key, and the second element is the paired `.fq` files. Then, view the contents of `reads_ch`
 
-::: {.callout-important}
-**TO DO**
-Change CONTAINER 
-:::
 
 ::: {.callout-note appearance="simple" collapse="true"}
 ### Solution
@@ -217,15 +210,15 @@ The `fromFilePairs` channel factory will automatically group input files into a 
 nextflow run rnaseq.nf
 ```
 ```default
-[gut, [/.../<PATH TO DATA>/gut_1.fq, /.../<PATH TO DATA>/gut_2.fq]]
-[liver, [/.../<PATH TO DATA>/liver_1.fq, /.../<PATH TO DATA>/liver_2.fq]]
-[lung, [/.../<PATH TO DATA>/lung_1.fq, /.../<PATH TO DATA>/lung_2.fq]]
+[gut, [/.../training/nf-training/data/ggal/gut_1.fq, /.../training/nf-training/data/ggal/gut_2.fq]]
+[liver, [/.../training/nf-training/data/ggal/liver_1.fq, /.../training/nf-training/data/ggal/liver_2.fq]]
+[lung, [/.../training/nf-training/data/ggal>/lung_1.fq, /.../training/nf-training/data/ggal/lung_2.fq]]
 ```
 
 :::
 
 
-### **4.1.4. Perform Expression Quantification**
+### **3.2.4. Perform Expression Quantification**
 
 Let's add a new process `QUANTIFICATION` that uses both the indexed transcriptome file and the `.fq` file pairs to execute the `salmon quant` command. 
 
@@ -253,15 +246,10 @@ In the script block, the `salmon quant` command saves the output of the tool as 
 
 Set the following as the execution container for `QUANTIFICATION`: 
 
-::: {.callout-important}
-**TO DO**
-Change CACHE DIR 
-:::
-
 ```default
-<CACHE DIR>/depot.galaxyproject.org-singularity-salmon-1.10.1--h7e5ed60_0.img
+/home/<username>/apptainer_cache/depot.galaxyproject.org-singularity-salmon-1.10.3--h6dccd9a_2.img
 ```
-Assign `index_ch` and `reads_ch` as the inputs to this process, and emit the process outputs as `quant_ch`. Then,iew the contents of `quant_ch`
+Assign `index_ch` and `reads_ch` as the inputs to this process, and save the process outputs as `quant_ch`. Then, view the contents of `quant_ch`
 
 ::: {.callout-note appearance="simple" collapse="true"}
 ### Solution
@@ -270,7 +258,7 @@ To assign a container to a process, the `container` directive can be used.
 
 ```default
 process QUANTIFICATION {
-    container "<CACHE DIRECTORY>/depot.galaxyproject.org-singularity-salmon-1.10.1--h7e5ed60_0.img"
+    container "/home/<username>/apptainer_cache/depot.galaxyproject.org-singularity-salmon-1.10.3--h6dccd9a_2.img"
 
     input:
     path salmon_index
@@ -301,7 +289,7 @@ nextflow run rnaseq.nf
 ```
 
 ```default
-N E X T F L O W  ~  version 23.04.1
+N E X T F L O W  ~  version 23.03.2
 Launching `rnaseq.nf` [elated_cray] DSL2 - revision: abe41f4f69
 executor >  local (4)
 [e5/e75095] process > INDEX              [100%] 1 of 1 ✔
@@ -315,7 +303,7 @@ In the Nextflow output, we can see that the `QUANTIFICATION` process has been ra
 :::
 
 
-### **4.1.5. Quality Control**
+### **3.2.5. Quality Control**
 
 Now, let's implement a `FASTQC` quality control process for the input fastq reads. 
 
@@ -328,13 +316,9 @@ fastqc -o fastqc_${sample_id}_logs -f fastq -q ${reads}
 ```
 Take `fastqc_${sample_id}_logs` as the output of the process, and assign it to the channel `fastqc_ch`. Finally, specify the process container to be the following:
 
-::: {.callout-important}
-**TO DO**
-Change CACHE DIR 
-:::
 
 ```default
-<CACHE DIR >/depot.galaxyproject.org-singularity-fastqc-0.12.1--hdfd78af_0.img
+'https://depot.galaxyproject.org/singularity/fastqc:0.12.1--hdfd78af_0'
 ```
 ::: {.callout-note appearance="simple" collapse="true"}
 ### Hint
@@ -374,7 +358,7 @@ The process `FASTQC` is created in `rnaseq.nf`. Since the input channel is a tup
 
 ```default
 process FASTQC {
-    container "<CACHE DIR>/depot.galaxyproject.org-singularity-fastqc-0.12.1--hdfd78af_0.img"
+    container 'https://depot.galaxyproject.org/singularity/fastqc:0.12.1--hdfd78af_0'
 
     input:
     tuple val(sample_id), path(reads)
@@ -402,7 +386,7 @@ nextflow run rnaseq.nf
 ```
 
 ```default
-N E X T F L O W  ~  version 23.04.1
+N E X T F L O W  ~  version 23.03.2
 Launching `rnaseq.nf` [sad_jennings] DSL2 - revision: cfae7ccc0e
 executor >  local (7)
 [b5/6bece3] process > INDEX              [100%] 1 of 1 ✔
@@ -414,7 +398,7 @@ In the Nextflow output, we can see that the `FASTQC` has been ran three times as
 :::
 
 
-### **4.1.6. MultiQC Report**
+### **3.2.6. MultiQC Report**
 
 So far, the generated outputs have all been saved inside the Nextflow work directory. For the `FASTQC` process, the specified output directory is only created inside the process execution directory. To save results to a custom folder, the `publishDir` process directive can be used. 
 
@@ -423,7 +407,7 @@ Let's create a new `MULTIQC` process in our workflow that takes the outputs from
 ```default
 process MULTIQC {
     publishDir params.outdir, mode:'copy'
-    container "<TODO_cachedir>/depot.galaxyproject.org-singularity-multiqc-1.21--pyhdfd78af_0.img"
+    container 'https://depot.galaxyproject.org/singularity/multiqc:1.28--pyhdfd78af_0'
 
     input:
     path quantification
@@ -462,15 +446,113 @@ ls results
 gut.html  liver.html  lung.html
 ```
 
+::: {.callout-note collapse="true"}
+### **Full `rnaseq.nf` workflow**
+
+```default
+#!/usr/bin/env nextflow
+
+params.reads = "/.../training/nf-training/data/ggal/*_{1,2}.fq"
+params.transcriptome_file = "/.../training/nf-training/data/ggal/transcriptome.fa"
+
+process INDEX {
+    container "https://depot.galaxyproject.org/singularity/salmon:1.10.3--h6dccd9a_2"
+    
+    input:
+    path transcriptome
+
+    output:
+    path "salmon_idx"
+
+    script:
+    """
+    salmon index -t $transcriptome -i salmon_idx
+    """
+}
+
+process QUANTIFICATION {
+    container "/home/<username>/apptainer_cache/depot.galaxyproject.org-singularity-salmon-1.10.3--h6dccd9a_2.img"
+
+    input:
+    path salmon_index
+    tuple val(sample_id), path(reads)
+
+    output:
+    path "$sample_id"
+
+    script:
+    """
+    salmon quant --libType=U \
+    -i $salmon_index -1 ${reads[0]} -2 ${reads[1]} -o $sample_id
+    """
+}
+
+process FASTQC {
+    container 'https://depot.galaxyproject.org/singularity/fastqc:0.12.1--hdfd78af_0'
+
+    input:
+    tuple val(sample_id), path(reads)
+
+    output:
+    path "fastqc_${sample_id}_logs"
+
+    script:
+    """
+    mkdir fastqc_${sample_id}_logs
+    fastqc -o fastqc_${sample_id}_logs -f fastq -q ${reads}
+    """
+}
+
+process MULTIQC {
+    publishDir params.outdir, mode:'copy'
+    container 'https://depot.galaxyproject.org/singularity/multiqc:1.28--pyhdfd78af_0'
+
+    input:
+    path quantification
+    path fastqc
+
+    output:
+    path "*.html"
+
+    script:
+    """
+    multiqc . --filename $quantification
+    """
+}
+
+workflow {
+  reads_ch = Channel.fromFilePairs("$params.reads")
+
+  index_ch = INDEX(params.transcriptome_file)
+  quant_ch = QUANTIFICATION(index_ch, reads_ch)
+  quant_ch.view()
+
+  fastqc_ch = FASTQC(reads_ch)
+  multiqc_ch = MULTIQC(quant_ch, fastqc_ch)
+
+}
+```
+
+:::
+
 ::: {.callout-tip}
 ### **Key points**
 
 - Environments can be defined using the `container` process directive
-- The input declaration for a process must match the structure of the channel that is being passed into that process
+- Apptainer cache can be defined using the `cacheDir` variable in the `apptainer` scope
+- The input declaration for a process must match the structure of the channel that is passed into that process
+- Output files can be saved to a directory using the `publishDir` process directive
 :::
+
+</br>
+
+### **Next Chapter: [Best practise and Q&A](./2.3_tips_and_tricks.html)** 
+
+</br>
+
 
 
 ---
 ^*This workshop is adapted from [Fundamentals Training](https://training.nextflow.io/basic_training/), [Advanced Training](https://training.nextflow.io/advanced/), [Developer Tutorials](https://nf-co.re/docs/contributing/tutorials/creating_with_nf_core#creating-a-pipeline), and [Nextflow Patterns](https://nextflow-io.github.io/patterns/) materials from Nextflow and nf-core*^
 
-<span style="font-size:0.5em;">^*[Draft for Future Sessions](./4.1_draft_future_sess.html)</span>
+<span style="font-size:0.5em;">^*[Draft for Future Sessions](./3.2_draft_future_sess.html)</span>

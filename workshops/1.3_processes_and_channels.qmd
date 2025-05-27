@@ -1,5 +1,5 @@
 ---
-title: "**Nextflow Development - Creating a Nextflow Workflow**"
+title: "**Introduction to Nextflow**"
 output:
   html_document:
     toc: false
@@ -19,43 +19,15 @@ from: markdown+emoji
 
 :::
 
-### **2.1.1. Environment setup**
+### **3.1.1. Download data**
 
-::: {.callout-important}
-**TO DO**
-Download training data beforehand 
-`git clone https://github.com/nextflow-io/training.git`
+Download the training data to your work directory: 
 
-Partition
+```default
+git clone https://github.com/nextflow-io/training.git
+```
 
-How to load nextflow 
-:::
-
-1. Create an interative session:
-
-    ``` default
-    srun --pty -p <PARTITION> --mem 8GB --mincpus 2 -t 0-5:00 bash
-    ```
-
-2. Export the path to our shared software location using the Nextflow environment variable `XXXX`:
-
-    ```default
-    export ...
-    ```
-
-3. Load Nextflow:
-
-    ``` default
-    ...
-    ```
-
-4. Copy the training materials to your personal directory
-
-    ```default 
-    cp <PATH TO TRAINING MATERIALS> .
-    ```
-
-### **2.1.3. Channels and channel factories**
+### **3.1.2. Channels and channel factories**
 
 Channels are a key data structure of Nextflow, used to pass data between processes. 
 
@@ -182,7 +154,7 @@ executor >  local (3)
 This integer has been automatically cast as a `value` channel, allowing it to be used multiple times for each of the elements in `ch1`, without its contents being consumed. Again, in the output logs we see that three separate tasks have been executed successfully.
 
 
-### **2.1.4. Processes**
+### **3.1.3. Processes**
 
 In Nextflow, a process is the basic computing task to execute functions (i.e., custom scripts or tools).
 
@@ -326,10 +298,10 @@ The `path` qualifier allows the handling of files inside a process. When a new i
 
 When the `path` qualifier is specified as the input, Nextflow will stage the file inside the process execution directory (eg. creating a symbolic link to the file), allowing it to be accessed by the script using the specified name in the `input` declaration, without having to provide the full file path.
 
-Let's first create a folder called `lesson2.1` and move into it:
+Let's first create a folder called `lesson3.1` and move into it:
 
 ```default
-mkdir ./lesson2.1 && cd $_
+mkdir ./lesson3.1 && cd $_
 ```
 
 Now, take a look inside our data folder. This folder contains multiple `.fq` files, along with a `.fa` file. 
@@ -342,7 +314,7 @@ ls ../training/nf-training/data/ggal
 gut_1.fq  gut_2.fq  liver_1.fq  liver_2.fq  lung_1.fq  lung_2.fq  transcriptome.fa
 ```
 
-Save the following code block as a new file `foo.nf` inside `lesson2.1`: 
+Save the following code block as a new file `foo.nf` inside `lesson3.1`: 
 
 ```default
 ch_reads = Channel.fromPath('../training/nf-training/data/ggal/*.fq') 
@@ -532,7 +504,7 @@ executor >  local (3)
 
 The use of the `tuple` qualifier is especially important when the output of a process is being used as an input into another process. This qualifier allows sample metadata information to be stored, critical in ensuring the correct inputs are being used for downstream processes. 
 
-::: {.callout-note}
+::: {.callout-tip}
 ### **Key points**
 - When a queue channel is input into a process, each element will be serially consumed until the channel is empty
 - Value channels can be used unlimited times without consuming its contents
@@ -540,7 +512,12 @@ The use of the `tuple` qualifier is especially important when the output of a pr
 - The scripting language within a process can be altered by starting the script with the desired Shebang declaration
 :::
 
+</br>
+
+### **Next Chapter: [Creating an RNAseq Workflow](./3.1_creating_a_workflow.html)** 
+
+</br>
+
+
 ---
 ^*This workshop is adapted from [Fundamentals Training](https://training.nextflow.io/basic_training/), [Advanced Training](https://training.nextflow.io/advanced/), [Developer Tutorials](https://nf-co.re/docs/contributing/tutorials/creating_with_nf_core#creating-a-pipeline), and [Nextflow Patterns](https://nextflow-io.github.io/patterns/) materials from Nextflow and nf-core*^
-
-<span style="font-size:0.5em;">^*[Draft for Future Sessions](./4.1_draft_future_sess.html)</span>
