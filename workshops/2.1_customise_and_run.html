@@ -542,6 +542,90 @@ Solution
 </ul>
 <div class="sourceCode" id="cb19"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>.  ..  fastqc  multiqc  pipeline_info  salmon  trimgalore</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
 </ul>
+<p><strong>Exercise</strong></p>
+<p>In the previous exercise we have been skipping alignment and only do pseudo-aligner. For this final exercise, your task is to run the same sample but through a different path of the nf-core/rnaseq pipeline. We would use a different output directory for this task <code>exercise_rnaseq</code>.</p>
+<p>The additional setting that we need to aim for:</p>
+<ul>
+<li>Skip picard MarkDuplicates step</li>
+<li>Skip bigwig file creation</li>
+<li>Skip stringtie</li>
+<li>Skip dupradar</li>
+<li>Not doing pseudo alignment</li>
+<li>But keep the alignment step this time</li>
+</ul>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-6-contents" aria-controls="callout-6" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Solution
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-6" class="callout-6-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="sourceCode" id="cb20"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>nextflow run nf-core/rnaseq -r 3.14.0 \</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>    -profile apptainer \</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>    --input samplesheet.csv \</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>    --outdir ./exercise_rnaseq \</span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>    --fasta ../rnaseq_data/reference/genome.fasta \</span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>    --gtf ../rnaseq_data/reference/genes.gtf \</span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>    --skip_pseudo_alignment \</span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>    --skip_markduplicates \</span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a>    --skip_bigwig \</span>
+<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a>    --skip_stringtie \</span>
+<span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a>    --skip_dupradar \</span>
+<span id="cb20-12"><a href="#cb20-12" aria-hidden="true" tabindex="-1"></a>    --max_memory '6.GB' \</span>
+<span id="cb20-13"><a href="#cb20-13" aria-hidden="true" tabindex="-1"></a>    --max_cpus 2 \</span>
+<span id="cb20-14"><a href="#cb20-14" aria-hidden="true" tabindex="-1"></a>    -resume</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>With the following message on stdout:</p>
+<div class="sourceCode" id="cb21"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>[c0/9d81c8] process &gt; NFCORE_RNASEQ:RNASEQ:PREPARE_GENOME:GTF_FILTER (genome.fasta)                                             [100%] 1 of 1 ✔</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>[ea/3069ab] process &gt; NFCORE_RNASEQ:RNASEQ:PREPARE_GENOME:GTF2BED (genome.filtered.gtf)                                         [100%] 1 of 1 ✔</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>[3a/994844] process &gt; NFCORE_RNASEQ:RNASEQ:PREPARE_GENOME:MAKE_TRANSCRIPTS_FASTA (rsem/genome.fasta)                            [100%] 1 of 1 ✔</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>[04/d57b99] process &gt; NFCORE_RNASEQ:RNASEQ:PREPARE_GENOME:CUSTOM_GETCHROMSIZES (genome.fasta)                                   [100%] 1 of 1 ✔</span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>[fd/b1edb9] process &gt; NFCORE_RNASEQ:RNASEQ:PREPARE_GENOME:STAR_GENOMEGENERATE (genome.fasta)                                    [100%] 1 of 1 ✔</span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>[-        ] process &gt; NFCORE_RNASEQ:RNASEQ:CAT_FASTQ                                                                            -</span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>[dd/9efa41] process &gt; NFCORE_RNASEQ:RNASEQ:FASTQ_FASTQC_UMITOOLS_TRIMGALORE:FASTQC (SRR6357071)                                 [100%] 2 of 2 ✔</span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>[e3/a17aba] process &gt; NFCORE_RNASEQ:RNASEQ:FASTQ_FASTQC_UMITOOLS_TRIMGALORE:TRIMGALORE (SRR6357071)                             [100%] 2 of 2 ✔</span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>[-        ] process &gt; NFCORE_RNASEQ:RNASEQ:FASTQ_SUBSAMPLE_FQ_SALMON:SALMON_INDEX                                               -</span>
+<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a>[-        ] process &gt; NFCORE_RNASEQ:RNASEQ:FASTQ_SUBSAMPLE_FQ_SALMON:FQ_SUBSAMPLE                                               -</span>
+<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a>[-        ] process &gt; NFCORE_RNASEQ:RNASEQ:FASTQ_SUBSAMPLE_FQ_SALMON:SALMON_QUANT                                               -</span>
+<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a>[2c/d49991] process &gt; NFCORE_RNASEQ:RNASEQ:ALIGN_STAR:STAR_ALIGN (SRR6357071)                                                   [100%] 2 of 2 ✔</span>
+<span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a>[be/9af502] process &gt; NFCORE_RNASEQ:RNASEQ:ALIGN_STAR:BAM_SORT_STATS_SAMTOOLS:SAMTOOLS_SORT (SRR6357071)                        [100%] 2 of 2 ✔</span>
+<span id="cb21-14"><a href="#cb21-14" aria-hidden="true" tabindex="-1"></a>[18/579c2a] process &gt; NFCORE_RNASEQ:RNASEQ:ALIGN_STAR:BAM_SORT_STATS_SAMTOOLS:SAMTOOLS_INDEX (SRR6357071)                       [100%] 2 of 2 ✔</span>
+<span id="cb21-15"><a href="#cb21-15" aria-hidden="true" tabindex="-1"></a>[06/c64a64] process &gt; NFCORE_RNASEQ:RNASEQ:ALIGN_STAR:BAM_SORT_STATS_SAMTOOLS:BAM_STATS_SAMTOOLS:SAMTOOLS_STATS (SRR6357071)    [100%] 2 of 2 ✔</span>
+<span id="cb21-16"><a href="#cb21-16" aria-hidden="true" tabindex="-1"></a>[56/efc898] process &gt; NFCORE_RNASEQ:RNASEQ:ALIGN_STAR:BAM_SORT_STATS_SAMTOOLS:BAM_STATS_SAMTOOLS:SAMTOOLS_FLAGSTAT (SRR6357071) [100%] 2 of 2 ✔</span>
+<span id="cb21-17"><a href="#cb21-17" aria-hidden="true" tabindex="-1"></a>[28/44e581] process &gt; NFCORE_RNASEQ:RNASEQ:ALIGN_STAR:BAM_SORT_STATS_SAMTOOLS:BAM_STATS_SAMTOOLS:SAMTOOLS_IDXSTATS (SRR6357071) [100%] 2 of 2 ✔</span>
+<span id="cb21-18"><a href="#cb21-18" aria-hidden="true" tabindex="-1"></a>[97/95c8d8] process &gt; NFCORE_RNASEQ:RNASEQ:QUANTIFY_STAR_SALMON:SALMON_QUANT (SRR6357071)                                       [100%] 2 of 2 ✔</span>
+<span id="cb21-19"><a href="#cb21-19" aria-hidden="true" tabindex="-1"></a>[6b/29f71d] process &gt; NFCORE_RNASEQ:RNASEQ:QUANTIFY_STAR_SALMON:TX2GENE (genome.filtered.gtf)                                   [100%] 1 of 1 ✔</span>
+<span id="cb21-20"><a href="#cb21-20" aria-hidden="true" tabindex="-1"></a>[9d/99d8aa] process &gt; NFCORE_RNASEQ:RNASEQ:QUANTIFY_STAR_SALMON:TXIMPORT                                                        [100%] 1 of 1 ✔</span>
+<span id="cb21-21"><a href="#cb21-21" aria-hidden="true" tabindex="-1"></a>[b6/1662ea] process &gt; NFCORE_RNASEQ:RNASEQ:QUANTIFY_STAR_SALMON:SE_GENE (tx2gene.tsv)                                           [100%] 1 of 1 ✔</span>
+<span id="cb21-22"><a href="#cb21-22" aria-hidden="true" tabindex="-1"></a>[a8/6e7986] process &gt; NFCORE_RNASEQ:RNASEQ:QUANTIFY_STAR_SALMON:SE_GENE_LENGTH_SCALED (tx2gene.tsv)                             [100%] 1 of 1 ✔</span>
+<span id="cb21-23"><a href="#cb21-23" aria-hidden="true" tabindex="-1"></a>[32/955831] process &gt; NFCORE_RNASEQ:RNASEQ:QUANTIFY_STAR_SALMON:SE_GENE_SCALED (tx2gene.tsv)                                    [100%] 1 of 1 ✔</span>
+<span id="cb21-24"><a href="#cb21-24" aria-hidden="true" tabindex="-1"></a>[72/c648dd] process &gt; NFCORE_RNASEQ:RNASEQ:QUANTIFY_STAR_SALMON:SE_TRANSCRIPT (tx2gene.tsv)                                     [100%] 1 of 1 ✔</span>
+<span id="cb21-25"><a href="#cb21-25" aria-hidden="true" tabindex="-1"></a>[40/6e5a0d] process &gt; NFCORE_RNASEQ:RNASEQ:DESEQ2_QC_STAR_SALMON                                                                [100%] 1 of 1 ✔</span>
+<span id="cb21-26"><a href="#cb21-26" aria-hidden="true" tabindex="-1"></a>[f8/4f4df4] process &gt; NFCORE_RNASEQ:RNASEQ:SUBREAD_FEATURECOUNTS (SRR6357071)                                                   [100%] 2 of 2 ✔</span>
+<span id="cb21-27"><a href="#cb21-27" aria-hidden="true" tabindex="-1"></a>[f4/216288] process &gt; NFCORE_RNASEQ:RNASEQ:MULTIQC_CUSTOM_BIOTYPE (SRR6357071)                                                  [100%] 2 of 2 ✔</span>
+<span id="cb21-28"><a href="#cb21-28" aria-hidden="true" tabindex="-1"></a>[ed/d5fc22] process &gt; NFCORE_RNASEQ:RNASEQ:QUALIMAP_RNASEQ (SRR6357071)                                                         [100%] 2 of 2 ✔</span>
+<span id="cb21-29"><a href="#cb21-29" aria-hidden="true" tabindex="-1"></a>[1c/c7c8e2] process &gt; NFCORE_RNASEQ:RNASEQ:BAM_RSEQC:RSEQC_BAMSTAT (SRR6357071)                                                 [100%] 2 of 2 ✔</span>
+<span id="cb21-30"><a href="#cb21-30" aria-hidden="true" tabindex="-1"></a>[16/449e9a] process &gt; NFCORE_RNASEQ:RNASEQ:BAM_RSEQC:RSEQC_INNERDISTANCE (SRR6357071)                                           [100%] 2 of 2 ✔</span>
+<span id="cb21-31"><a href="#cb21-31" aria-hidden="true" tabindex="-1"></a>[dc/8d178e] process &gt; NFCORE_RNASEQ:RNASEQ:BAM_RSEQC:RSEQC_INFEREXPERIMENT (SRR6357071)                                         [100%] 2 of 2 ✔</span>
+<span id="cb21-32"><a href="#cb21-32" aria-hidden="true" tabindex="-1"></a>[43/4f82d7] process &gt; NFCORE_RNASEQ:RNASEQ:BAM_RSEQC:RSEQC_JUNCTIONANNOTATION (SRR6357071)                                      [100%] 2 of 2 ✔</span>
+<span id="cb21-33"><a href="#cb21-33" aria-hidden="true" tabindex="-1"></a>[6c/e6dc04] process &gt; NFCORE_RNASEQ:RNASEQ:BAM_RSEQC:RSEQC_JUNCTIONSATURATION (SRR6357071)                                      [100%] 2 of 2 ✔</span>
+<span id="cb21-34"><a href="#cb21-34" aria-hidden="true" tabindex="-1"></a>[a0/2cc99b] process &gt; NFCORE_RNASEQ:RNASEQ:BAM_RSEQC:RSEQC_READDISTRIBUTION (SRR6357071)                                        [100%] 2 of 2 ✔</span>
+<span id="cb21-35"><a href="#cb21-35" aria-hidden="true" tabindex="-1"></a>[b5/2ad65c] process &gt; NFCORE_RNASEQ:RNASEQ:BAM_RSEQC:RSEQC_READDUPLICATION (SRR6357071)                                         [100%] 2 of 2 ✔</span>
+<span id="cb21-36"><a href="#cb21-36" aria-hidden="true" tabindex="-1"></a>[6b/6657bb] process &gt; NFCORE_RNASEQ:RNASEQ:CUSTOM_DUMPSOFTWAREVERSIONS (1)                                                      [100%] 1 of 1 ✔</span>
+<span id="cb21-37"><a href="#cb21-37" aria-hidden="true" tabindex="-1"></a>[73/528544] process &gt; NFCORE_RNASEQ:RNASEQ:MULTIQC (1)                                                                          [100%] 1 of 1 ✔</span>
+<span id="cb21-38"><a href="#cb21-38" aria-hidden="true" tabindex="-1"></a>-[nf-core/rnaseq] Pipeline completed successfully with skipped sampl(es)-</span>
+<span id="cb21-39"><a href="#cb21-39" aria-hidden="true" tabindex="-1"></a>-[nf-core/rnaseq] Please check MultiQC report: 2/2 samples failed strandedness check.-</span>
+<span id="cb21-40"><a href="#cb21-40" aria-hidden="true" tabindex="-1"></a>Completed at: 27-May-2025 17:09:36</span>
+<span id="cb21-41"><a href="#cb21-41" aria-hidden="true" tabindex="-1"></a>Duration    : 6m 15s</span>
+<span id="cb21-42"><a href="#cb21-42" aria-hidden="true" tabindex="-1"></a>CPU hours   : 0.2</span>
+<span id="cb21-43"><a href="#cb21-43" aria-hidden="true" tabindex="-1"></a>Succeeded   : 52</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+</div>
 <div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">

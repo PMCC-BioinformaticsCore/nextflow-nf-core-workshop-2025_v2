@@ -397,7 +397,7 @@ Solution
 </section>
 <section id="troubleshoot-warning-and-error-messages" class="level3">
 <h3 class="anchored" data-anchor-id="troubleshoot-warning-and-error-messages"><strong>2.2.3. Troubleshoot warning and error messages</strong></h3>
-<p>While our previous workflow execution completed successfully, there were a couple of warning messages that may be cause for concern:</p>
+<p>If we go back to our last exercise (<code>exercise_rnaseq</code> output), you might recall that while that workflow execution completed successfully, there were a couple of warning messages that may be cause for concern:</p>
 <div class="sourceCode" id="cb17"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>-[nf-core/rnaseq] Pipeline completed successfully with skipped sampl(es)-</span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>-[nf-core/rnaseq] Please check MultiQC report: 2/2 samples failed strandedness check.-</span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>Completed at: 04-May-2025 15:03:01</span>
@@ -417,8 +417,8 @@ Handling dodgy error messages
 <p>The first warning message isn’t very descriptive (see this <a href="https://github.com/nf-core/rnaseq/pull/963">pull request</a>). You might come across issues like this when running nf-core pipelines, too. Bug reports and user feedback is very important to open source software communities like nf-core. If you come across any issues, submit a GitHub issue or start a discussion in the relevant nf-core Slack channel so others are aware and it can be addressed by the pipeline’s developers.</p>
 </div>
 </div>
-<p>➤ Take a look at the MultiQC report, as directed by the second message. You can find the MultiQC report in the <code>my_results</code> directory:</p>
-<div class="sourceCode" id="cb18"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>ls -la my_results/multiqc/star_salmon/</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>➤ Take a look at the MultiQC report, as directed by the second message. You can find the MultiQC report in the <code>exercise_rnaseq</code> directory:</p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>ls -la exercise_rnaseq/multiqc/star_salmon/</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="sourceCode" id="cb19"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>total 1402</span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>drwxrwxr-x 4 rlupat rlupat    4096 Nov 22 00:29 .</span>
 <span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>drwxrwxr-x 3 rlupat rlupat    4096 Nov 22 00:29 ..</span>
@@ -476,18 +476,15 @@ Handling dodgy error messages
 <span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>      fi; </span>
 <span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>    done </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>This will list all process <code>.command.sh</code> scripts containing the word ‘salmon’. Notice that there are a few different processes that run Salmon to perform other steps in the workflow. We are looking for Salmon quant which performs the read quantification:</p>
-<div class="sourceCode" id="cb24"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>/scratch/users/rlupat/nfWorkshop/lesson2.1/work/57/fba8f9a2385dac5fa31688ba1afa9b/.command.sh</span>
-<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>/scratch/users/rlupat/nfWorkshop/lesson2.1/work/30/0113a58c14ca8d3099df04ebf388f3/.command.sh</span>
-<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>/scratch/users/rlupat/nfWorkshop/lesson2.1/work/ec/95d6bd12d578c3bce22b5de4ed43fe/.command.sh</span>
-<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>/scratch/users/rlupat/nfWorkshop/lesson2.1/work/49/6fedcb09e666432ae6ddf8b1e8f488/.command.sh</span>
-<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>/scratch/users/rlupat/nfWorkshop/lesson2.1/work/b4/2ca8d05b049438262745cde92955e9/.command.sh</span>
-<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>/scratch/users/rlupat/nfWorkshop/lesson2.1/work/38/875d68dae270504138bb3d72d511a7/.command.sh</span>
-<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>/scratch/users/rlupat/nfWorkshop/lesson2.1/work/72/776810a99695b1c114cbb103f4a0e6/.command.sh</span>
-<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>/scratch/users/rlupat/nfWorkshop/lesson2.1/work/1c/dc3f54cc7952bf55e6742dd4783392/.command.sh</span>
-<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>/scratch/users/rlupat/nfWorkshop/lesson2.1/work/f3/5116a5b412bde7106645671e4c6ffb/.command.sh</span>
-<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a>/scratch/users/rlupat/nfWorkshop/lesson2.1/work/17/fb0c791810f42a438e812d5c894ebf/.command.sh</span>
-<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a>/scratch/users/rlupat/nfWorkshop/lesson2.1/work/4c/931a9b60b2f3cf770028854b1c673b/.command.sh</span>
-<span id="cb24-12"><a href="#cb24-12" aria-hidden="true" tabindex="-1"></a>/scratch/users/rlupat/nfWorkshop/lesson2.1/work/91/e1c99d8acb5adf295b37fd3bbc86a5/.command.sh</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb24"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>/home/larigan/lesson2.1/work/9c/9cdaec01c009a4fef6de3b50b0d2c9/.command.sh</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>/home/larigan/lesson2.1/work/d9/e696aa3903f2f7bef3ead3852a7d51/.command.sh</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>/home/larigan/lesson2.1/work/57/95f7806c62313c5788780d1fadc89a/.command.sh</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>/home/larigan/lesson2.1/work/2f/bef610318ab85c7fdbb3a773c568d5/.command.sh</span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>/home/larigan/lesson2.1/work/ec/d8a46743dc73214b04e09c7ae9ecb4/.command.sh</span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>/home/larigan/lesson2.1/work/f2/cc71ed58bbfba78ea034a26bd48370/.command.sh</span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>/home/larigan/lesson2.1/work/3b/0a2737be44be977e4b695c5bade23f/.command.sh</span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>/home/larigan/lesson2.1/work/8d/fed78effdd1b28435a698d8a6efb7a/.command.sh</span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>/home/larigan/lesson2.1/work/65/bd7329a29aaf2136f25173a22918ae/.command.sh</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Compared with the salmon quant <code>main.nf</code> file, we get a lot more fine scale details from the <code>.command.sh</code> process scripts:</p>
 <p><code>main.nf</code>:</p>
 <div class="sourceCode" id="cb25"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>salmon quant \\</span>
@@ -500,13 +497,13 @@ Handling dodgy error messages
 <span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a>        -o $prefix</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p><code>.command.sh</code>:</p>
 <div class="sourceCode" id="cb26"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>salmon quant \</span>
-<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>    --geneMap chr22_with_ERCC92.gtf \</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>    --geneMap genome.filtered.gtf \</span>
 <span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>    --threads 2 \</span>
 <span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>    --libType=ISF \</span>
 <span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>    -t genome.transcripts.fa \</span>
-<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>    -a HBR_Rep1_ERCC.Aligned.toTranscriptome.out.bam \</span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>    -a SRR6357071.Aligned.toTranscriptome.out.bam \</span>
 <span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a>     \</span>
-<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a>    -o HBR_Rep1_ERCC</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a>    -o SRR6357071</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>From <code>.command.sh</code>, we see that <code>--libType</code> has been set to <code>ISF</code> (ie. forward strandedness), based on our samplesheet.</p>
 <p><strong>Exercise</strong>: Besides changing the samplesheet input, we can use parameter settings to over-ride the <code>--libType</code>. Use the <a href="https://nf-co.re/rnaseq/3.14.0/parameters#salmon_quant_libtype">pipeline Parameters documentation</a> to determine what parameter has to be changed. Instead, we would like this to be <code>ISR</code> (ie. reverse strandedness). How can we do this?</p>
 <div class="callout callout-style-default callout-note callout-titled">
@@ -559,17 +556,16 @@ Solution
 <div id="callout-8" class="callout-8-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p><code>workshop-params.yaml</code> should now contain one additional parameter:</p>
-<div class="sourceCode" id="cb27"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>salmon_quant_libtype: "A" </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb27"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>salmon_quant_libtype: "ISR" </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 </div>
 <p>➤ Now that our params file has been saved, we can rerun the pipeline:</p>
 <div class="sourceCode" id="cb28"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>nextflow run nf-core/rnaseq -r 3.14.0 \</span>
 <span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>  -resume </span>
-<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>  -profile &lt;CONTAINER&gt; \</span>
-<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>  -c my_resources.config \</span>
-<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>  -params-file workshop-params.yaml \</span>
-<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>  --outdir my_results \</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>  -profile apptainer \</span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>  -params-file workshop-params.yaml \</span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>  --outdir exercise_rnaseq </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>As the workflow runs a second time, you will notice 4 things:</p>
 <ol type="1">
 <li>The <code>nextflow run</code> command is much tidier, due to the use of a <code>-params-file</code> that stores <strong>pipeline</strong> parameters used in a Nextflow run</li>
@@ -580,11 +576,11 @@ Solution
 </ol>
 <div class="sourceCode" id="cb29"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>-[nf-core/rnaseq] Pipeline completed successfully with skipped sampl(es)-</span>
 <span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>-[nf-core/rnaseq] Please check MultiQC report: 2/2 samples failed strandedness check.-</span>
-<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>Completed at: 04-May-2025 17:28:40</span>
-<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>Duration    : 3m 59s</span>
-<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>CPU hours   : 0.6 (66.3% cached)</span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>Completed at: 27-May-2025 17:13:48</span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>Duration    : 1m 55s</span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>CPU hours   : 0.2 (70.8% cached)</span>
 <span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>Succeeded   : 11</span>
-<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a>Cached      : 55</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a>Cached      : 41</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>We still seem to be getting the warning <code>Please check MultiQC report: 2/2 samples failed strandedness check.-</code>. Let’s check what <code>--libType</code> has been used inside the salmon process.</p>
 <p><strong>Exercise</strong>: Determine the hexadecimal code output by Nextflow for a <code>SALMON_QUANT</code> process in your most recent run. Use this code to determine the <code>work</code> execution directory for <code>SALMON_QUANT</code>, and look inside the <code>.command.sh</code>. What <code>--libType</code> has been used? Is it the one we specified in our parameter file?</p>
 <div class="callout callout-style-default callout-note callout-titled">
@@ -600,29 +596,29 @@ Solution
 <div id="callout-9" class="callout-9-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>In the Nextflow output, the following line provides the hexadeximal for a <code>SALMON_QUANT</code> process.</p>
-<div class="sourceCode" id="cb30"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>[04/d742db] NFC…TAR_SALMON:SALMON_QUANT (HBR_Rep2_ERCC) | 2 of 2 ✔</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb30"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>[d9/69e2a7] process &gt; NFCORE_RNASEQ:RNASEQ:QUANTIFY_STAR_SALMON:SALMON_QUANT (SRR6357071)                                       [100%] 2 of 2 ✔</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>The <code>work</code> execution directory for this process is located in (using <code>tab</code> to autocomplete the folder name):</p>
-<div class="sourceCode" id="cb31"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>ls -a work/04/d742db4c1760d0c4581fb7790a71a9/</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb31"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>ls -a work/d9/69e2a7563de5e6046f140a1317c1d2/</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Inside the <code>.command.sh</code> file, the <code>--libType</code> parameter matches the one specified in our parameter file:</p>
 <div class="sourceCode" id="cb32"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>#!/bin/bash -euo pipefail</span>
 <span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>salmon quant \</span>
-<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>    --geneMap chr22_with_ERCC92.filtered.gtf \</span>
-<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>    --threads 4 \</span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>    --geneMap genome.filtered.gtf \</span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>    --threads 2 \</span>
 <span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>    --libType=ISR \</span>
 <span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a>    -t genome.transcripts.fa \</span>
-<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a>    -a HBR_Rep2_ERCC.Aligned.toTranscriptome.out.bam \</span>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a>    -a SRR6357071.Aligned.toTranscriptome.out.bam \</span>
 <span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a>     \</span>
-<span id="cb32-9"><a href="#cb32-9" aria-hidden="true" tabindex="-1"></a>    -o HBR_Rep2_ERCC</span>
+<span id="cb32-9"><a href="#cb32-9" aria-hidden="true" tabindex="-1"></a>    -o SRR6357071</span>
 <span id="cb32-10"><a href="#cb32-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb32-11"><a href="#cb32-11" aria-hidden="true" tabindex="-1"></a>if [ -f HBR_Rep2_ERCC/aux_info/meta_info.json ]; then</span>
-<span id="cb32-12"><a href="#cb32-12" aria-hidden="true" tabindex="-1"></a>    cp HBR_Rep2_ERCC/aux_info/meta_info.json "HBR_Rep2_ERCC_meta_info.json"</span>
+<span id="cb32-11"><a href="#cb32-11" aria-hidden="true" tabindex="-1"></a>if [ -f SRR6357071/aux_info/meta_info.json ]; then</span>
+<span id="cb32-12"><a href="#cb32-12" aria-hidden="true" tabindex="-1"></a>    cp SRR6357071/aux_info/meta_info.json "SRR6357071_meta_info.json"</span>
 <span id="cb32-13"><a href="#cb32-13" aria-hidden="true" tabindex="-1"></a>fi</span>
 <span id="cb32-14"><a href="#cb32-14" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb32-15"><a href="#cb32-15" aria-hidden="true" tabindex="-1"></a>cat &lt;&lt;-END_VERSIONS &gt; versions.yml</span>
 <span id="cb32-16"><a href="#cb32-16" aria-hidden="true" tabindex="-1"></a>"NFCORE_RNASEQ:RNASEQ:QUANTIFY_STAR_SALMON:SALMON_QUANT":</span>
 <span id="cb32-17"><a href="#cb32-17" aria-hidden="true" tabindex="-1"></a>    salmon: $(echo $(salmon --version) | sed -e "s/salmon //g")</span>
 <span id="cb32-18"><a href="#cb32-18" aria-hidden="true" tabindex="-1"></a>END_VERSIONS</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>The tool is working as we expect!</p>
+<p>The tool is working as we expected!</p>
 </div>
 </div>
 </div>
