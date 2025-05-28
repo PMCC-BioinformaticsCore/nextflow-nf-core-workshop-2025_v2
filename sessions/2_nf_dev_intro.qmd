@@ -14,6 +14,8 @@ This workshop is designed to provide participants with a fundamental understandi
 - Emma Gail, Melbourne Bioinformatics
 - Sanduni Rajapaksa, Research Computing Facility, Peter Mac
 - Adam Taranto, WEHI
+- Alex Ringeri, WEHI
+- Grace Hall, Melbourne Bioinformatics
 
 ### Prerequisites
 
