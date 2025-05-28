@@ -115,7 +115,7 @@ Recall that when we created each process, we manually defined the input(s) and t
 
 Before creating a module ourselves, we should always first check the [nf-core modules page](https://nf-co.re/modules/) to see if the module we are interested in exists. 
 
-For our `INDEX` and `QUANTIFICATION` processes, let's check if are already modules that use `salmon index` and `salmon quant`.
+For our `INDEX` and `QUANTIFICATION` processes, let's check if there are already modules that use `salmon index` and `salmon quant`.
 
 ```default
 process INDEX {
@@ -185,7 +185,7 @@ INFO     Use the following statement to include this module:
 By default, the example `include` command provided by running `nf-core modules install` will provide the **relative output path** from the **analysis workflow file**. Therefore, this can be copied directly into `workflows/customrnaseq.nf`. Recall that if you are importing the module from within a subworkflow file in the `subworkflows` folder, you will need to change the relative file path to match the new structure. 
 
 
-::: {.callout-warning collapse="true"}
+::: {.callout-warning}
 If you are installing the module **outside** of the nf-core pipeline folder, you may see the below message:
 
 ```default
@@ -781,7 +781,7 @@ The `subworkflows` command contains similar sub-commands to `modules`
 - `list`: list the installed subworkflows in the pipeline
 - `install`: install a subworkflow to the pipeline
 - `update`: update the pipeline version using the GitHub SHA
-- `remove`: remoe a subworkflow from the pipeline
+- `remove`: remove a subworkflow from the pipeline
 
 **Exercise**: Search the [nf-core subworkflows page](https://nf-co.re/subworkflows) for the `fastq_subsample_fq_salmon` subworkflow. Install it into the workflow, and list all the subworkflows that are installed in the pipeline. 
 

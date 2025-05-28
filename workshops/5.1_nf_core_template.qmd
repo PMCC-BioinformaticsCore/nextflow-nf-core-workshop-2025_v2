@@ -147,9 +147,9 @@ workflow {
 
 The following will be printed, where the process names contain the `tag` that has been defined:
 ```default
-[6e/28919b] Submitted process > FOO (alpha)
-[d2/1c6175] Submitted process > FOO (gamma)
-[1c/3ef220] Submitted process > FOO (omega)
+Launching `foo.nf` [grave_cantor] DSL2 - revision: 345f2fb75c
+executor >  local (3)
+[1a/915255] process > FOO (omega) [100%] 3 of 3 ✔
 ```
 
 In the `FASTQC` process, the tag has been defined as `$meta.id`, which we will investigate later. 
@@ -171,7 +171,7 @@ The `conda` and `container` directives define the software dependencies that wil
 The input block defines the input channels to a process. It consists of a qualifier (ie. input data type), and a variable name that can be referenced in the process. Based on the qualifier, Nextflow can handle the input differently. 
 
 - `path`: Nextflow will 'stage' the input into the `work` execution directory of the process
-- `val`: the input vale can be accessed by the name
+- `val`: the input value can be accessed by the name
 - `tuple`: group common inputs, each with another qualifier
 
 For `FASTQC`, the input is a `tuple`, where the first element is assigned the variable `meta` that is of data type `val`. The second element in the tuple is set as the variable `reads`, that is of the data type `path`. This means file paths that are provided to this `FASTQC` process will be symbolically linked inside the execution directory, where it can be accessed by within the `script`. 
@@ -755,7 +755,14 @@ For users who wish to run existing nf-core pipelines, the commands `list`, `laun
 
 ## **4.4 `nf-core pipelines create`**
 
-Let's start by creating a pipeline:
+Let's create a new directory for this section.
+
+```default
+cd ~
+mkdir ./lesson4.4 && cd $_
+```
+
+Now, let's start by creating a pipeline:
 
 ```default
 nf-core pipelines create
@@ -1157,26 +1164,52 @@ SAMPLE_SINGLE_END,/path/to/fastq/files/AEG588A4_S4_L003_R1_001.fastq.gz,
 Copy this samplesheet into your folder, one level higher than the pipeline folder `./nf-core-customrnaseq`
 
 ```default 
-cp ./nf-core-customrnaseq/assets/samplesheet.csv .
+cp ./nf-core-customrnaseq/assets/samplesheet.csv ~/lesson4.4
 ```
 
 Also download the following test data to your folder:
 
 ```default
-git clone -b rnaseq https://github.com/nf-core/test-datasets.git
+git clone --single-branch --branch rnaseq https://github.com/nf-core/test-datasets ~/rnaseq_data
 ```
 
-This test dataset consists of two paired-end samples `gut`, `liver`, and `lung`, as well as a transcriptome file. 
+This test dataset is downloaded from the nf-core pipeline `rnaseq`, and contains FASTQ and reference files we will use. 
 
 ```default
-data
-├── gut_1.fastq.gz
-├── gut_2.fastq.gz
-├── liver_1.fastq.gz
-├── liver_2.fastq.gz
-├── lung_1.fastq.gz
-├── lung_2.fastq.gz
-└-- transcriptome.fa
+/home/goldmire/rnaseq_data/
+├── ...
+├── reference
+│   ├── ...
+│   ├── genes.gtf
+│   ├── genome.fasta
+│   └── transcriptome.fasta
+└── testdata
+    ├── ...
+    └── GSE110004
+        ├── SRR6357070_1.fastq.gz
+        ├── SRR6357070_2.fastq.gz
+        ├── SRR6357071_1.fastq.gz
+        ├── SRR6357071_2.fastq.gz
+        ├── SRR6357072_1.fastq.gz
+        ├── SRR6357072_2.fastq.gz
+        ├── SRR6357073_1.fastq.gz
+        ├── SRR6357073_2.fastq.gz
+        ├── SRR6357074_1.fastq.gz
+        ├── SRR6357074_2.fastq.gz
+        ├── SRR6357075_1.fastq.gz
+        ├── SRR6357075_2.fastq.gz
+        ├── SRR6357076_1.fastq.gz
+        ├── SRR6357076_2.fastq.gz
+        ├── SRR6357077_1.fastq.gz
+        ├── SRR6357077_2.fastq.gz
+        ├── SRR6357078_1.fastq.gz
+        ├── SRR6357078_2.fastq.gz
+        ├── SRR6357079_1.fastq.gz
+        ├── SRR6357079_2.fastq.gz
+        ├── SRR6357080_1.fastq.gz
+        ├── SRR6357080_2.fastq.gz
+        ├── SRR6357081_1.fastq.gz
+        └── SRR6357081_2.fastq.gz
 ```
 
 Your samplesheet and data folder should now sit **outside** of your pipeline folder.
@@ -1188,37 +1221,90 @@ Your samplesheet and data folder should now sit **outside** of your pipeline fol
 └── data 
 ```
 
-Edit the samplesheet to use our test data. Replace `<full_path>` with the path to your current working directory. 
+Edit the samplesheet to use our test data. Replace `<full_path>` with the full path to your dataset. 
 
 ```default
 sample,fastq_1,fastq_2
-gut,<full_path>/data/gut_1.fastq.gz,<full_path>/data/gut_2.fastq.gz
-liver,<full_path>/data/liver_1.fastq.gz,<full_path>/data/liver_2.fastq.gz
-lung,<full_path>/data/lung_1.fastq.gz,<full_path>/data/lung_2.fastq.gz
+SRR6357070,<full_path>/rnaseq_data/testdata/GSE110004/SRR6357070_1.fastq.gz,<full_path>/rnaseq_data/testdata/GSE110004/SRR6357070_2.fastq.gz
+SRR6357071,<full_path>/rnaseq_data/testdata/GSE110004/SRR6357071_1.fastq.gz,<full_path>/rnaseq_data/testdata/GSE110004/SRR6357071_2.fastq.gz
+SRR6357072,<full_path>/rnaseq_data/testdata/GSE110004/SRR6357072_1.fastq.gz,<full_path>/rnaseq_data/testdata/GSE110004/SRR6357072_2.fastq.gz
 ```
 
 ### **4.4.4 Running the pipeline**
 
-Previously, we used a singularity profile, which allowed nextflow to store downloaded containers in a shared location. This location was defined using the bash command below:
-
-::: {.callout-important}
-**TO DO**
-
-Cache directory location
-:::
+Previously, we used an `apptainer` profile, which enabled the use of Apptainer software containers for each process of the pipeline. We also specified the cache directory for those containers inside a config file. Create a config file `cache.config` and add the following cache directory to the config:
 
 ```default
-export NXF_SINGULARITY_CACHEDIR=<path_to_cache> 
+apptainer {
+  cacheDir = "/home/<user-name>/apptainer_cache"
+}
 ```
+Change the `<user-name>` to your username. 
 
-Let's run our pipeline by specifying the singularity profile, input samplesheet, and output location.:
+Let's run our pipeline by specifying the apptainer profile, cache configuration file, input samplesheet, and output location: 
 
 ```default
-nextflow run ./nf-core-customrnaseq/main.nf -profile singularity --input ./samplesheet.csv --outdir output
+nextflow run ./nf-core-customrnaseq/main.nf -profile apptainer -c ./cache.config --input ./samplesheet.csv --outdir output 
 ```
 Note that we are launching the wrapper workflow file, which contains the `PIPELINE_INITIALISATION`, `PIPELINE_COMPLETION`, and our analysis workflow `CUSTOMRNASEQ`. 
 
-As expected, the modules that have completed successfully are `FASTQC` and `MULTIQC`
+You'll notice that we get an error at the FASTQC process: 
+
+```default
+[2d/b7335e] process > NFCORE_CUSTOMRNASEQ:CUSTOMRNASEQ:FASTQC (SRR6357071) [ 33%] 1 of 3, failed: 1
+[-        ] process > NFCORE_CUSTOMRNASEQ:CUSTOMRNASEQ:MULTIQC             -
+Execution cancelled -- Finishing pending tasks before exit
+-[nf-core/customrnaseq] Pipeline completed with errors-
+ERROR ~ Error executing process > 'NFCORE_CUSTOMRNASEQ:CUSTOMRNASEQ:FASTQC (SRR6357071)'
+
+Caused by:
+  Process requirement exceeds available CPUs -- req: 6; avail: 2
+
+...
+
+```
+
+The [nf-core FASTQC process](https://github.com/nf-core/modules/blob/master/modules/nf-core/fastqc/main.nf) has the `process_medium` label, which by default required 6 CPUs. To change the resource settings to fit the limitations of our VM instance, the `nf-core-customrnaseq/conf/base.config` configuration file can be changed to the following:
+
+```default
+    withLabel:process_single {
+        cpus   = { 1                   }
+        memory = { 6.GB * task.attempt }
+        time   = { 4.h  * task.attempt }
+    }
+    withLabel:process_low {
+        cpus   = { 2                   }
+        memory = { 6.GB * task.attempt }
+        time   = { 4.h  * task.attempt }
+    }
+    withLabel:process_medium {
+        cpus   = { 2                   }
+        memory = { 6.GB * task.attempt }
+        time   = { 4.h  * task.attempt }
+    }
+    withLabel:process_high {
+        cpus   = { 2                   }
+        memory = { 6.GB * task.attempt }
+        time   = { 4.h  * task.attempt }
+    }
+    withLabel:process_long {
+        time   = { 20.h  * task.attempt }
+    }
+    withLabel:process_high_memory {
+        memory = { 6.GB * task.attempt }
+    }
+    withLabel:error_ignore {
+        errorStrategy = 'ignore'
+    }
+    withLabel:error_retry {
+        errorStrategy = 'retry'
+        maxRetries    = 2
+    }
+```
+
+Here, processes have been set to run with a maximum of 2 CPUs and 6GB of memory. Now, rerun the pipeline. 
+
+As expected, the modules that have completed successfully are `FASTQC` and `MULTIQC`:
 
 ```default
 
@@ -1244,12 +1330,12 @@ Generic options
 
 Core Nextflow options
   runName            : amazing_varahamihira
-  containerEngine    : singularity
+  containerEngine    : apptainer
   launchDir          : /scratch/users/sli/workshop/pipeline
   workDir            : /scratch/users/sli/workshop/pipeline/work
   projectDir         : /scratch/users/sli/workshop/pipeline/nf-core-customrnaseq
   userName           : sli
-  profile            : singularity
+  profile            : apptainer
   configFiles        : /scratch/users/sli/workshop/pipeline/nf-core-customrnaseq/nextflow.config
 
 !! Only displaying parameters that differ from the pipeline defaults !!
@@ -1261,9 +1347,25 @@ Core Nextflow options
     https://github.com/nf-core/customrnaseq/blob/main/CITATIONS.md
 
 executor >  local (4)
-[27/5fb1e5] NFCORE_CUSTOMRNASEQ:CUSTOMRNASEQ:FASTQC (liver) | 3 of 3 ✔
-[4c/9df475] NFCORE_CUSTOMRNASEQ:CUSTOMRNASEQ:MULTIQC        | 1 of 1 ✔
+[bc/aa58ea] process > NFCORE_CUSTOMRNASEQ:CUSTOMRNASEQ:FASTQC (SRR6357072) [100%] 3 of 3 ✔
+[38/71c1b4] process > NFCORE_CUSTOMRNASEQ:CUSTOMRNASEQ:MULTIQC             [100%] 1 of 1 ✔
 -[nf-core/customrnaseq] Pipeline completed successfully-
 ```
 
 Now that we've verified our pipeline template is working, we can add our own modules to the workflow. 
+
+::: {.callout-warning}
+**Nextflow version error**
+
+If you get an error message similar to the following:
+
+```default
+Nextflow version 23.10.0 does not match workflow required version: >=24.04.2
+```
+
+You can set a specific version of Nextflow on the terminal session using:
+
+```default
+export NXF_VER=24.04.2
+```
+:::
