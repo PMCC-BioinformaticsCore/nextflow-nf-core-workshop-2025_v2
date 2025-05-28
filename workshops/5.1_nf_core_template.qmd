@@ -10,10 +10,8 @@ from: markdown+emoji
 ::: callout-tip
 
 ### Objectives{.unlisted}
+- Gain an understanding of nf-core template structures
 - Develop a basic Nextflow workflow with nf-core templates
-- Test and set up profiles for a Nextflow workflow
-- Create conditional processes, and conditional scripts within a processs
-- Read data of different types into a Nextflow workflow
 :::
 
 ## **4.1 Recap: nf-core**
@@ -42,7 +40,7 @@ The main folders and files we will focus on today:
 - A schema file `assets/schema_input.json`, used to specify required values in the **input samplesheet**. This can be used to build sample metadata
 - A schema file `nextflow_schema.json`, used to specify required parameters to the **pipeline**
 
-## **4.2 Pipeline syntax**
+## **4.2 Recap: Pipeline syntax and additional Nextflow DSL**
 
 ### **4.2.1 Module file and process structure**
 
@@ -120,39 +118,153 @@ This process follows the typical structure we have seen previously:
 - `script` block that contains what the process will execute
 - `stub` block for prototyping workflow logic
 
-#### Directives
+Comparing this to the simple rnaseq.nf we created from [previous session](./3.1_creating_a_workflow.qmd), the structure is quite different. 
 
-Previously, we saw that processes were grouped together based on their resource requirements using the `withLabel` function. This function utilises the `label` directive to 'annotate' the process. 
+:::{.callout-note collapse="true"}
+## rnaseq.nf
+```
+#!/usr/bin/env nextflow
 
-In the `FASTQC` process, the `tag` directive is used to display the sample name when that process is being ran. For example: 
+params.reads = "/home/$USER/training/nf-training/data/ggal/*_{1,2}.fq"
+params.transcriptome_file = "/home/$USER/training/nf-training/data/ggal/transcriptome.fa"
 
-```default
-process FOO {
-  tag "$code"
+process INDEX {
+    container "quay.io/biocontainers/salmon:1.10.3--h6dccd9a_2"
+    
+    input:
+    path transcriptome
 
-  input:
-  val code
+    output:
+    path "salmon_idx"
 
-  script:
-  """
-  echo $code
-  """
+    script:
+    """
+    salmon index -t $transcriptome -i salmon_idx
+    """
+}
+
+process QUANTIFICATION {
+    container "quay.io/biocontainers/salmon:1.10.3--h6dccd9a_2"
+
+    input:
+    path salmon_index
+    tuple val(sample_id), path(reads)
+
+    output:
+    path "$sample_id"
+
+    script:
+    """
+    salmon quant --libType=U \
+    -i $salmon_index -1 ${reads[0]} -2 ${reads[1]} -o $sample_id
+    """
+}
+
+process FASTQC {
+    container 'quay.io/biocontainers/fastqc:0.12.1--hdfd78af_0'
+
+    input:
+    tuple val(sample_id), path(reads)
+
+    output:
+    path "fastqc_${sample_id}_logs"
+
+    script:
+    """
+    mkdir fastqc_${sample_id}_logs
+    fastqc -o fastqc_${sample_id}_logs -f fastq -q ${reads}
+    """
+}
+
+process MULTIQC {
+    publishDir params.outdir, mode:'copy'
+    container 'quay.io/biocontainers/multiqc:1.19--pyhdfd78af_0'
+
+    input:
+    path quantification
+    path fastqc
+
+    output:
+    path "*.html"
+
+    script:
+    """
+    multiqc . --filename $quantification
+    """
 }
 
 workflow {
-    ch_in = Channel.of('alpha', 'gamma', 'omega')
-    FOO(ch_in)
+  reads_ch = Channel.fromFilePairs("$params.reads")
+
+  index_ch = INDEX(params.transcriptome_file)
+  quant_ch = QUANTIFICATION(index_ch, reads_ch)
+  fastqc_ch = FASTQC(reads_ch)
+  multiqc_ch = MULTIQC(quant_ch, fastqc_ch)
+
+}
+```
+:::
+
+#### Directives
+
+In the previous section, you have been introduced to the `container` directive, which defines the software dependencies that will automatically be created by Nextflow, based on the profile specified by the user. 
+
+In the `FASTQC` process, you see another directive `tag` used to display the sample name when that process is being ran. 
+
+This was not available when we run our `rnaseq.py` from the previous section, where instead we have number next to the task name. 
+
+```default
+N E X T F L O W  ~  version 23.10.0
+Launching `rnaseq.nf` [hungry_swanson] DSL2 - revision: 8d8f0d321d
+executor >  local (3)
+[3d/edab31] process > INDEX              [100%] 1 of 1, cached: 1 ✔
+[17/31cf77] process > QUANTIFICATION (3) [100%] 3 of 3, cached: 3 ✔
+[cc/4edabe] process > FASTQC (3)         [100%] 3 of 3, cached: 3 ✔
+[08/3c1cfa] process > MULTIQC (3)        [100%] 3 of 3 ✔
+``` 
+
+Adding the `tag` directive, we can change how this is being displayed. 
+
+```default
+process FASTQC {
+
+    tag "${sample_id}"
+
+    container 'quay.io/biocontainers/fastqc:0.12.1--hdfd78af_0'
+
+    input:
+    tuple val(sample_id), path(reads)
+
+    output:
+    path "fastqc_${sample_id}_logs"
+
+    script:
+    """
+    mkdir fastqc_${sample_id}_logs
+    fastqc -o fastqc_${sample_id}_logs -f fastq -q ${reads}
+    """
 }
 ```
 
-The following will be printed, where the process names contain the `tag` that has been defined:
+If we re-run this again:
+
 ```default
-Launching `foo.nf` [grave_cantor] DSL2 - revision: 345f2fb75c
-executor >  local (3)
-[1a/915255] process > FOO (omega) [100%] 3 of 3 ✔
+nextflow run rnaseq.nf --outdir myresults -resume
 ```
 
-In the `FASTQC` process, the tag has been defined as `$meta.id`, which we will investigate later. 
+The following will be printed, where the `FASTQC` process names now contain the `tag` that has been defined (pay attention to how the tag is updated as the the number of processes completed).
+
+```default
+N E X T F L O W  ~  version 23.10.0
+Launching `rnaseq.nf` [sick_gautier] DSL2 - revision: b7fb1b8b79
+executor >  local (10)
+[a0/1cf654] process > INDEX              [100%] 1 of 1 ✔
+[5e/043543] process > QUANTIFICATION (3) [100%] 3 of 3 ✔
+[51/bd7035] process > FASTQC (gut)       [100%] 3 of 3 ✔
+[66/2ef36a] process > MULTIQC (3)        [100%] 3 of 3 ✔
+```
+
+In the `FASTQC` process, the tag has been defined as `$meta.id`, which we will go through further in [later section](./5.3_metadata_propagation.qmd) how nf-core utilises the `meta` variable for metadata propagation. 
 
 ```default
     tag "$meta.id"
@@ -164,9 +276,12 @@ In the `FASTQC` process, the tag has been defined as `$meta.id`, which we will i
         'biocontainers/fastqc:0.12.1--hdfd78af_0' }"
 ```
 
-The `conda` and `container` directives define the software dependencies that will automatically be created by Nextflow, based on the `profile` specified by the user. In the `FASTQC` process, `conda` contains the name of the channel where a package needs to be downloaded, and `container` defines where the container is hosted.
-
 #### Input 
+
+```default
+    input:
+    tuple val(meta), path(reads)
+```
 
 The input block defines the input channels to a process. It consists of a qualifier (ie. input data type), and a variable name that can be referenced in the process. Based on the qualifier, Nextflow can handle the input differently. 
 
@@ -176,17 +291,14 @@ The input block defines the input channels to a process. It consists of a qualif
 
 For `FASTQC`, the input is a `tuple`, where the first element is assigned the variable `meta` that is of data type `val`. The second element in the tuple is set as the variable `reads`, that is of the data type `path`. This means file paths that are provided to this `FASTQC` process will be symbolically linked inside the execution directory, where it can be accessed by within the `script`. 
 
-```default
-    input:
-    tuple val(meta), path(reads)
+#### Output 
 
+```default
     output:
     tuple val(meta), path("*.html"), emit: html
     tuple val(meta), path("*.zip") , emit: zip
     path  "versions.yml"           , emit: versions
 ```
-
-#### Output 
 
 Similar to `input`, the `output` block allows the output of the process to be specified, along with its accompanying qualifier. Only files that are defined within this `output` block can be saved to the output directory. 
 
@@ -195,102 +307,115 @@ Note that wildcards can be used when defining process outputs. For example, usin
 Additionally, there is an option to `emit` that output with a name that can be referenced to inside the workflow scope. Adding to the previous example:
 
 ```default
-process FOO {
-  tag "$code"
+process FASTQC {
 
-  input:
-  val code
+    tag "${sample_id}"
 
-  output:
-  path "*.txt"
+    container 'quay.io/biocontainers/fastqc:0.12.1--hdfd78af_0'
 
-  script:
-  """
-  echo $code > values.txt
-  """
-}
+    input:
+    tuple val(sample_id), path(reads)
 
-workflow {
-    ch_in = Channel.of('alpha', 'gamma', 'omega')
-    ch_out = FOO(ch_in)
+    output:
+    path "fastqc_${sample_id}_logs", emit: fastqc_out
+
+    script:
+    """
+    mkdir fastqc_${sample_id}_logs
+    fastqc -o fastqc_${sample_id}_logs -f fastq -q ${reads}
+    """
 }
 ```
-The value that is input to the process is now printed into a file `values.txt`. This file is matched using the `*` in the `output` block, and returned with qualifier `path`. Within the `workflow` scope, the output of the `FOO` process is assigned to `ch_out`.
 
-There are many ways to obtain the output of a process within the `workflow` scope. Another way is to provide the inputs to the process without assigning it to a new channel. Any process outputs can then be accessed using the `.out` attribute. 
+The value that is input to the process is now emitted to an attribute called `fastqc_out`, that can be accessed in the workflow scope with one the following syntax `<process-name>.out.fastqc_out`, `<process-name>.out`, or `<process-name>.out[0]`. This is an alternative way to provide the inputs to the process without assigning it to a new channel. 
 
 ```default
 workflow {
-    ch_in = Channel.of('alpha', 'gamma', 'omega')
+  reads_ch = Channel.fromFilePairs("$params.reads")
 
-    FOO(ch_in)
-    ch_out = FOO.out
+  index_ch = INDEX(params.transcriptome_file)
+  quant_ch = QUANTIFICATION(index_ch, reads_ch)
+  FASTQC(reads_ch)
+  multiqc_ch = MULTIQC(quant_ch, FASTQC.out)
 }
 ```
 
-This becomes useful if there are multiple outputs in a process. We have created an additional output file `edited_values.txt` that will be output by `FOO`: 
+This becomes useful if there are multiple outputs in a process.
+
+For example, if we now want to store the zip file separately for a different downstream process, we can update our FASTQC process to: 
 
 ```default
-process FOO {
-  tag "$code"
+process FASTQC {
 
-  input:
-  val code
+    tag "${sample_id}"
 
-  output:
-  path "values.txt"
-  path "edited_values.txt"
+    container 'quay.io/biocontainers/fastqc:0.12.1--hdfd78af_0'
 
-  script:
-  """
-  echo $code > values.txt
-  echo edited_$code > edited_values.txt
-  """
-}
+    input:
+    tuple val(sample_id), path(reads)
 
-workflow {
-    ch_in = Channel.of('alpha', 'gamma', 'omega')
+    output:
+    path "fastqc_${sample_id}_logs", emit: fastqc_out
+    path "fastqc_${sample_id}_logs/${sample_id}*.zip", emit: fastqc_zip
 
-    FOO(ch_in)
-    ch_out = FOO.out[0]
+    script:
+    """
+    mkdir fastqc_${sample_id}_logs
+    fastqc -o fastqc_${sample_id}_logs -f fastq -q ${reads}
+    """
 }
 ```
 
-Inside the `workflow` scope, the different outputs can be accessed by indexing the `.out` attribute. Alternatively, `emit` can be used:
+And in the workflow scope: 
 
 ```default
-process FOO {
-  tag "$code"
-
-  input:
-  val code
-
-  output:
-  path "values.txt", emit: original
-  path "edited_values.txt", emit: edited
-
-  script:
-  """
-  echo $code > values.txt
-  echo edited_$code > edited_values.txt
-  """
-}
-
 workflow {
-    ch_in = Channel.of('alpha', 'gamma', 'omega')
+  reads_ch = Channel.fromFilePairs("$params.reads")
 
-    FOO(ch_in)
-    ch_out = FOO.out.original
+  index_ch = INDEX(params.transcriptome_file)
+  quant_ch = QUANTIFICATION(index_ch, reads_ch)
+  FASTQC(reads_ch)
+  multiqc_ch = MULTIQC(quant_ch, FASTQC.out[0])
+
+  FASTQC.out.fastqc_zip.view()
 }
 ```
-The original `values.txt` has been emitted as `original`, which can be accessed within the `.out` attribute inside the `workflow` scope.
 
+We will get the following logging in the stdout, as per our intended design. 
+
+```default
+executor >  local (2)
+[51/e78fe9] process > INDEX              [100%] 1 of 1, cached: 1 ✔
+[fe/0d4674] process > QUANTIFICATION (3) [100%] 3 of 3, cached: 3 ✔
+[e3/43da72] process > FASTQC (gut)       [100%] 3 of 3, cached: 3 ✔
+[ae/c8dd39] process > MULTIQC (2)        [100%] 3 of 3, cached: 1 ✔
+[/home/larigan/lesson3.2/work/44/7af31590b2876facff2d0334c643e4/fastqc_liver_logs/liver_1_fastqc.zip, /home/larigan/lesson3.2/work/44/7af31590b2876facff2d0334c643e4/fastqc_liver_logs/liver_2_fastqc.zip]
+[/home/larigan/lesson3.2/work/78/0a38f532cd086bbf1173f57ca7f7b7/fastqc_lung_logs/lung_1_fastqc.zip, /home/larigan/lesson3.2/work/78/0a38f532cd086bbf1173f57ca7f7b7/fastqc_lung_logs/lung_2_fastqc.zip]
+[/home/larigan/lesson3.2/work/e3/43da722e6feb27ee4bc4c04b73e01a/fastqc_gut_logs/gut_1_fastqc.zip, /home/larigan/lesson3.2/work/e3/43da722e6feb27ee4bc4c04b73e01a/fastqc_gut_logs/gut_2_fastqc.zip]
+```
+
+::: {.callout-note collapse="false"}
+### Quiz
+
+What will happen if we did not update `multiqc_ch = MULTIQC(quant_ch, FASTQC.out)` to `multiqc_ch = MULTIQC(quant_ch, FASTQC.out[0])`?
+
+::: {.callout-note collapse="true"}
+### Solution
+
+```default
+N E X T F L O W  ~  version 23.10.0
+Launching `rnaseq.nf` [insane_banach] DSL2 - revision: 4b8bf69afe
+Process `MULTIQC` declares 2 input channels but 3 were specified
+```
+:::
+
+:::
 
 #### Script
 
 The `script` block defines the commands that is executed by the process. By default, it is executed as a Bash script, and can be any command or script normally executed on the command line. Within this block, **Bash** variables can be referenced to using an escaped dollar sign, ie. `\$`. **Nextflow** variables can be referenced to using the singular dollar sign, ie. `$`. 
 
-Let's take a look at the `script` block for RNASEQ's `FASTQC` process: 
+Let's take a look at the `script` block for `FASTQC` process: 
 
 ```default
 script:
@@ -327,7 +452,128 @@ The script starts by defnining local variables that can be accessed within the e
 
 Since processes are stored as separate Nextflow files, they need to be imported to a workflow script before they can be called inside a `workflow` scope. 
 
-Within the `fastq_fastqc_umitools_fastp` [subworkflow file](https://github.com/nf-core/rnaseq/blob/b96a75361a4f1d49aa969a2b1c68e3e607de06e8/subworkflows/nf-core/fastq_fastqc_umitools_fastp/main.nf#L5), the `FASTQC` process is imported using the following command:
+If we restructure our `rnaseq.py` from previous exercise, this can be achieved with the following structure:
+
+```default
+#!/usr/bin/env nextflow
+
+params.reads = "/home/$USER/training/nf-training/data/ggal/*_{1,2}.fq"
+params.transcriptome_file = "/home/$USER/training/nf-training/data/ggal/transcriptome.fa"
+
+include { INDEX } from './modules/index.nf'
+include { QUANTIFICATION } from './modules/quant.nf'
+include { FASTQC } from './modules/fastqc.nf'
+include { MULTIQC } from './modules/multiqc.nf'
+
+workflow {
+  reads_ch = Channel.fromFilePairs("$params.reads")
+
+  index_ch = INDEX(params.transcriptome_file)
+  quant_ch = QUANTIFICATION(index_ch, reads_ch)
+  FASTQC(reads_ch)
+  multiqc_ch = MULTIQC(quant_ch, FASTQC.out[0])
+
+  FASTQC.out.fastqc_zip.view()
+}
+```
+
+:::{.callout-note collapse="true"}
+#### modules/index.nf
+```default
+process INDEX {
+
+    container "quay.io/biocontainers/salmon:1.10.3--h6dccd9a_2"
+    
+    input:
+    path transcriptome
+
+    output:
+    path "salmon_idx"
+
+    script:
+    """
+    salmon index -t $transcriptome -i salmon_idx
+    """
+}
+```
+:::
+
+:::{.callout-note collapse="true"}
+#### modules/quant.nf
+```default
+process QUANTIFICATION {
+    container "quay.io/biocontainers/salmon:1.10.3--h6dccd9a_2"
+
+    input:
+    path salmon_index
+    tuple val(sample_id), path(reads)
+
+    output:
+    path "$sample_id"
+
+    script:
+    """
+    salmon quant --libType=U \
+    -i $salmon_index -1 ${reads[0]} -2 ${reads[1]} -o $sample_id
+    """
+}
+
+```
+:::
+
+:::{.callout-note collapse="true"}
+#### modules/fastqc.nf
+```default
+process FASTQC {
+
+    tag "${sample_id}"
+
+    container 'quay.io/biocontainers/fastqc:0.12.1--hdfd78af_0'
+
+    input:
+    tuple val(sample_id), path(reads)
+
+    output:
+    path "fastqc_${sample_id}_logs", emit: fastqc_out
+    path "fastqc_${sample_id}_logs/${sample_id}*.zip", emit: fastqc_zip
+
+    script:
+    """
+    mkdir fastqc_${sample_id}_logs
+    fastqc -o fastqc_${sample_id}_logs -f fastq -q ${reads}
+    """
+}
+```
+:::
+
+:::{.callout-note collapse="true"}
+#### modules/multiqc.nf
+```default
+process MULTIQC {
+    publishDir params.outdir, mode:'copy'
+    container 'quay.io/biocontainers/multiqc:1.19--pyhdfd78af_0'
+
+    input:
+    path quantification
+    path fastqc
+
+    output:
+    path "*.html"
+
+    script:
+    """
+    multiqc . --filename $quantification
+    """
+}
+
+```
+:::
+
+
+
+#### Modules Import Consideration
+
+If we observe within the `fastq_fastqc_umitools_fastp` [subworkflow file](https://github.com/nf-core/rnaseq/blob/b96a75361a4f1d49aa969a2b1c68e3e607de06e8/subworkflows/nf-core/fastq_fastqc_umitools_fastp/main.nf#L5), the `FASTQC` process is imported using the following command:
 
 ```default
 include { FASTQC as FASTQC_RAW  } from '../../../modules/nf-core/fastqc/main'
@@ -1167,7 +1413,7 @@ Copy this samplesheet into your folder, one level higher than the pipeline folde
 cp ./nf-core-customrnaseq/assets/samplesheet.csv ~/lesson4.4
 ```
 
-Also download the following test data to your folder:
+Also download the following test data to your folder, if you haven't already done it from the previous workshop:
 
 ```default
 git clone --single-branch --branch rnaseq https://github.com/nf-core/test-datasets ~/rnaseq_data
@@ -1214,13 +1460,6 @@ This test dataset is downloaded from the nf-core pipeline `rnaseq`, and contains
 
 Your samplesheet and data folder should now sit **outside** of your pipeline folder.
 
-```default
-.
-├── nf-core-customrnaseq 
-├── samplesheet.csv 
-└── data 
-```
-
 Edit the samplesheet to use our test data. Replace `<full_path>` with the full path to your dataset. 
 
 ```default
@@ -1246,6 +1485,23 @@ Let's run our pipeline by specifying the apptainer profile, cache configuration 
 ```default
 nextflow run ./nf-core-customrnaseq/main.nf -profile apptainer -c ./cache.config --input ./samplesheet.csv --outdir output 
 ```
+
+::: {.callout-warning}
+**Nextflow version error**
+
+If you get an error message similar to the following:
+
+```default
+Nextflow version 23.10.0 does not match workflow required version: >=24.04.2
+```
+
+You can set a specific version of Nextflow on the terminal session using:
+
+```default
+export NXF_VER=24.04.2
+```
+:::
+
 Note that we are launching the wrapper workflow file, which contains the `PIPELINE_INITIALISATION`, `PIPELINE_COMPLETION`, and our analysis workflow `CUSTOMRNASEQ`. 
 
 You'll notice that we get an error at the FASTQC process: 
@@ -1264,7 +1520,9 @@ Caused by:
 
 ```
 
-The [nf-core FASTQC process](https://github.com/nf-core/modules/blob/master/modules/nf-core/fastqc/main.nf) has the `process_medium` label, which by default required 6 CPUs. To change the resource settings to fit the limitations of our VM instance, the `nf-core-customrnaseq/conf/base.config` configuration file can be changed to the following:
+The [nf-core FASTQC process](https://github.com/nf-core/modules/blob/master/modules/nf-core/fastqc/main.nf) has the `process_medium` label, which by default required 6 CPUs. Previously when we were running nf-core pipelines, we would use the `--max-cpus` and `--max-memory` to cap the resources, but in this case, because this is our own workflow, we will update it in our base config. 
+
+To change the resource settings to fit the limitations of our VM instance, the `nf-core-customrnaseq/conf/base.config` configuration file can be changed to the following:
 
 ```default
     withLabel:process_single {
@@ -1308,10 +1566,11 @@ As expected, the modules that have completed successfully are `FASTQC` and `MULT
 
 ```default
 
- N E X T F L O W   ~  version 24.10.5
+ N E X T F L O W   ~  version 24.04.2
 
-Launching `./nf-core-customrnaseq/main.nf` [amazing_varahamihira] DSL2 - revision: d93ca14588
+Launching `./nf-core-customrnaseq/main.nf` [extravagant_volhard] DSL2 - revision: d93ca14588
 
+WARN: Invalid config manifest attribute `contributors`
 
 ------------------------------------------------------
                                         ,--./,-.
@@ -1326,17 +1585,17 @@ Input/output options
   outdir             : output
 
 Generic options
-  trace_report_suffix: 2025-05-01_16-19-14
+  trace_report_suffix: 2025-05-28_22-07-53
 
 Core Nextflow options
-  runName            : amazing_varahamihira
+  runName            : extravagant_volhard
   containerEngine    : apptainer
-  launchDir          : /scratch/users/sli/workshop/pipeline
-  workDir            : /scratch/users/sli/workshop/pipeline/work
-  projectDir         : /scratch/users/sli/workshop/pipeline/nf-core-customrnaseq
-  userName           : sli
+  launchDir          : /home/larigan/lesson4.4
+  workDir            : /home/larigan/lesson4.4/work
+  projectDir         : /home/larigan/lesson4.4/nf-core-customrnaseq
+  userName           : larigan
   profile            : apptainer
-  configFiles        : /scratch/users/sli/workshop/pipeline/nf-core-customrnaseq/nextflow.config
+  configFiles        : /home/larigan/lesson4.4/nf-core-customrnaseq/nextflow.config, /home/larigan/lesson4.4/./cache.config
 
 !! Only displaying parameters that differ from the pipeline defaults !!
 ------------------------------------------------------
@@ -1344,28 +1603,22 @@ Core Nextflow options
     https://doi.org/10.1038/s41587-020-0439-x
 
 * Software dependencies
-    https://github.com/nf-core/customrnaseq/blob/main/CITATIONS.md
+    https://github.com/nf-core/customrnaseq/blob/master/CITATIONS.md
 
 executor >  local (4)
-[bc/aa58ea] process > NFCORE_CUSTOMRNASEQ:CUSTOMRNASEQ:FASTQC (SRR6357072) [100%] 3 of 3 ✔
-[38/71c1b4] process > NFCORE_CUSTOMRNASEQ:CUSTOMRNASEQ:MULTIQC             [100%] 1 of 1 ✔
+[8e/0c0284] process > NFCORE_CUSTOMRNASEQ:CUSTOMRNASEQ:FASTQC (SRR6357072) [100%] 3 of 3 ✔
+[e1/bdfff7] process > NFCORE_CUSTOMRNASEQ:CUSTOMRNASEQ:MULTIQC             [100%] 1 of 1 ✔
 -[nf-core/customrnaseq] Pipeline completed successfully-
+Completed at: 28-May-2025 22:09:49
+Duration    : 1m 54s
+CPU hours   : (a few seconds)
+Succeeded   : 4
 ```
 
 Now that we've verified our pipeline template is working, we can add our own modules to the workflow. 
 
-::: {.callout-warning}
-**Nextflow version error**
+</br>
 
-If you get an error message similar to the following:
+### **Next Chapter: [nf-core modules](./5.2_nf_core_modules.qmd)** 
 
-```default
-Nextflow version 23.10.0 does not match workflow required version: >=24.04.2
-```
-
-You can set a specific version of Nextflow on the terminal session using:
-
-```default
-export NXF_VER=24.04.2
-```
-:::
+</br>

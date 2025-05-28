@@ -452,11 +452,11 @@ gut.html  liver.html  lung.html
 ```default
 #!/usr/bin/env nextflow
 
-params.reads = "/.../training/nf-training/data/ggal/*_{1,2}.fq"
-params.transcriptome_file = "/.../training/nf-training/data/ggal/transcriptome.fa"
+params.reads = "/home/$USER/training/nf-training/data/ggal/*_{1,2}.fq"
+params.transcriptome_file = "/home/$USER/training/nf-training/data/ggal/transcriptome.fa"
 
 process INDEX {
-    container "https://depot.galaxyproject.org/singularity/salmon:1.10.3--h6dccd9a_2"
+    container "quay.io/biocontainers/salmon:1.10.3--h6dccd9a_2"
     
     input:
     path transcriptome
@@ -471,7 +471,7 @@ process INDEX {
 }
 
 process QUANTIFICATION {
-    container "/home/<username>/apptainer_cache/depot.galaxyproject.org-singularity-salmon-1.10.3--h6dccd9a_2.img"
+    container "quay.io/biocontainers/salmon:1.10.3--h6dccd9a_2"
 
     input:
     path salmon_index
@@ -488,7 +488,7 @@ process QUANTIFICATION {
 }
 
 process FASTQC {
-    container 'https://depot.galaxyproject.org/singularity/fastqc:0.12.1--hdfd78af_0'
+    container 'quay.io/biocontainers/fastqc:0.12.1--hdfd78af_0'
 
     input:
     tuple val(sample_id), path(reads)
@@ -505,7 +505,7 @@ process FASTQC {
 
 process MULTIQC {
     publishDir params.outdir, mode:'copy'
-    container 'https://depot.galaxyproject.org/singularity/multiqc:1.28--pyhdfd78af_0'
+    container 'quay.io/biocontainers/multiqc:1.19--pyhdfd78af_0'
 
     input:
     path quantification
@@ -525,8 +525,6 @@ workflow {
 
   index_ch = INDEX(params.transcriptome_file)
   quant_ch = QUANTIFICATION(index_ch, reads_ch)
-  quant_ch.view()
-
   fastqc_ch = FASTQC(reads_ch)
   multiqc_ch = MULTIQC(quant_ch, fastqc_ch)
 
