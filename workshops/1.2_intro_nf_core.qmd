@@ -199,7 +199,7 @@ Pipeline parameters and their descriptions can also be viewed on the command lin
 nextflow run -r 3.18.0 nf-core/rnaseq --help
 ``` 
 
-In the example above, the parameters for `rnaseq` pipeline version `3.18.0` is being viewed. 
+In the example above, the parameters for `rnaseq` pipeline version `3.14.0` is being viewed. 
 
 **Exercise**: View the parameters for version `2.0` of the `nf-core/testpipeline` workflow using the command line
 
@@ -276,7 +276,7 @@ Notably, the `nextflow.config` file can also contain the definition of one or mo
 nextflow run nf-core/<pipeline> -profile apptainer
 ```
 
-By specifying `pptainer` as the Nextflow profile, the following options will be enabled:
+By specifying `apptainer` as the Nextflow profile, the following options will be enabled:
 
 ```default
 profiles {
@@ -477,4 +477,8 @@ nextflow run -r 2.0 nf-core/testpipeline -resume -profile test,apptainer --outdi
 </br>
 
 ---
-^*These materials are adapted from [Customising Nf-Core Workshop](https://sydney-informatics-hub.github.io/customising-nfcore-workshop/notebooks/1.2_nfcore.html) by Sydney Informatics Hub*^
+This workshop is adapted from various nextflow training materials, including:
+
+- [Nextflow Training Materials](https://training.nextflow.io)
+- [Customising Nf-Core Workshop](https://sydney-informatics-hub.github.io/customising-nfcore-workshop)
+- [Hello Nextflow Workshop](https://sydney-informatics-hub.github.io/hello-nextflow/)

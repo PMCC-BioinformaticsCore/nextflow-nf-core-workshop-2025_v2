@@ -12,7 +12,9 @@ This workshop is designed to provide participants with a foundational understand
 
 ### Course Helpers
 
-TO DO
+- Emma Gail, Melbourne Bioinformatics
+- Sanduni Rajapaksa, Research Computing Facility, Peter Mac
+- Adam Taranto, WEHI
 
 ### Prerequisites
 
@@ -51,4 +53,8 @@ If you have any trouble, please get in contact with us ASAP.
 
 ### Credits and acknowledgement
 
-^*This workshop is adapted from [Customising Nf-Core Workshop](https://sydney-informatics-hub.github.io/customising-nfcore-workshop) materials from Sydney Informatics Hub*^
+This workshop is adapted from various nextflow training materials, including:
+
+- [Nextflow Training Materials](https://training.nextflow.io)
+- [Customising Nf-Core Workshop](https://sydney-informatics-hub.github.io/customising-nfcore-workshop)
+- [Hello Nextflow Workshop](https://sydney-informatics-hub.github.io/hello-nextflow/)

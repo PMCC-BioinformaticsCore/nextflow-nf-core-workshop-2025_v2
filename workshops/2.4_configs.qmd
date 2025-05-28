@@ -1,0 +1,400 @@
+---
+title: "**Nextflow Configs**"
+output:
+  html_document:
+    toc: false
+    toc_float: false
+from: markdown+emoji
+---
+
+As we learnt in [lesson 1.2.4](../workshops/1.2_intro_nf_core.qmd#viewing-parameters), all nf-core pipelines have a unique set of **pipeline-specific** parameters that can be used in conjunction with **Nextflow** parameters to configure the workflow. Generally, nf-core pipelines can be customised at a few different levels:
+
+|Level of effect      |Customisation feature                                                        |
+|---------------------|-----------------------------------------------------------------------------|
+|The workflow         |When diverging methods are available for a pipeline, you may choose a specific path to follow  |
+|A process            |Where the process is executed and what software version is used  |
+|A tool               |Apply specific thresholds or optional flags for a tool inside a process |
+|Compute resources    |Resource allocation thresholds or software execution methods for a workflow or a process  |
+
+It is important to remember that nf-core pipelines typically do not include all possible tool parameters. This makes it challenging to piece different sources of information together to determine which parameters you should be using. 
+
+
+### **4.1.4. Default nf-core configuration**
+
+Let's take a closer look at **configuration settings**, which manage **how the workflow is implemented on your system**. 
+
+Nextflow's portability is achieved by separating the **workflow implementation** (input data, custom parameters, etc.) from the **configuration settings** (tool access, compute resources, etc.) required to execute it. This portability facilitates **reproducibility**: by applying the same pipeline parameters as a colleague, you can achieve the same results on any machine by adjusting the resource configurations to suit your platform. This means there is no requirement to edit the pipeline code. 
+
+Together, `nextflow.config` and `base.config` can be used to define the default execution settings and parameters of an nf-core workflow. 
+
+Inside the [conf/base.config](https://github.com/nf-core/rnaseq/blob/3.14.0/conf/base.config) file are the default **compute resource settings** to be used by the processes in the nf-core workflow. It uses process labels, specified with `withLabel`, to enable different sets of resources to be applied to groups of processes that require similar compute. Processes are labelled within the process [`main.nf`](https://github.com/nf-core/rnaseq/blob/3.14.0/modules/nf-core/star/align/main.nf) file:
+
+```default
+process STAR_ALIGN {
+    ...
+
+    label 'process_high'
+
+    ...
+
+}
+```
+
+We can over-ride these default compute resources using the **command line**, or a **custom configuration file** specifed with `-c`.
+
+Now, take a few moments to look through [nextflow.config](https://github.com/nf-core/rnaseq/blob/3.14.0/nextflow.config). 
+
+Recall that this file is more **workflow-specific**, and sets the **defaults for the workflow parameters** such as `--max_cpus`, `--max_memory` and `--max_time`. These are generous values that are expected to be over-ridden with your custom settings, to ensure that no single process attempts to use more resources than you have available on your platform. To over-ride these default parameters, the **command line**, or a **parameters file** specified with `-params-file` can be used. 
+
+Within `conf/base.config`, the `check_max()` function will ensure that a process-specifc resource setting will not exceed the maximum settings as dictated by by `--max_cpus`, `--max_memory` and `--max_time`. If the process setting does exceed any of the maximum CPUs, memory, or time, that value will be over-written to the values in `--max_cpus`, `--max_memory` and `--max_time`. 
+
+![](./media/2.3_check_max.png){width=75%}
+
+By default, all published nf-core modules contain a process label that categorises that process based on its resource usage. This means we won't have to specify the resources for each individual process in the pipeline -- we only need to tune these resource usage groups based on our compute infrastructure. 
+
+Also notice that `nextflow.config` contains the **software profiles** available to use, such as Apptainer, Singulariy, Docker, or Conda. Each process definition script `main.nf` will define which software can be used -- these are usually container managers or Conda environment managers. For `STAR_ALIGN`:
+
+```default
+process STAR_ALIGN {
+    ...
+
+    conda "bioconda::star=2.7.10a bioconda::samtools=1.16.1 conda-forge::gawk=5.1.0"
+    container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
+        'https://depot.galaxyproject.org/singularity/mulled-v2-1fa26d1ce03c295fe2fdcf85831a92fbcbd7e8c2:1df389393721fc66f3fd8778ad938ac711951107-0' :
+        'biocontainers/mulled-v2-1fa26d1ce03c295fe2fdcf85831a92fbcbd7e8c2:1df389393721fc66f3fd8778ad938ac711951107-0' }"
+
+    ...
+
+}
+```
+
+A different container will be 'pulled' from a repository if Docker/Singularity/Apptainer is specified, or environment files will be downloaded if Conda has been specified. The default software profile can be over-ridden by specifying `-profile` on the command line. 
+
+**Exercise**: What are the default settings for maximum CPU, memory and time for the `STAR_ALIGN` module? How have these defaults changed after applying our customisations previously?
+
+::: {.callout-note collapse="true"}
+### Solution
+First, we need to determine what **process label** has been assigned to the `STAR_ALIGN` [module](https://github.com/nf-core/rnaseq/blob/3.14.0/modules/nf-core/star/align/main.nf). 
+
+`STAR_ALIGN` has the label `process_high` which by default sets 12 CPUs, 72GB of memory, 16 hours time limit, as specified in `conf/base.config`(https://github.com/nf-core/rnaseq/blob/3.14.0/conf/base.config). 
+
+We have previosuly applied `--max_cpus 2` and `--max_memory 6.GB`, so the `check_max()` function would have reduced the final resources given to the STAR alignment process to 2 CPUs and 6GB of memory, while retaining the default maximum walltime. 
+:::
+
+
+### **4.1.5. When to use a custom config file**
+
+::: {.callout-important}
+**TO DO**
+Change CONTAINER AND PATH EXPORT
+:::
+
+In our runs so far, we have avoided the need for a custom resource configuration file by:
+
+- Over-riding the default <CONTAINER> **profile** that dictates how software tools are accessed
+  - Without this, our pipeline runs would fail since we do not have each workflow tool (such as `STAR_ALIGN`) installed localy on our machine
+  - Additionally, since we use a shared container directory, the path was exported using the command `export ...=...`
+- Over-riding the default values for CPUs and memory set in `nextflow.config` with `--max_cpus 2` and `--max_memory 6.GB` to fit within our interactive sessions
+  - Without these parameters, our pipeline runs would fail since Nextflow first checks that the requested resources are available before attempting to execute a workflow. When a process requests more resources than available, that process will fail. 
+  
+  
+However, those are basic configurations. What if:
+
+- We wanted to increase the resources above what is set by default in pipeline process labels, to take advantage of high CPU or high memory infrastructures?
+- We wanted to run on an HPC or cloud infrastructure? 
+- We wanted to execute specific modules on specific partitions on a cluster?
+- We wanted to use a non-default software container? 
+- We wanted to customise outputs beyond what was possible with the nf-core workflow parameters?
+
+
+### **4.1.6** Submitting each process as an individual job to HPC
+
+Recall that Nextflow has a number of different [`scopes`](https://www.nextflow.io/docs/latest/config.html) that can be included in configuration files. For example the `params` scope that we tested previously, and the `profiles` scope that defined software management methods. 
+
+Again, look inside [conf/base.config](https://github.com/nf-core/rnaseq/blob/3.14.0/conf/base.config). Notice that all the resource specifications are wrapped inside the `process` scope. 
+
+```default
+process {
+
+    cpus   = { check_max( 1    * task.attempt, 'cpus'   ) }
+    memory = { check_max( 6.GB * task.attempt, 'memory' ) }
+    time   = { check_max( 4.h  * task.attempt, 'time'   ) }
+
+    ...
+
+}
+```
+
+To specify how a process is executed, the `process` scope can also be used. Currently, all our processes are running locally on our interactive session. These processes are managed by Nextflow, which determines which inputs are available to a particular process, and launches multiple processes in parallel if there are adequate resources available. 
+
+However, instead of launching the processes in parallel locally, we can submit them as individual jobs on our HPC system. This will also execute the processes to run in parallel, but will allow for more resources to be specified beyond what is available locally. 
+
+::: {.callout-important}
+**TO DO**
+Change to PARTITION and EXECUTOR in nectar. Change MAX LIMITS
+:::  
+
+Let's create a custom resource file, `resources.config`. Paste the following into your new file:
+
+```default
+process {
+    executor = 'slurm'
+    queue = 'PARTITION'
+}
+
+executor {
+    queueSize = 4
+}
+```
+
+Nextflow is compatible with many [executors](https://www.nextflow.io/docs/latest/executor.html#), including AWS, Azure, PBS, and many more -- we will take a closer look later in the session. For our purposes, we are specifying the `executor` as `slurm` and the partition to be `PARTITION`, inside the `process` scope. Nexflow will submit each process as a separate job using the `sbatch` command. 
+
+For the purposees of this workshop, we will limit the number of concurrent jobs each user can submit to `4`. This can be done using the `executor` scope, along with the `queueSize` parameter. There are many execution options that can be configured; for a full list see [here](https://www.nextflow.io/docs/latest/reference/config.html). 
+
+Note that we can now adjust the `--max_memory` and `--max_cpus` that we specified in our parameter file `workshop-params.yaml` to suit our HPC system. Change those parameters to the following:
+
+```default
+max_memory: "36.GB" 
+max_cpus: 12
+```
+
+Now, rerun the pipeline, specifying our new `resources.config` file, and our updated `workshop-params.yaml`.
+
+::: {.callout-important}
+**TO DO**
+Change to CONTAINER
+:::  
+
+::: {.callout-warning}
+Make sure the previous Nextflow run has completed. If it has not completed, you can simply cancel it by running `control+C`. Also, add the `-resume` option to your `nextflow run` command. This will cache any already completed processes. We will investigate this functionality later in the workshop. 
+:::
+
+```default
+nextflow run nf-core/rnaseq -r 3.14.0 \
+    -resume
+    -profile <CONTAINER> \
+    -params-file ./workshop-params.yaml \
+    -c resources.config
+```
+
+Has the executor been updated successfully? If `slurm` is being used, you should now notice `executor > slurm (4)`. This indicates that a maximum of 4 concurrent jobs have been submitted, as specified in `queueSize`. 
+
+```default
+executor >  slurm (4)
+[72/1f5082] NFC…ENOME:GTF_FILTER (chr22_with_ERCC92.fa) | 0 of 1
+[-        ] NFCORE_RNASEQ:RNASEQ:PREPARE_GENOME:GTF2BED -
+[-        ] NFC…Q:PREPARE_GENOME:MAKE_TRANSCRIPTS_FASTA -
+[4e/90b642] NFC…OM_GETCHROMSIZES (chr22_with_ERCC92.fa) | 0 of 1
+[-        ] NFC…ASEQ:PREPARE_GENOME:STAR_GENOMEGENERATE -
+[-        ] NFCORE_RNASEQ:RNASEQ:CAT_FASTQ              -
+...
+```
+
+### **4.1.7. Custom resource configuration using process labels**
+
+To achieve optimum computational efficiency on your platform, more granular control may be required beyond what is capable with `--max_cpus`, `--max_memory` and `--max_time`. 
+
+::: {.callout-note}
+If you instead set `--max_cpus 16` to the nf-core `rnaseq` workflow, the `STAR_ALIGN` module would still only utilise 12 CPUs. This is because it has been set with the label `process_high`, which sets the CPUs to 12. Since 12 does not exceed the maximum allowable CPUs of 16, 12 CPUs will be utilised in the process execution.
+
+```default
+    withLabel:process_high {
+        cpus   = { check_max( 12    * task.attempt, 'cpus'    ) }
+        memory = { check_max( 72.GB * task.attempt, 'memory'  ) }
+        time   = { check_max( 16.h  * task.attempt, 'time'    ) }
+    }
+```
+
+However, if we do have 16 CPUs available and there are no ther processes with fulfilled input channels that could make use of the 4 remaining CPUs, those resources would sit idle while the `STAR_ALIGN` process is completing. 
+
+To optimise the resource allocations for the 16 CPU platform, we might for example set `--max_cpus 8` so two samples could be aligned concurrently. Another option is to over-ride the CPU resources assigned to the `STAR_ALIGN` module and increase it to 16. 
+:::
+
+This can be done through the `process` scope. Let's now add the following process label resources to our custom resources file, `resources.config`. 
+
+```default
+    withLabel: process_low {
+        cpus = 2
+        memory = 6.GB
+    }
+    withLabel: process_medium {
+        cpus = 4
+        memory = 12.GB
+    } 
+    withLabel: process_high {
+        cpus = 12
+        memory = 36.GB
+    }
+```
+
+::: {.callout-note}
+For the purposes of our workshop, we are setting small resource limits for our HPC. Consider how this approach can be powerful when taking advantage of the compute resources available on your platform.   
+:::
+
+Save the file then re-run the workflow with our custom configuration. 
+
+::: {.callout-important}
+**TO DO**
+Change CONTAINER
+:::
+
+::: {.callout-warning}
+Make sure the previous Nextflow run has completed. If it has not completed, you can simply cancel it by running `control+C`. Also, add the `-resume` option to your `nextflow run` command. This will cache any already completed processes. We will investigate this functionality later in the workshop. 
+:::
+
+```default
+nextflow run nf-core/rnaseq -r 3.14.0 \
+    -resume
+    -profile <CONTAINER> \
+    -params-file ./workshop-params.yaml \
+    -c resources.config
+```
+
+
+
+### **4.1.8. Custom resource configuration using process names**
+
+Since process labels can only specifiy resources to groups of processes that share the same label through `withLabel`, we can achieve greater control using `withName`, to specify resources for a particular process. 
+
+Similar to `withLabel`, using `withName` allows us to adjust the requirements for a specific process without needing to edit any pipeline module code (ie. the `main.nf` module file). With `withName`, multiple module names can also be specified using wildcards or `or` (`*` or `|`) notation. 
+
+`withName` has a [higher priority](https://www.nextflow.io/docs/latest/config.html#selector-priority) than `withLabel`, meaning anything contained in `withName` will over-ride conflicting values in `withLabel'. 
+
+First, let's ensure we have the specific **path name** for the module that we wish to target. We will be using the `MULTIQC` module as an example. When the `rnaseq` pipeline was executed, an **execution file** was created inside the pipeline output folder. This file is located within the `pipeline_info` folder, and prefixed with `execution_trace` along with the date of pipeline execution.
+***Note***: Change `<date_of_pipeline>` to the file date that is inside your folder. 
+
+```default
+ls lesson2.1/pipeline_info/execution_trace_<date_of_pipeline>.txt
+```
+
+This file contains a full log of each process that has ran, along with resources specified to the process and if the execution was successful. To get the full name path for the `MULTIQC` process, let's search for this process name inside the execution trace
+
+```default
+grep MULTIQC lesson2.1/pipeline_info/execution_trace_<date_of_pipeline>.txt
+```
+```default
+36      f0/731167       23769653        NFCORE_RNASEQ:RNASEQ:MULTIQC_CUSTOM_BIOTYPE (HBR_Rep2_ERCC)  COMPLETED       0       2025-05-04 15:55:44.676 9.7s    0ms     38.2%   3.1 MB  5.4 MB       1.4 MB  2.6 KB
+52      c9/b96b9e       23769667        NFCORE_RNASEQ:RNASEQ:MULTIQC_CUSTOM_BIOTYPE (HBR_Rep1_ERCC)  COMPLETED       0       2025-05-04 15:55:49.699 9.7s    0ms     40.0%   3 MB    5.4 MB       1.4 MB  2.6 KB
+66      b7/aba0aa       23769685        NFCORE_RNASEQ:RNASEQ:MULTIQC (1)        COMPLETED   02025-05-04 15:57:14.401 1m 35s  1m 18s  198.4%  186.7 MB        1.1 GB  44.1 GB 12.2 MB
+```
+This search returned three results. For our purposes, we will be using the last result, and the information contained in the fourth column, which provides the full process name `NFCORE_RNASEQ:RNASEQ:MULTIQC`. This process name indicates what workflows the particular module originated from. 
+
+For `MULTIQC`, any of the following names can be used:
+
+- `'NFCORE_RNASEQ:RNASEQ:MULTIQC'`: Use the `MULTIQC` module inside the `RNASEQ` workflow in `NFCORE_RNASEQ`
+- `'.*:RNASEQ:MULTIQC'`: Use the `MULTIQC` module inside the `RNASEQ` workflow in any upstream workflows
+- `'.*:MULTIQC'`: Use the `MULTIQC` module in any upstream workflows
+
+::: {.callout-note}
+If you are running the pipeline for the first time, it can be difficult to determine the full name path to use. If you are unsure of how to build the path, you can look through the `modules.config` files specified for your pipeline on [Github](https://github.com/nf-core/rnaseq/blob/3.14.0/conf/modules.config). These usually contain module specific parameters that can guide you in creating your own name path.   
+:::
+
+Let's now add the following to our configuration file `resources.config`. Inside the `process` scope, provide the name for the `MULTIQC` module using the `withName` selector. Now, we wish to use a specific container when running that module. Change it to `'quay.io/biocontainers/multiqc:1.14--pyhdfd78af_0'`
+
+```default
+process {
+
+  ...
+
+  withName: '.*:MULTIQC' {
+    container = 'quay.io/biocontainers/multiqc:1.14--pyhdfd78af_0'
+  }
+} 
+```  
+
+::: {.callout-important}
+**TO DO**
+Change EXECUTOR
+:::
+
+::: {.callout-note collapse="true"}
+### Completed configuration file
+
+```default
+process {
+    executor = 'slurm'
+    queue = 'EXECUTOR'
+
+    withLabel: process_low {
+        cpus = 2
+        memory = 6.GB
+    }
+    withLabel: process_medium {
+        cpus = 4
+        memory = 12.GB
+    } 
+    withLabel: process_high {
+        cpus = 12
+        memory = 36.GB
+    }
+
+    withName: '.*:MULTIQC' {
+        container = 'quay.io/biocontainers/multiqc:1.14--pyhdfd78af_0'
+    }
+
+}
+
+executor {
+    queueSize = 4
+}
+
+```
+:::
+
+::: {.callout-warning}
+### **What if the parameter I want to apply isn't available?**
+
+Recall [earlier](2.1_customise_and_run.qmd#custom-configuration-files) that nf-core modules use `ext.args` to pass additional arguments to a module. This uses a special Nextflow directive [`ext`](https://www.nextflow.io/docs/latest/process.html#ext). If an nf-core pipeline does not have a pre-defined parameter for a process, you may be able to implement `ext.args`. 
+
+The inclusion of `ext.args` is currently best practice for all DSL2 nf-core modules where additional parameters may be required to run a process. However, this may not be implemented for all modules in all nf-core pipelines. Depending on the pipeline, these process modules may not have defined the `ext.args` variable in the script blocks and is thus not available for applying customisation. If that is the case consider submitting a feature request or a making pull request on the pipeline's GitHub repository to implement this!
+:::
+
+Save the config then resume your run, setting `outdir` to `lesson2.1_multiqc`, along with the resource file `resources.config` and parameter file `workshop-params.yaml`:
+
+::: {.callout-important}
+**TO DO**
+Change CONTAINER
+:::
+
+```default
+nextflow run nf-core/rnaseq -r 3.14.0 \
+  -resume 
+  -profile <CONTAINER> \
+  -c my_resources.config \
+  -params-file workshop-params.yaml \
+  --outdir lesson2.1_multiqc \
+```
+
+If your execution path for the `MULTIQC` module was **not** specified correctly, a pipeline warning would be printed, such as:
+
+```default
+WARN: There's no process matching config selector: ...
+```
+
+
+::: {.callout-note}
+### Configuration order of priority
+
+Previously, we saw that `withName` has a higher priority than `withLabel`. There are additional [configuration priorities](https://www.nextflow.io/docs/latest/config.html#configuration-file) managed by Nextflow, when conflicting parameters are provided. 
+
+The settings specific with  `-c resources.config` will over-ride those that appear in the default nf-core configurations `nextflow.config` and `conf/base.config`. 
+
+Additionally, any parameters provided in the command line will over-ride those in the `-c` configuration file. 
+
+To avoid confusion, it is best not to name your custom configuration files `nextflow.config`!
+::: 
+
+
+::: {.callout-tip}
+### **Key points**
+- nf-core workflows work 'out of the box' but there are compute and software configurations we can customise to optimise the pipeline execution on our compute infrastructure
+- nf-core uses the default parameters in `nextflow.config` and `conf/base.config`, both of which are automatically used by the pipeline
+- A custom configuration can be applied using `-c`, and will over-ride settings in the default configs
+- Customisations can be targeted to either groups of processes, or specific processes using `withLabel` or `withName`
+- Workflow parameters can be specific in `-params-file` and not `-c`
+:::
+
+
+
+
+---

@@ -285,7 +285,11 @@ srun --pty -p <PARTITION> --mem 8GB --mincpus 2 -t 0-5:00 bash
 </br>
 
 ---
-^*These materials are adapted from [Customising Nf-Core Workshop](https://sydney-informatics-hub.github.io/customising-nfcore-workshop/notebooks/1.2_nfcore.html) by Sydney Informatics Hub*^
+This workshop is adapted from various nextflow training materials, including:
+
+- [Nextflow Training Materials](https://training.nextflow.io)
+- [Customising Nf-Core Workshop](https://sydney-informatics-hub.github.io/customising-nfcore-workshop)
+- [Hello Nextflow Workshop](https://sydney-informatics-hub.github.io/hello-nextflow/)
 
 
 [^1]: https://www.lexico.com/definition/workflow

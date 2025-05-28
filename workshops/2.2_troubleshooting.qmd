@@ -7,6 +7,16 @@ output:
 from: markdown+emoji
 ---
 
+::: callout-tip
+
+### Objectives{.unlisted}
+
+- Learn basic troubleshooting of nextflow log
+- Learn the structure of nextflow work directory
+- Examine the run command stitched together by nextflow for manual debugging
+
+:::
+
 ### **2.2.1. Nextflow log**
 
 It is important to keep a record of the commands you have used to generate your results. Nextflow helps with this by creating and storing metadata and logs about the run in hidden files and folders in your current directory (unless otherwise specified). This data can be used by Nextflow to generate reports. It can also be queried using the Nextflow `log` command:
@@ -52,10 +62,10 @@ nextflow log
 ```
 
 ```default
-TIMESTAMP          	DURATION	RUN NAME         	STATUS	REVISION ID	SESSION ID                          	COMMAND 
-2023-11-21 22:43:14	14m 17s 	jovial_angela    	OK    	3bec2331ca 	319751c3-25a6-4085-845c-6da28cd771df	nextflow run nf-core/rnaseq
-2023-11-21 23:05:49	1m 36s  	marvelous_shannon	OK    	3bec2331ca 	319751c3-25a6-4085-845c-6da28cd771df	nextflow run nf-core/rnaseq
-2023-11-21 23:10:00	1m 35s  	deadly_babbage   	OK    	3bec2331ca 	319751c3-25a6-4085-845c-6da28cd771df	nextflow run nf-core/rnaseq
+TIMESTAMP          	DURATION	RUN NAME        	STATUS	REVISION ID	SESSION ID                          	COMMAND                                                                                                                 
+2025-05-27 15:23:39	2m 16s  	hopeful_dubinsky	OK    	b89fac3265 	54c06115-6867-45e3-86b3-8566a69f7406	nextflow run nf-core/rnaseq -r 3.14.0 -profile apptainer -params-file ./workshop-params.yaml                            
+2025-05-27 15:56:36	37.1s   	tiny_bartik     	OK    	b89fac3265 	54c06115-6867-45e3-86b3-8566a69f7406	nextflow run nf-core/rnaseq -r 3.14.0 -profile apptainer -params-file ./workshop-params.yaml -resume                    
+2025-05-27 15:57:23	35.6s   	angry_mcclintock	OK    	b89fac3265 	54c06115-6867-45e3-86b3-8566a69f7406	nextflow run nf-core/rnaseq -r 3.14.0 -profile apptainer -params-file ./workshop-params.yaml -resume --outdir my_results
 ```
 
 Query the process, hash, and script using the `-f` option for the most recent run:
@@ -68,25 +78,30 @@ nextflow log marvelous_shannon -f process,hash,script
 
 [... truncated ...]
 
-NFCORE_RNASEQ:RNASEQ:SUBREAD_FEATURECOUNTS	7c/f936d4	
-    featureCounts \
-        -B -C -g gene_biotype -t exon \
-        -p \
-        -T 2 \
-        -a chr22_with_ERCC92.gtf \
-        -s 2 \
-        -o HBR_Rep1_ERCC.featureCounts.txt \
-        HBR_Rep1_ERCC.markdup.sorted.bam
+NFCORE_RNASEQ:RNASEQ:QUANTIFY_PSEUDO_ALIGNMENT:SALMON_QUANT	d7/01e251	
+    salmon quant \
+        --geneMap genome.filtered.gtf \
+        --threads 2 \
+        --libType=ISR \
+        --index salmon \
+        -1 SRR6357071_1_val_1.fq.gz -2 SRR6357071_2_val_2.fq.gz \
+         \
+        -o SRR6357071
+
+    if [ -f SRR6357071/aux_info/meta_info.json ]; then
+        cp SRR6357071/aux_info/meta_info.json "SRR6357071_meta_info.json"
+    fi
 
     cat <<-END_VERSIONS > versions.yml
-    "NFCORE_RNASEQ:RNASEQ:SUBREAD_FEATURECOUNTS":
-        subread: $( echo $(featureCounts -v 2>&1) | sed -e "s/featureCounts v//g")
+    "NFCORE_RNASEQ:RNASEQ:QUANTIFY_PSEUDO_ALIGNMENT:SALMON_QUANT":
+        salmon: $(echo $(salmon --version) | sed -e "s/salmon //g")
     END_VERSIONS
 
 [... truncated ... ]
 
-NFCORE_RNASEQ:RNASEQ:MULTIQC	7a/8449d7	
+NFCORE_RNASEQ:RNASEQ:MULTIQC	7c/b0bbc5	
     multiqc \
+        -n multiqc_report.html \
         -f \
          \
          \
@@ -108,34 +123,30 @@ Nextflow caching mechanism works by assigning a unique ID to each task. The task
 
 You can re-launch the previously executed `nf-core/rnaseq` workflow again using `-resume`, and observe the progress. Change the output directory to be `my_results`. Notice the time it takes to complete the workflow. 
 
-::: {.callout-important}
-**TO DO**
-Change CONTAINER
-:::
-
 ```default
 nextflow run nf-core/rnaseq -r 3.14.0 \
-  -resume 
-  -profile <CONTAINER> \
-  -c my_resources.config \
-  -params-file workshop-params.yaml \
-  --outdir my_results \
+    -profile apptainer \
+    -params-file ./workshop-params.yaml \
+    -resume \
+    --outdir my_results
 ```
 
 ```default
-[80/ec6ff8] process > NFCORE_RNASEQ:RNASEQ:PREPARE_GENOME:GTF2BED (chr22_with_ERCC92.gtf)                  [100%] 1 of 1, cached: 1 ✔
-[1a/7bec9c] process > NFCORE_RNASEQ:RNASEQ:PREPARE_GENOME:GTF_GENE_FILTER (chr22_with_ERCC92.fa)           [100%] 1 of 1, cached: 1 ✔
+[6d/10f0b4] process > NFCORE_RNASEQ:RNASEQ:PREPARE_GENOME:GTF_FILTER (genome.fasta)                      [100%] 1 of 1, cached: 1 ✔
+[77/74cbf2] process > NFCORE_RNASEQ:RNASEQ:PREPARE_GENOME:GTF2BED (genome.filtered.gtf)                  [100%] 1 of 1, cached: 1 ✔
+[02/f7e668] process > NFCORE_RNASEQ:RNASEQ:PREPARE_GENOME:MAKE_TRANSCRIPTS_FASTA (rsem/genome.fasta)     [100%] 1 of 1, cached: 1 ✔
+...
 
 ```
 
 Executing this workflow will create a `my_results` directory that contain selected results files, as well as the `work` directory, which contains further sub-directories. 
 
-In the schematic above, the hexadecimal numbers, such as `80/ec6ff8`, identify the unique task execution. These numbers are also the prefix of the `work` subdirectories where each task is executed.
+In the schematic above, the hexadecimal numbers, such as `6d/10f0b4`, identify the unique task execution. These numbers are also the prefix of the `work` subdirectories where each task is executed.
 
 You can inspect the files produced by a task by looking inside the `work` directory and using these numbers to find the task-specific execution path. Use `tab` to autocomplete the full file path:
 
 ```default
-ls work/80/ec6ff8ba69a8b5b8eede3679e9f978/
+ls work/6d/10f0b4d0e6cf920e35657ce78feb1d/
 ```
 
 If you look inside the `work` directory of a `FASTQC` process, you will find the files that were staged and created when this task was executed:
@@ -145,30 +156,26 @@ ls -la  work/e9/60b2e80b2835a3e1ad595d55ac5bf5/
 ```
 
 ```default
-total 15895
-drwxrwxr-x 2 rlupat rlupat    4096 Nov 22 03:39 .
-drwxrwxr-x 4 rlupat rlupat    4096 Nov 22 03:38 ..
--rw-rw-r-- 1 rlupat rlupat       0 Nov 22 03:39 .command.begin
--rw-rw-r-- 1 rlupat rlupat    9509 Nov 22 03:39 .command.err
--rw-rw-r-- 1 rlupat rlupat    9609 Nov 22 03:39 .command.log
--rw-rw-r-- 1 rlupat rlupat     100 Nov 22 03:39 .command.out
--rw-rw-r-- 1 rlupat rlupat   10914 Nov 22 03:39 .command.run
--rw-rw-r-- 1 rlupat rlupat     671 Nov 22 03:39 .command.sh
--rw-rw-r-- 1 rlupat rlupat     231 Nov 22 03:39 .command.trace
--rw-rw-r-- 1 rlupat rlupat       1 Nov 22 03:39 .exitcode
-lrwxrwxrwx 1 rlupat rlupat      63 Nov 22 03:39 HBR_Rep1_ERCC_1.fastq.gz -> HBR_Rep1_ERCC-Mix2_Build37-ErccTranscripts-chr22.read1.fastq.gz
--rw-rw-r-- 1 rlupat rlupat    2368 Nov 22 03:39 HBR_Rep1_ERCC_1.fastq.gz_trimming_report.txt
--rw-rw-r-- 1 rlupat rlupat  697080 Nov 22 03:39 HBR_Rep1_ERCC_1_val_1_fastqc.html
--rw-rw-r-- 1 rlupat rlupat  490526 Nov 22 03:39 HBR_Rep1_ERCC_1_val_1_fastqc.zip
--rw-rw-r-- 1 rlupat rlupat 6735205 Nov 22 03:39 HBR_Rep1_ERCC_1_val_1.fq.gz
-lrwxrwxrwx 1 rlupat rlupat      63 Nov 22 03:39 HBR_Rep1_ERCC_2.fastq.gz -> HBR_Rep1_ERCC-Mix2_Build37-ErccTranscripts-chr22.read2.fastq.gz
--rw-rw-r-- 1 rlupat rlupat    2688 Nov 22 03:39 HBR_Rep1_ERCC_2.fastq.gz_trimming_report.txt
--rw-rw-r-- 1 rlupat rlupat  695591 Nov 22 03:39 HBR_Rep1_ERCC_2_val_2_fastqc.html
--rw-rw-r-- 1 rlupat rlupat  485732 Nov 22 03:39 HBR_Rep1_ERCC_2_val_2_fastqc.zip
--rw-rw-r-- 1 rlupat rlupat 7088948 Nov 22 03:39 HBR_Rep1_ERCC_2_val_2.fq.gz
-lrwxrwxrwx 1 rlupat rlupat     102 Nov 22 03:39 HBR_Rep1_ERCC-Mix2_Build37-ErccTranscripts-chr22.read1.fastq.gz -> /data/seqliner/test-data/rna-seq/fastq/HBR_Rep1_ERCC-Mix2_Build37-ErccTranscripts-chr22.read1.fastq.gz
-lrwxrwxrwx 1 rlupat rlupat     102 Nov 22 03:39 HBR_Rep1_ERCC-Mix2_Build37-ErccTranscripts-chr22.read2.fastq.gz -> /data/seqliner/test-data/rna-seq/fastq/HBR_Rep1_ERCC-Mix2_Build37-ErccTranscripts-chr22.read2.fastq.gz
--rw-rw-r-- 1 rlupat rlupat     109 Nov 22 03:39 versions.yml
+total 1940
+drwxrwxr-x 2 larigan larigan   4096 May 27 15:24 .
+drwxrwxr-x 3 larigan larigan   4096 May 27 15:23 ..
+-rw-rw-r-- 1 larigan larigan      0 May 27 15:24 .command.begin
+-rw-rw-r-- 1 larigan larigan      0 May 27 15:24 .command.err
+-rw-rw-r-- 1 larigan larigan     34 May 27 15:24 .command.log
+-rw-rw-r-- 1 larigan larigan     34 May 27 15:24 .command.out
+-rw-rw-r-- 1 larigan larigan  10394 May 27 15:24 .command.run
+-rw-rw-r-- 1 larigan larigan    468 May 27 15:24 .command.sh
+-rw-rw-r-- 1 larigan larigan    261 May 27 15:24 .command.trace
+-rw-rw-r-- 1 larigan larigan      1 May 27 15:24 .exitcode
+-rw-rw-r-- 1 larigan larigan 598884 May 27 15:24 SRR6357071_1_fastqc.html
+-rw-rw-r-- 1 larigan larigan 365752 May 27 15:24 SRR6357071_1_fastqc.zip
+lrwxrwxrwx 1 larigan larigan     66 May 27 15:24 SRR6357071_1.fastq.gz -> /home/larigan/rnaseq_data/testdata/GSE110004/SRR6357071_1.fastq.gz
+lrwxrwxrwx 1 larigan larigan     21 May 27 15:24 SRR6357071_1.gz -> SRR6357071_1.fastq.gz
+-rw-rw-r-- 1 larigan larigan 604569 May 27 15:24 SRR6357071_2_fastqc.html
+-rw-rw-r-- 1 larigan larigan 355487 May 27 15:24 SRR6357071_2_fastqc.zip
+lrwxrwxrwx 1 larigan larigan     66 May 27 15:24 SRR6357071_2.fastq.gz -> /home/larigan/rnaseq_data/testdata/GSE110004/SRR6357071_2.fastq.gz
+lrwxrwxrwx 1 larigan larigan     21 May 27 15:24 SRR6357071_2.gz -> SRR6357071_2.fastq.gz
+-rw-rw-r-- 1 larigan larigan     83 May 27 15:24 versions.yml
 ```
 
 The `FASTQC` process runs twice, executing in a different work directories for each set of inputs. Therefore, in the previous example, the work directory `[e9/60b2e8]` represents just one of the two sets of input data that was processed.
@@ -189,30 +196,29 @@ Execute the workflow for the first time (if you have not already).
 Use the task ID shown for the `FASTQC` process and use it to find and `touch` a `.fastq.gz` file:
 
 ```default
-touch work/ff/21abfa87cc7cdec037ce4f36807d32/HBR_Rep1_ERCC_1.fastq.gz
+touch work/ff/21abfa87cc7cdec037ce4f36807d32/SRR6357071_1.fastq.gz
 ```
 
 Execute the workflow again with the `-resume` command option:
 
 ```default
 nextflow run nf-core/rnaseq -r 3.14.0 \
-  -resume 
-  -profile <CONTAINER> \
-  -c my_resources.config \
-  -params-file workshop-params.yaml \
-  --outdir my_results \
+    -profile apptainer \
+    -params-file ./workshop-params.yaml \
+    -resume \
+    --outdir my_results
 ```
 
 You should see that some task were invalid and were executed again.
 
 **Why did this happen?**
 
-In this example, the caching of the two `FASTQC` tasks were invalid. The fastq file we `touch` is used by in the pipeline in multiple places. Thus, touching the symbolic link for this file and changing the date of last modification disrupted two task executions.
+In this example, the caching of one of the two `FASTQC` tasks were invalid. The fastq file we `touch` is used by in the pipeline in multiple places. Thus, touching the symbolic link for this file and changing the date of last modification disrupted one of the task execution and its related downstream processes.
 ::: 
 
 ### **2.2.3. Troubleshoot warning and error messages**
 
-While our previous workflow execution completed successfully, there were a couple of warning messages that may be cause for concern:
+If we go back to our last exercise (`exercise_rnaseq` output), you might recall that while that workflow execution completed successfully, there were a couple of warning messages that may be cause for concern:
 
 ```default
 -[nf-core/rnaseq] Pipeline completed successfully with skipped sampl(es)-
@@ -228,10 +234,10 @@ Succeeded   : 66
 The first warning message isn't very descriptive (see this [pull request](https://github.com/nf-core/rnaseq/pull/963)). You might come across issues like this when running nf-core pipelines, too. Bug reports and user feedback is very important to open source software communities like nf-core. If you come across any issues, submit a GitHub issue or start a discussion in the relevant nf-core Slack channel so others are aware and it can be addressed by the pipeline's developers.
 :::
 
-&#x27A4; Take a look at the MultiQC report, as directed by the second message. You can find the MultiQC report in the `my_results` directory: 
+&#x27A4; Take a look at the MultiQC report, as directed by the second message. You can find the MultiQC report in the `exercise_rnaseq` directory: 
 
 ```default
-ls -la my_results/multiqc/star_salmon/
+ls -la exercise_rnaseq/multiqc/star_salmon/
 ```
 
 ```default
@@ -311,18 +317,15 @@ nextflow log ${run_name} | while read line;
 This will list all process `.command.sh` scripts containing the word 'salmon'. Notice that there are a few different processes that run Salmon to perform other steps in the workflow. We are looking for Salmon quant which performs the read quantification:
 
 ```default
-/scratch/users/rlupat/nfWorkshop/lesson2.1/work/57/fba8f9a2385dac5fa31688ba1afa9b/.command.sh
-/scratch/users/rlupat/nfWorkshop/lesson2.1/work/30/0113a58c14ca8d3099df04ebf388f3/.command.sh
-/scratch/users/rlupat/nfWorkshop/lesson2.1/work/ec/95d6bd12d578c3bce22b5de4ed43fe/.command.sh
-/scratch/users/rlupat/nfWorkshop/lesson2.1/work/49/6fedcb09e666432ae6ddf8b1e8f488/.command.sh
-/scratch/users/rlupat/nfWorkshop/lesson2.1/work/b4/2ca8d05b049438262745cde92955e9/.command.sh
-/scratch/users/rlupat/nfWorkshop/lesson2.1/work/38/875d68dae270504138bb3d72d511a7/.command.sh
-/scratch/users/rlupat/nfWorkshop/lesson2.1/work/72/776810a99695b1c114cbb103f4a0e6/.command.sh
-/scratch/users/rlupat/nfWorkshop/lesson2.1/work/1c/dc3f54cc7952bf55e6742dd4783392/.command.sh
-/scratch/users/rlupat/nfWorkshop/lesson2.1/work/f3/5116a5b412bde7106645671e4c6ffb/.command.sh
-/scratch/users/rlupat/nfWorkshop/lesson2.1/work/17/fb0c791810f42a438e812d5c894ebf/.command.sh
-/scratch/users/rlupat/nfWorkshop/lesson2.1/work/4c/931a9b60b2f3cf770028854b1c673b/.command.sh
-/scratch/users/rlupat/nfWorkshop/lesson2.1/work/91/e1c99d8acb5adf295b37fd3bbc86a5/.command.sh
+/home/larigan/lesson2.1/work/9c/9cdaec01c009a4fef6de3b50b0d2c9/.command.sh
+/home/larigan/lesson2.1/work/d9/e696aa3903f2f7bef3ead3852a7d51/.command.sh
+/home/larigan/lesson2.1/work/57/95f7806c62313c5788780d1fadc89a/.command.sh
+/home/larigan/lesson2.1/work/2f/bef610318ab85c7fdbb3a773c568d5/.command.sh
+/home/larigan/lesson2.1/work/ec/d8a46743dc73214b04e09c7ae9ecb4/.command.sh
+/home/larigan/lesson2.1/work/f2/cc71ed58bbfba78ea034a26bd48370/.command.sh
+/home/larigan/lesson2.1/work/3b/0a2737be44be977e4b695c5bade23f/.command.sh
+/home/larigan/lesson2.1/work/8d/fed78effdd1b28435a698d8a6efb7a/.command.sh
+/home/larigan/lesson2.1/work/65/bd7329a29aaf2136f25173a22918ae/.command.sh
 ```
 
 Compared with the salmon quant `main.nf` file, we get a lot more fine scale details from the `.command.sh` process scripts: 
@@ -342,13 +345,13 @@ salmon quant \\
 `.command.sh`:
 ```default
 salmon quant \
-    --geneMap chr22_with_ERCC92.gtf \
+    --geneMap genome.filtered.gtf \
     --threads 2 \
     --libType=ISF \
     -t genome.transcripts.fa \
-    -a HBR_Rep1_ERCC.Aligned.toTranscriptome.out.bam \
+    -a SRR6357071.Aligned.toTranscriptome.out.bam \
      \
-    -o HBR_Rep1_ERCC
+    -o SRR6357071
 ```
 
 From `.command.sh`, we see that `--libType` has been set to `ISF` (ie. forward strandedness), based on our samplesheet. 
@@ -378,7 +381,7 @@ From the previous section we learn that Nextflow can accept a `yaml` parameter f
 `workshop-params.yaml` should now contain one additional parameter:
 
 ```default
-salmon_quant_libtype: "A" 
+salmon_quant_libtype: "ISR" 
 ```
 :::
 
@@ -387,10 +390,9 @@ salmon_quant_libtype: "A"
 ```default
 nextflow run nf-core/rnaseq -r 3.14.0 \
   -resume 
-  -profile <CONTAINER> \
-  -c my_resources.config \
+  -profile apptainer \
   -params-file workshop-params.yaml \
-  --outdir my_results \
+  --outdir exercise_rnaseq 
 ```
 
 As the workflow runs a second time, you will notice 4 things:
@@ -403,11 +405,11 @@ As the workflow runs a second time, you will notice 4 things:
 ```default
 -[nf-core/rnaseq] Pipeline completed successfully with skipped sampl(es)-
 -[nf-core/rnaseq] Please check MultiQC report: 2/2 samples failed strandedness check.-
-Completed at: 04-May-2025 17:28:40
-Duration    : 3m 59s
-CPU hours   : 0.6 (66.3% cached)
+Completed at: 27-May-2025 17:13:48
+Duration    : 1m 55s
+CPU hours   : 0.2 (70.8% cached)
 Succeeded   : 11
-Cached      : 55
+Cached      : 41
 ```
 
 We still seem to be getting the warning `Please check MultiQC report: 2/2 samples failed strandedness check.-`. Let's check what `--libType` has been used inside the salmon process.
@@ -420,13 +422,13 @@ We still seem to be getting the warning `Please check MultiQC report: 2/2 sample
 In the Nextflow output, the following line provides the hexadeximal for a `SALMON_QUANT` process. 
 
 ```default
-[04/d742db] NFC…TAR_SALMON:SALMON_QUANT (HBR_Rep2_ERCC) | 2 of 2 ✔
+[d9/69e2a7] process > NFCORE_RNASEQ:RNASEQ:QUANTIFY_STAR_SALMON:SALMON_QUANT (SRR6357071)                                       [100%] 2 of 2 ✔
 ```
 
 The `work` execution directory for this process is located in (using `tab` to autocomplete the folder name):
 
 ```default
-ls -a work/04/d742db4c1760d0c4581fb7790a71a9/
+ls -a work/d9/69e2a7563de5e6046f140a1317c1d2/
 ```
 
 Inside the `.command.sh` file, the `--libType` parameter matches the one specified in our parameter file:
@@ -434,16 +436,16 @@ Inside the `.command.sh` file, the `--libType` parameter matches the one specifi
 ```default
 #!/bin/bash -euo pipefail
 salmon quant \
-    --geneMap chr22_with_ERCC92.filtered.gtf \
-    --threads 4 \
+    --geneMap genome.filtered.gtf \
+    --threads 2 \
     --libType=ISR \
     -t genome.transcripts.fa \
-    -a HBR_Rep2_ERCC.Aligned.toTranscriptome.out.bam \
+    -a SRR6357071.Aligned.toTranscriptome.out.bam \
      \
-    -o HBR_Rep2_ERCC
+    -o SRR6357071
 
-if [ -f HBR_Rep2_ERCC/aux_info/meta_info.json ]; then
-    cp HBR_Rep2_ERCC/aux_info/meta_info.json "HBR_Rep2_ERCC_meta_info.json"
+if [ -f SRR6357071/aux_info/meta_info.json ]; then
+    cp SRR6357071/aux_info/meta_info.json "SRR6357071_meta_info.json"
 fi
 
 cat <<-END_VERSIONS > versions.yml
@@ -452,7 +454,7 @@ cat <<-END_VERSIONS > versions.yml
 END_VERSIONS
 ```
 
-The tool is working as we expect!
+The tool is working as we expected!
 :::
 
 ::: callout-note
@@ -460,6 +462,24 @@ The tool is working as we expect!
 If we want to remove the warning message `Please check MultiQC report: 2/2 samples failed strandedness check`, we will have to change the strandedness fields in our `samplesheet.csv`. Keep in mind, doing this will invalidate the pipeline's cache and will cause the pipeline to run from the beginning.  
 :::
 
+::: {.callout-tip}
+### **Key points**
+- Use nextflow log to query the record of commands used in the pipeline
+- Use `-resume` to re-launch previously executed workflows in order to get Nextflow to utilise its task execution caching feature 
+- Examine the .command.sh to inside the work directory to troubleshoot the command that Nextflow use to run a particular task
+:::
+
+</br>
+
+### **Next Chapter: [Introduction to Nextflow Processes and Channels](./1.3_processes_and_channels.qmd)** 
+
+</br>
+
 ---
-^*These materials are adapted from [Customising Nf-Core Workshop](https://sydney-informatics-hub.github.io/customising-nfcore-workshop/notebooks/1.2_nfcore.html) by Sydney Informatics Hub*^
+
+This workshop is adapted from various nextflow training materials, including:
+
+- [Nextflow Training Materials](https://training.nextflow.io)
+- [Customising Nf-Core Workshop](https://sydney-informatics-hub.github.io/customising-nfcore-workshop)
+- [Hello Nextflow Workshop](https://sydney-informatics-hub.github.io/hello-nextflow/)
 

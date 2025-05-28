@@ -23,4 +23,8 @@ Collaborative workshop between Peter Mac, Melbourne Bioinformatics, and WEHI
 
 ### Credits and acknowledgement
 
-^*This workshop is adapted from [Customising Nf-Core Workshop](https://sydney-informatics-hub.github.io/customising-nfcore-workshop) materials from Sydney Informatics Hub*^
+This workshop is adapted from various nextflow training materials, including:
+
+- [Nextflow Training Materials](https://training.nextflow.io)
+- [Customising Nf-Core Workshop](https://sydney-informatics-hub.github.io/customising-nfcore-workshop)
+- [Hello Nextflow Workshop](https://sydney-informatics-hub.github.io/hello-nextflow/)
