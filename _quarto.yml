@@ -35,8 +35,10 @@ website:
           href: workshops/5.1_nf_core_template.html
         - text: "5.1 nf-core modules and subworkflows"
           href: workshops/5.2_nf_core_modules.html
-        - text: "6.1 Metadata Propagation"
-          href: workshops/5.3_metadata_propagation.html
+        - text: "6.1 Samplesheet parsing and nf-core modules"
+          href: workshops/5.3_samplesheet_parsing.html
+        - text: "6.3 Module arguments and custom modules"
+          href: workshops/5.4_module_args_custom_module.html
         - text: "7.1 Pipeline version control and additional resources"
           href: workshops/5.4_pipeline_testing.html
 
