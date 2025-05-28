@@ -1,5 +1,5 @@
 ---
-title: "**Nextflow Development - Developing Modularised Workflows**"
+title: "**Nextflow Development - nf-core Template**"
 output:
   html_document:
     toc: false

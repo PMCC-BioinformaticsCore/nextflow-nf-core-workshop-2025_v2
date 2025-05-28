@@ -1,0 +1,672 @@
+---
+title: "**Nextflow Development - Module arguments and custom modules**"
+output:
+  html_document:
+    toc: false
+    toc_float: false
+from: markdown+emoji
+---
+
+::: callout-tip
+### Objectives{.unlisted}
+- Gain an understanding of how specify arguments to an nf-core module
+- Create a custom module
+:::
+
+
+## **6.3 Module arguments**
+
+Currently, we have been using the default arguments for our processes: 
+
+- `FASTQC`
+- `SALMON_INDEX`
+- `SALMON_QUANT`
+- `MULTIQC`
+
+Let's take a closer lok at the `SALMON_INDEX` process. Look inside the latest `execution_trace` file inside the `output/pipeline_info` folder and navigate to the execution directory of the `SALMON_INDEX` process.
+
+```default
+cat output/pipeline_info/execution_trace_2025-05-28_12-10-11.txt
+```
+
+```default
+task_id hash    native_id       name    status  exit    submit  duration        realtime        %cpu    peak_rss        peak_vmem       rchar   wchar
+1       0b/daf027       106574  NFCORE_CUSTOMRNASEQ:CUSTOMRNASEQ:FASTQC (SRR6357070)    CACHED  0       2025-05-28 10:16:03.979 4.9s    4s      125.6%  262.3 MB        3.5 GB  16 MB   3.5 MB
+2       8e/9633e2       123739  NFCORE_CUSTOMRNASEQ:CUSTOMRNASEQ:SALMON_INDEX (transcriptome.fasta)     CACHED  0       2025-05-28 10:58:34.631 1.2s    1s      42.3%   7.9 MB  20.7 MB 7.3 MB  2.3 MB
+3       d9/20bef2       107003  NFCORE_CUSTOMRNASEQ:CUSTOMRNASEQ:FASTQC (SRR6357071)    CACHED  0       2025-05-28 10:16:08.880 5.1s    4s      152.7%  324.3 MB        3.4 GB  15.9 MB 3.5 MB
+5       bb/d103d3       124548  NFCORE_CUSTOMRNASEQ:CUSTOMRNASEQ:SALMON_QUANT (SRR6357070)      CACHED  0       2025-05-28 11:18:03.149 1.4s    1s      80.4%   219.3 MB        398.2 MB        5.4 MB  36.5 KB
+4       fa/542072       107460  NFCORE_CUSTOMRNASEQ:CUSTOMRNASEQ:FASTQC (SRR6357072)    CACHED  0       2025-05-28 10:16:13.960 4.9s    4s      129.0%  283.2 MB        3.5 GB  16 MB   3.5 MB
+6       d4/c1e1f9       131625  NFCORE_CUSTOMRNASEQ:CUSTOMRNASEQ:MULTIQC        COMPLETED       0       2025-05-28 12:10:17.435 16.2s   15.9s   59.2%   667.7 MB        9.9 GB  84.7 MB 26.4 MB
+```
+
+The `hash` value contains the start of the directory inside the `work` folder where the process was ran. For `SALMON_QUANT`, the hash is `8e/9633e2`
+
+```default
+ls -a work/8e/9633e2fb6386695b06ef6702a15e4d/
+```
+
+```default
+.command.begin  .command.err  .command.log  .command.out  .command.run  .command.sh  .command.trace  decoys.txt  .exitcode  genome.fasta  gentrome.fa  salmon  transcriptome.fasta  versions.yml
+```
+
+Recall that the `.command.sh` file contains the Bash command that was executed. These are the arguments that are provided to the `SALMON_INDEX` process:
+
+```default
+#!/usr/bin/env bash -C -e -u -o pipefail
+if [ -n 'genome.fasta' ]; then
+    grep '^>' genome.fasta | cut -d ' ' -f 1 | cut -d $'\t' -f 1 | sed 's/>//g' > decoys.txt
+    cat transcriptome.fasta genome.fasta > gentrome.fa
+fi
+
+salmon \
+    index \
+    --threads 2 \
+    -t gentrome.fa \
+    -d decoys.txt \
+     \
+    -i salmon 
+
+cat <<-END_VERSIONS > versions.yml
+"NFCORE_CUSTOMRNASEQ:CUSTOMRNASEQ:SALMON_INDEX":
+    salmon: $(echo $(salmon --version) | sed -e "s/salmon //g")
+END_VERSIONS
+```
+
+However, `salmon index` has many additional arguments we can use:
+
+```default
+Index
+==========
+Creates a salmon index.
+
+Command Line Options:
+  -v [ --version ]              print version string
+  -h [ --help ]                 produce help message
+  -t [ --transcripts ] arg      Transcript fasta file.
+  -k [ --kmerLen ] arg (=31)    The size of k-mers that should be used for the 
+                                quasi index.
+  -i [ --index ] arg            salmon index.
+  --gencode                     This flag will expect the input transcript 
+                                fasta to be in GENCODE format, and will split 
+                                the transcript name at the first '|' character.
+                                These reduced names will be used in the output 
+                                and when looking for these transcripts in a 
+                                gene to transcript GTF.
+  --features                    This flag will expect the input reference to be
+                                in the tsv file format, and will split the 
+                                feature name at the first 'tab' character. 
+                                These reduced names will be used in the output 
+                                and when looking for the sequence of the 
+                                features.GTF.
+  --keepDuplicates              This flag will disable the default indexing 
+                                behavior of discarding sequence-identical 
+                                duplicate transcripts.  If this flag is passed,
+                                then duplicate transcripts that appear in the 
+                                input will be retained and quantified 
+                                separately.
+  -p [ --threads ] arg (=2)     Number of threads to use during indexing.
+  --keepFixedFasta              Retain the fixed fasta file (without short 
+                                transcripts and duplicates, clipped, etc.) 
+                                generated during indexing
+  -f [ --filterSize ] arg (=-1) The size of the Bloom filter that will be used 
+                                by TwoPaCo during indexing. The filter will be 
+                                of size 2^{filterSize}. The default value of -1
+                                means that the filter size will be 
+                                automatically set based on the number of 
+                                distinct k-mers in the input, as estimated by 
+                                nthll.
+  --tmpdir arg                  The directory location that will be used for 
+                                TwoPaCo temporary files; it will be created if 
+                                need be and be removed prior to indexing 
+                                completion. The default value will cause a 
+                                (temporary) subdirectory of the salmon index 
+                                directory to be used for this purpose.
+  --sparse                      Build the index using a sparse sampling of 
+                                k-mer positions This will require less memory 
+                                (especially during quantification), but will 
+                                take longer to construct and can slow down 
+                                mapping / alignment
+  -d [ --decoys ] arg           Treat these sequences ids from the reference as
+                                the decoys that may have sequence homologous to
+                                some known transcript. for example in case of 
+                                the genome, provide a list of chromosome name 
+                                --- one per line
+  -n [ --no-clip ]              Don't clip poly-A tails from the ends of target
+                                sequences
+  --type arg (=puff)            The type of index to build; the only option is 
+                                "puff" in this version of salmon.
+```
+
+For example, how do we set `--sparse` to the process? This can be done inside the `nf-core-customrnaseq/conf/modules.config` file. 
+
+:::{.callout-note collapse="true"}
+## **`nf-core-customrnaseq/conf/modules.config`**
+
+```default
+/*
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Config file for defining DSL2 per module options and publishing paths
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Available keys to override module options:
+        ext.args   = Additional arguments appended to command in module.
+        ext.args2  = Second set of arguments appended to command in module (multi-tool modules).
+        ext.args3  = Third set of arguments appended to command in module (multi-tool modules).
+        ext.prefix = File name prefix for output files.
+----------------------------------------------------------------------------------------
+*/
+
+process {
+
+    publishDir = [
+        path: { "${params.outdir}/${task.process.tokenize(':')[-1].tokenize('_')[0].toLowerCase()}" },
+        mode: params.publish_dir_mode,
+        saveAs: { filename -> filename.equals('versions.yml') ? null : filename }
+    ]
+
+    withName: FASTQC {
+        ext.args = '--quiet'
+    }
+
+    withName: 'MULTIQC' {
+        ext.args   = { params.multiqc_title ? "--title \"$params.multiqc_title\"" : '' }
+        publishDir = [
+            path: { "${params.outdir}/multiqc" },
+            mode: params.publish_dir_mode,
+            saveAs: { filename -> filename.equals('versions.yml') ? null : filename }
+        ]
+    }
+
+}
+```
+:::
+
+Inside this config file, `FASTQC` and `MULTIQC` arguments have already been set, using the `ext.args` Nextflow property. 
+
+To set the arguments for a specific module name, the `withName` Nextflow selector. 
+
+```default
+    withName: SALMON_INDEX {
+        ext.args = '--sparse'
+    }
+```
+
+Now, rerun the pipeline:
+
+```default
+nextflow run ./nf-core-customrnaseq/main.nf -resume -profile apptainer --input ./samplesheet.csv --outdir output -params-file ./params.yaml 
+```
+
+```default
+executor >  local (3)
+[78/1f6e10] process > NFCORE_CUSTOMRNASEQ:CUSTOMRNASEQ:SALMON_INDEX (transcriptome.fasta) [100%] 1 of 1 ✔
+[e4/37ce1b] process > NFCORE_CUSTOMRNASEQ:CUSTOMRNASEQ:SALMON_QUANT (SRR6357070)          [100%] 1 of 1 ✔
+[fa/542072] process > NFCORE_CUSTOMRNASEQ:CUSTOMRNASEQ:FASTQC (SRR6357072)                [100%] 3 of 3, cached: 3 ✔
+[3e/0850a0] process > NFCORE_CUSTOMRNASEQ:CUSTOMRNASEQ:MULTIQC                            [100%] 1 of 1 ✔
+-[nf-core/customrnaseq] Pipeline completed successfully-
+```
+
+Notice that since we specified `-resume` and there was no change to the `FASTQC` process, this was cached successfully and the process was not re-executed. Since we changed the inputs to the `SALMON_INDEX` process, this was executed again, and since `SALMON_QUANT` depends on the outputs of `SALMON_INDEX`, this process was also executed again. 
+
+Let's check inside the execution script of the `SALMON_INDEX` process, and check the new argument was added to the command. 
+
+```default
+cat work/78/1f6e102b1653c043ff091942c96d47/.command.sh 
+```
+
+```default
+#!/usr/bin/env bash -C -e -u -o pipefail
+if [ -n 'genome.fasta' ]; then
+    grep '^>' genome.fasta | cut -d ' ' -f 1 | cut -d $'\t' -f 1 | sed 's/>//g' > decoys.txt
+    cat transcriptome.fasta genome.fasta > gentrome.fa
+fi
+
+salmon \
+    index \
+    --threads 2 \
+    -t gentrome.fa \
+    -d decoys.txt \
+    --sparse \
+    -i salmon
+
+cat <<-END_VERSIONS > versions.yml
+"NFCORE_CUSTOMRNASEQ:CUSTOMRNASEQ:SALMON_INDEX":
+    salmon: $(echo $(salmon --version) | sed -e "s/salmon //g")
+END_VERSIONS
+```
+
+As expected, `--sparse` was added as an argument in the `salmon index` command. 
+
+**Exercise**: 
+
+1. For the `SALMON_INDEX` process, set `--thinningFactor 10` as an argument
+2. Check that the expected processes are cached and re-executed
+3. Check inside the `.command.sh` file to ensure `--thinningFactor 10` has been applied
+
+::: {.callout-note collapse="true"}
+## Solution
+
+1. To set `--thinningFactor 10` as an argument, this is done inside the `nf-core-customrnaseq/conf/modules.config` file:
+
+    ```default
+        withName: SALMON_QUANT {
+            ext.args = '--thinningFactor 10'
+        }
+    ```
+
+2. When rerunning the pipeline, the `FASTQC` and `SALMON_INDEX` should be cached, but the `SALMON_QUANT` process should be re-executed since the new argument was provided
+
+    ```default
+    nextflow run ./nf-core-customrnaseq/main.nf -resume -profile apptainer --input ./samplesheet.csv --outdir output -params-file ./params.yaml 
+    ```
+
+    ```default
+    executor >  local (2)
+    [78/1f6e10] process > NFCORE_CUSTOMRNASEQ:CUSTOMRNASEQ:SALMON_INDEX (transcriptome.fasta) [100%] 1 of 1, cached: 1 ✔
+    [ec/36ff47] process > NFCORE_CUSTOMRNASEQ:CUSTOMRNASEQ:SALMON_QUANT (SRR6357070)          [100%] 1 of 1 ✔
+    [fa/542072] process > NFCORE_CUSTOMRNASEQ:CUSTOMRNASEQ:FASTQC (SRR6357072)                [100%] 3 of 3, cached: 3 ✔
+    [6b/ad9d34] process > NFCORE_CUSTOMRNASEQ:CUSTOMRNASEQ:MULTIQC                            [100%] 1 of 1 ✔
+    -[nf-core/customrnaseq] Pipeline completed successfully-
+    ```
+
+3. To check inside the execution script `.command.sh`, the hash `ec/36ff47` can be used:
+
+    ```default
+    cat work/ec/36ff473cc742b52b5b26910dee1579/.command.sh 
+    ```
+
+    ```default
+    #!/usr/bin/env bash -C -e -u -o pipefail
+    salmon quant \
+        --geneMap genes.gtf \
+        --threads 2 \
+        --libType=A \
+        --index salmon \
+        -1 SRR6357070_1.fastq.gz -2 SRR6357070_2.fastq.gz \
+        --thinningFactor 10 \
+        -o SRR6357070
+
+    if [ -f SRR6357070/aux_info/meta_info.json ]; then
+        cp SRR6357070/aux_info/meta_info.json "SRR6357070_meta_info.json"
+    fi
+    if [ -f SRR6357070/lib_format_counts.json ]; then
+        cp SRR6357070/lib_format_counts.json "SRR6357070_lib_format_counts.json"
+    fi
+
+    cat <<-END_VERSIONS > versions.yml
+    "NFCORE_CUSTOMRNASEQ:CUSTOMRNASEQ:SALMON_QUANT":
+        salmon: $(echo $(salmon --version) | sed -e "s/salmon //g")
+    END_VERSIONS
+    ```
+
+    As expected, `--thinningFactor 10` was added as an argument to the `salmon quant` command. 
+
+:::
+
+
+## **6.4 Custom modules**
+
+So far, we have been using the default nf-core modules in our pipelines. What if we have a custom script that we would like to use inside a module? For example, we have a custom script that converts a GTF file to a BED file:
+
+::: {.callout-note collapse="true"}
+## `gtf2bed`
+
+```default
+#!/usr/bin/env perl
+
+# Copyright (c) 2011 Erik Aronesty (erik@q32.com)
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+# THE SOFTWARE.
+#
+# ALSO, IT WOULD BE NICE IF YOU LET ME KNOW YOU USED IT.
+
+use Getopt::Long;
+
+my $extended;
+GetOptions("x"=>\$extended);
+
+$in = shift @ARGV;
+
+my $in_cmd =($in =~ /\.gz$/ ? "gunzip -c $in|" : $in =~ /\.zip$/ ? "unzip -p $in|" : "$in") || die "Can't open $in: $!\n";
+open IN, $in_cmd;
+
+while (<IN>) {
+    $gff = 2 if /^##gff-version 2/;
+    $gff = 3 if /^##gff-version 3/;
+    next if /^#/ && $gff;
+
+    s/\s+$//;
+    # 0-chr 1-src 2-feat 3-beg 4-end 5-scor 6-dir 7-fram 8-attr
+    my @f = split /\t/;
+    if ($gff) {
+        # most ver 2's stick gene names in the id field
+        ($id) = $f[8]=~ /\bID="([^"]+)"/;
+        # most ver 3's stick unquoted names in the name field
+        ($id) = $f[8]=~ /\bName=([^";]+)/ if !$id && $gff == 3;
+    } else {
+        ($id) = $f[8]=~ /transcript_id "([^"]+)"/;
+    }
+
+    next unless $id && $f[0];
+
+    if ($f[2] eq 'exon') {
+        die "no position at exon on line $." if ! $f[3];
+        # gff3 puts :\d in exons sometimes
+        $id =~ s/:\d+$// if $gff == 3;
+        push @{$exons{$id}}, \@f;
+        # save lowest start
+        $trans{$id} = \@f if !$trans{$id};
+    } elsif ($f[2] eq 'start_codon') {
+        #optional, output codon start/stop as "thick" region in bed
+        $sc{$id}->[0] = $f[3];
+    } elsif ($f[2] eq 'stop_codon') {
+        $sc{$id}->[1] = $f[4];
+    } elsif ($f[2] eq 'miRNA' ) {
+        $trans{$id} = \@f if !$trans{$id};
+        push @{$exons{$id}}, \@f;
+    }
+}
+
+for $id (
+    # sort by chr then pos
+    sort {
+        $trans{$a}->[0] eq $trans{$b}->[0] ?
+        $trans{$a}->[3] <=> $trans{$b}->[3] :
+        $trans{$a}->[0] cmp $trans{$b}->[0]
+    } (keys(%trans)) ) {
+        my ($chr, undef, undef, undef, undef, undef, $dir, undef, $attr, undef, $cds, $cde) = @{$trans{$id}};
+        my ($cds, $cde);
+        ($cds, $cde) = @{$sc{$id}} if $sc{$id};
+
+        # sort by pos
+        my @ex = sort {
+            $a->[3] <=> $b->[3]
+        } @{$exons{$id}};
+
+        my $beg = $ex[0][3];
+        my $end = $ex[-1][4];
+
+        if ($dir eq '-') {
+            # swap
+            $tmp=$cds;
+            $cds=$cde;
+            $cde=$tmp;
+            $cds -= 2 if $cds;
+            $cde += 2 if $cde;
+        }
+
+        # not specified, just use exons
+        $cds = $beg if !$cds;
+        $cde = $end if !$cde;
+
+        # adjust start for bed
+        --$beg; --$cds;
+
+        my $exn = @ex;												# exon count
+        my $exst = join ",", map {$_->[3]-$beg-1} @ex;				# exon start
+        my $exsz = join ",", map {$_->[4]-$_->[3]+1} @ex;			# exon size
+
+        my $gene_id;
+        my $extend = "";
+        if ($extended) {
+            ($gene_id) = $attr =~ /gene_name "([^"]+)"/;
+            ($gene_id) = $attr =~ /gene_id "([^"]+)"/ unless $gene_id;
+            $extend="\t$gene_id";
+        }
+        # added an extra comma to make it look exactly like ucsc's beds
+        print "$chr\t$beg\t$end\t$id\t0\t$dir\t$cds\t$cde\t0\t$exn\t$exsz,\t$exst,$extend\n";
+}
+
+close IN;
+```
+
+:::
+
+To use custom scripts to an nf-core pipeline, the script will need to be added to the `nf-core-customrnaseq/bin` folder. If this folder doesn't exist, create it, and copy the `gtf2bed` script to that folder, and make it executable.
+
+```default
+mkdir -p nf-core-customrnaseq/bin
+```
+
+```default
+chmod a+x nf-core-customrnaseq/bin/gtf2bed
+```
+
+In Nextflow, the `bin` directory is always added to the `$PATH` of all processes. This means scripts won't need to be committed to a container, and without the need to specify the full path to the script within the process. 
+
+Now, we can create a module that calls the `gtf2bed` script.
+
+```default
+nf-core modules create
+```
+
+As you navigate through the prompts, set the following:
+
+1. Name of tool/subtool: `gtf2bed`
+2. Do you want to enter a different Bioconda package name? [y/n]: n
+3. GitHub Username: (@author): `@<your-username>`
+4. Process resource label: `process_low`
+5. Will the module require a meta map of sample information? [y/n] (y): y
+
+Since `gtf2bed` is a fully custom tool, we will need to specify our own software containers. If we are using a modified version of an existing tool such as `samtools`, Nextflow will populate the container with the relevant `samtools` container. 
+
+Now, open the newly created script: 
+
+::: {.callout-note collapse="true"}
+## `modules/local/gtf2bed/main.nf`
+
+```default
+// TODO nf-core: If in doubt look at other nf-core/modules to see how we are doing things! :)
+//               https://github.com/nf-core/modules/tree/master/modules/nf-core/
+//               You can also ask for help via your pull request or on the #modules channel on the nf-core Slack workspace:
+//               https://nf-co.re/join
+// TODO nf-core: A module file SHOULD only define input and output files as command-line parameters.
+//               All other parameters MUST be provided using the "task.ext" directive, see here:
+//               https://www.nextflow.io/docs/latest/process.html#ext
+//               where "task.ext" is a string.
+//               Any parameters that need to be evaluated in the context of a particular sample
+//               e.g. single-end/paired-end data MUST also be defined and evaluated appropriately.
+// TODO nf-core: Software that can be piped together SHOULD be added to separate module files
+//               unless there is a run-time, storage advantage in implementing in this way
+//               e.g. it's ok to have a single module for bwa to output BAM instead of SAM:
+//                 bwa mem | samtools view -B -T ref.fasta
+// TODO nf-core: Optional inputs are not currently supported by Nextflow. However, using an empty
+//               list (`[]`) instead of a file can be used to work around this issue.
+
+process GTF2BED {
+    tag "$meta.id"
+    label 'process_low'
+
+    // TODO nf-core: List required Conda package(s).
+    //               Software MUST be pinned to channel (i.e. "bioconda"), version (i.e. "1.10").
+    //               For Conda, the build (i.e. "h9402c20_2") must be EXCLUDED to support installation on different operating systems.
+    // TODO nf-core: See section in main README for further information regarding finding and adding container addresses to the section below.
+    conda "${moduleDir}/environment.yml"
+    container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
+        'https://depot.galaxyproject.org/singularity/YOUR-TOOL-HERE':
+        'biocontainers/YOUR-TOOL-HERE' }"
+
+    input:
+    // TODO nf-core: Where applicable all sample-specific information e.g. "id", "single_end", "read_group"
+    //               MUST be provided as an input via a Groovy Map called "meta".
+    //               This information may not be required in some instances e.g. indexing reference genome files:
+    //               https://github.com/nf-core/modules/blob/master/modules/nf-core/bwa/index/main.nf
+    // TODO nf-core: Where applicable please provide/convert compressed files as input/output
+    //               e.g. "*.fastq.gz" and NOT "*.fastq", "*.bam" and NOT "*.sam" etc.
+    tuple val(meta), path(bam)
+
+    output:
+    // TODO nf-core: Named file extensions MUST be emitted for ALL output channels
+    tuple val(meta), path("*.bam"), emit: bam
+    // TODO nf-core: List additional required output channels/values here
+    path "versions.yml"           , emit: versions
+
+    when:
+    task.ext.when == null || task.ext.when
+
+    script:
+    def args = task.ext.args ?: ''
+    def prefix = task.ext.prefix ?: "${meta.id}"
+    // TODO nf-core: Where possible, a command MUST be provided to obtain the version number of the software e.g. 1.10
+    //               If the software is unable to output a version number on the command-line then it can be manually specified
+    //               e.g. https://github.com/nf-core/modules/blob/master/modules/nf-core/homer/annotatepeaks/main.nf
+    //               Each software used MUST provide the software name and version number in the YAML version file (versions.yml)
+    // TODO nf-core: It MUST be possible to pass additional parameters to the tool as a command-line string via the "task.ext.args" directive
+    // TODO nf-core: If the tool supports multi-threading then you MUST provide the appropriate parameter
+    //               using the Nextflow "task" variable e.g. "--threads $task.cpus"
+    // TODO nf-core: Please replace the example samtools command below with your module's command
+    // TODO nf-core: Please indent the command appropriately (4 spaces!!) to help with readability ;)
+    """
+    samtools \\
+        sort \\
+        $args \\
+        -@ $task.cpus \\
+        -o ${prefix}.bam \\
+        -T $prefix \\
+        $bam
+
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        gtf2bed: \$(samtools --version |& sed '1!d ; s/samtools //')
+    END_VERSIONS
+    """
+
+    stub:
+    def args = task.ext.args ?: ''
+    def prefix = task.ext.prefix ?: "${meta.id}"
+    // TODO nf-core: A stub section should mimic the execution of the original module as best as possible
+    //               Have a look at the following examples:
+    //               Simple example: https://github.com/nf-core/modules/blob/818474a292b4860ae8ff88e149fbcda68814114d/modules/nf-core/bcftools/annotate/main.nf#L47-L63
+    //               Complex example: https://github.com/nf-core/modules/blob/818474a292b4860ae8ff88e149fbcda68814114d/modules/nf-core/bedtools/split/main.nf#L38-L54
+    """
+    touch ${prefix}.bam
+
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        gtf2bed: \$(samtools --version |& sed '1!d ; s/samtools //')
+    END_VERSIONS
+    """
+}
+```
+:::
+
+Notice that there are many `TODO` steps. Since we are using a custom script that uses perl, change the container to be the following:
+
+```default
+    container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
+        'https://depot.galaxyproject.org/singularity/perl:5.26.2' :
+        'biocontainers/perl:5.26.2' }"
+```
+
+Inside the `script` block, change the content to the following:
+
+```default
+    script:
+    """
+    gtf2bed \\
+        $gtf \\
+        > ${gtf.baseName}.bed
+
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        perl: \$(echo \$(perl --version 2>&1) | sed 's/.*v\\(.*\\)) built.*/\\1/')
+    END_VERSIONS
+    """
+```
+
+Here, the command that is executed is the `gtf2bed` script that was copied to the `nf-core-customrnaseq/bin` directory. The input to this script is the GTF file, and the ouput of the script is a BED file `${gtf.baseName}.bed`. 
+
+Inside the `stub` block, change the content to the following:
+
+```default
+    stub:
+    """
+    touch ${gtf.baseName}.bed
+
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        perl: \$(echo \$(perl --version 2>&1) | sed 's/.*v\\(.*\\)) built.*/\\1/')
+    END_VERSIONS
+    """
+```
+This simplified `stub` block will `touch` the output file name generated by the `GTF2BED` process. 
+
+Finally, since the input files won't have any metadata, change the `tag` to the following:
+
+```default
+tag "$gtf"
+```
+
+**Exercise**: 
+
+1. Edit the `input` block of the process such it takes an input GTF file. This will be referred to locally within the `GTF2BED` process as the local variable `gtf`
+2. Edit the `output` block such that it returns a `"*.bed"` file that will be emitted as `bed`. Keep the `"versions.yml"` file as an output. 
+3. Include the `GTF2BED` inside the analysis script, and input the `ch_gtf` to the process
+4. Rerun the pipeline, ensure the new `GTF2BED` process has been successfully executed
+
+::: {.callout-note collapse="true"}
+## Solution
+
+1. Since the `input` is a single file, the `path` qualifier will be used. This input will be assigned as the local variable `gtf`
+
+```default
+    input:
+    path gtf
+```
+
+2. Since the `output` is a single bed file, the `path` qualifier will be used. This output will use the wildcard `*` to match for `.bed` files, and emitted as `bed`
+
+```default
+    output:
+    path '*.bed'       , emit: bed
+    path "versions.yml"           , emit: versions
+
+
+```
+
+3. `GTF2BED` needs to be included inside the  `nf-core-customrnaseq/workflows/customrnaseq.nf` script:
+
+```default
+    include { GTF2BED } from '../modules/local/gtf2bed'
+```
+
+Now, it can be invoked inside the `workflow CUSTOMRNASEQ { }` definition, using `ch_gtf` as input:
+
+```default
+    GTF2BED(ch_gtf)
+```
+
+4. Rerunning the pipeline:
+
+```default
+nextflow run ./nf-core-customrnaseq/main.nf -resume -profile apptainer --input ./samplesheet.csv --outdir output -params-file ./params.yaml 
+```
+
+```default
+executor >  local (2)
+[6b/3a6f84] process > NFCORE_CUSTOMRNASEQ:CUSTOMRNASEQ:SALMON_INDEX (transcriptome.fasta) [100%] 1 of 1, cached: 1 ✔
+[08/efbe76] process > NFCORE_CUSTOMRNASEQ:CUSTOMRNASEQ:SALMON_QUANT (SRR6357070)          [100%] 1 of 1, cached: 1 ✔
+[ad/e18ad4] process > NFCORE_CUSTOMRNASEQ:CUSTOMRNASEQ:GTF2BED (genes.gtf)                [100%] 1 of 1 ✔
+[b1/5815ca] process > NFCORE_CUSTOMRNASEQ:CUSTOMRNASEQ:FASTQC (SRR6357072)                [100%] 3 of 3, cached: 3 ✔
+[e8/3e6f5c] process > NFCORE_CUSTOMRNASEQ:CUSTOMRNASEQ:MULTIQC                            [100%] 1 of 1 ✔
+-[nf-core/customrnaseq] Pipeline completed successfully-
+```
+
+The new `GTF2BED` process has completed successfully. 
+
+:::
