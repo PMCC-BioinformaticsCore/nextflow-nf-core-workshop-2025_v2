@@ -188,8 +188,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
  <span class="dropdown-text">5.1 nf-core modules and subworkflows</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../workshops/5.3_metadata_propagation.html">
- <span class="dropdown-text">6.1 Metadata Propagation</span></a>
+    <a class="dropdown-item" href="../workshops/5.3_samplesheet_parsing.html">
+ <span class="dropdown-text">6.1 Samplesheet parsing and nf-core modules</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../workshops/5.4_module_args_custom_module.html">
+ <span class="dropdown-text">6.3 Module arguments and custom modules</span></a>
   </li>  
         <li>
     <a class="dropdown-item" href="../workshops/5.4_pipeline_testing.html">
@@ -591,11 +595,11 @@ Solution
 <div class="callout-body-container callout-body">
 <div class="sourceCode" id="cb38"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>#!/usr/bin/env nextflow</span>
 <span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>params.reads = "/.../training/nf-training/data/ggal/*_{1,2}.fq"</span>
-<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>params.transcriptome_file = "/.../training/nf-training/data/ggal/transcriptome.fa"</span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>params.reads = "/home/$USER/training/nf-training/data/ggal/*_{1,2}.fq"</span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>params.transcriptome_file = "/home/$USER/training/nf-training/data/ggal/transcriptome.fa"</span>
 <span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a>process INDEX {</span>
-<span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a>    container "https://depot.galaxyproject.org/singularity/salmon:1.10.3--h6dccd9a_2"</span>
+<span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a>    container "quay.io/biocontainers/salmon:1.10.3--h6dccd9a_2"</span>
 <span id="cb38-8"><a href="#cb38-8" aria-hidden="true" tabindex="-1"></a>    </span>
 <span id="cb38-9"><a href="#cb38-9" aria-hidden="true" tabindex="-1"></a>    input:</span>
 <span id="cb38-10"><a href="#cb38-10" aria-hidden="true" tabindex="-1"></a>    path transcriptome</span>
@@ -610,7 +614,7 @@ Solution
 <span id="cb38-19"><a href="#cb38-19" aria-hidden="true" tabindex="-1"></a>}</span>
 <span id="cb38-20"><a href="#cb38-20" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb38-21"><a href="#cb38-21" aria-hidden="true" tabindex="-1"></a>process QUANTIFICATION {</span>
-<span id="cb38-22"><a href="#cb38-22" aria-hidden="true" tabindex="-1"></a>    container "/home/&lt;username&gt;/apptainer_cache/depot.galaxyproject.org-singularity-salmon-1.10.3--h6dccd9a_2.img"</span>
+<span id="cb38-22"><a href="#cb38-22" aria-hidden="true" tabindex="-1"></a>    container "quay.io/biocontainers/salmon:1.10.3--h6dccd9a_2"</span>
 <span id="cb38-23"><a href="#cb38-23" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb38-24"><a href="#cb38-24" aria-hidden="true" tabindex="-1"></a>    input:</span>
 <span id="cb38-25"><a href="#cb38-25" aria-hidden="true" tabindex="-1"></a>    path salmon_index</span>
@@ -627,7 +631,7 @@ Solution
 <span id="cb38-36"><a href="#cb38-36" aria-hidden="true" tabindex="-1"></a>}</span>
 <span id="cb38-37"><a href="#cb38-37" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb38-38"><a href="#cb38-38" aria-hidden="true" tabindex="-1"></a>process FASTQC {</span>
-<span id="cb38-39"><a href="#cb38-39" aria-hidden="true" tabindex="-1"></a>    container 'https://depot.galaxyproject.org/singularity/fastqc:0.12.1--hdfd78af_0'</span>
+<span id="cb38-39"><a href="#cb38-39" aria-hidden="true" tabindex="-1"></a>    container 'quay.io/biocontainers/fastqc:0.12.1--hdfd78af_0'</span>
 <span id="cb38-40"><a href="#cb38-40" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb38-41"><a href="#cb38-41" aria-hidden="true" tabindex="-1"></a>    input:</span>
 <span id="cb38-42"><a href="#cb38-42" aria-hidden="true" tabindex="-1"></a>    tuple val(sample_id), path(reads)</span>
@@ -644,7 +648,7 @@ Solution
 <span id="cb38-53"><a href="#cb38-53" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb38-54"><a href="#cb38-54" aria-hidden="true" tabindex="-1"></a>process MULTIQC {</span>
 <span id="cb38-55"><a href="#cb38-55" aria-hidden="true" tabindex="-1"></a>    publishDir params.outdir, mode:'copy'</span>
-<span id="cb38-56"><a href="#cb38-56" aria-hidden="true" tabindex="-1"></a>    container 'https://depot.galaxyproject.org/singularity/multiqc:1.28--pyhdfd78af_0'</span>
+<span id="cb38-56"><a href="#cb38-56" aria-hidden="true" tabindex="-1"></a>    container 'quay.io/biocontainers/multiqc:1.19--pyhdfd78af_0'</span>
 <span id="cb38-57"><a href="#cb38-57" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb38-58"><a href="#cb38-58" aria-hidden="true" tabindex="-1"></a>    input:</span>
 <span id="cb38-59"><a href="#cb38-59" aria-hidden="true" tabindex="-1"></a>    path quantification</span>
@@ -664,12 +668,10 @@ Solution
 <span id="cb38-73"><a href="#cb38-73" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb38-74"><a href="#cb38-74" aria-hidden="true" tabindex="-1"></a>  index_ch = INDEX(params.transcriptome_file)</span>
 <span id="cb38-75"><a href="#cb38-75" aria-hidden="true" tabindex="-1"></a>  quant_ch = QUANTIFICATION(index_ch, reads_ch)</span>
-<span id="cb38-76"><a href="#cb38-76" aria-hidden="true" tabindex="-1"></a>  quant_ch.view()</span>
-<span id="cb38-77"><a href="#cb38-77" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb38-78"><a href="#cb38-78" aria-hidden="true" tabindex="-1"></a>  fastqc_ch = FASTQC(reads_ch)</span>
-<span id="cb38-79"><a href="#cb38-79" aria-hidden="true" tabindex="-1"></a>  multiqc_ch = MULTIQC(quant_ch, fastqc_ch)</span>
-<span id="cb38-80"><a href="#cb38-80" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb38-81"><a href="#cb38-81" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb38-76"><a href="#cb38-76" aria-hidden="true" tabindex="-1"></a>  fastqc_ch = FASTQC(reads_ch)</span>
+<span id="cb38-77"><a href="#cb38-77" aria-hidden="true" tabindex="-1"></a>  multiqc_ch = MULTIQC(quant_ch, fastqc_ch)</span>
+<span id="cb38-78"><a href="#cb38-78" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-79"><a href="#cb38-79" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 </div>

@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Nextflow Development - Developing Modularised Workflows – Peter Mac Nextflow Workshop</title>
+<title>Nextflow Development - nf-core Modules – Peter Mac Nextflow Workshop</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -188,8 +188,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
  <span class="dropdown-text">5.1 nf-core modules and subworkflows</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../workshops/5.3_metadata_propagation.html">
- <span class="dropdown-text">6.1 Metadata Propagation</span></a>
+    <a class="dropdown-item" href="../workshops/5.3_samplesheet_parsing.html">
+ <span class="dropdown-text">6.1 Samplesheet parsing and nf-core modules</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../workshops/5.4_module_args_custom_module.html">
+ <span class="dropdown-text">6.3 Module arguments and custom modules</span></a>
   </li>  
         <li>
     <a class="dropdown-item" href="../workshops/5.4_pipeline_testing.html">
@@ -214,7 +218,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title"><strong>Nextflow Development - Developing Modularised Workflows</strong></h1>
+<h1 class="title"><strong>Nextflow Development - nf-core Modules</strong></h1>
 </div>
 
 
@@ -328,7 +332,7 @@ Objectives
 <p>We will be recreating these steps, using the nf-core template as a guide.</p>
 <p>Recall that when we created each process, we manually defined the input(s) and their structure, the output(s) and their structure, the process script, and any containers required to execute the process. This can become time consuming, especially when creating pipelines with many processes.</p>
 <p>Before creating a module ourselves, we should always first check the <a href="https://nf-co.re/modules/">nf-core modules page</a> to see if the module we are interested in exists.</p>
-<p>For our <code>INDEX</code> and <code>QUANTIFICATION</code> processes, let’s check if are already modules that use <code>salmon index</code> and <code>salmon quant</code>.</p>
+<p>For our <code>INDEX</code> and <code>QUANTIFICATION</code> processes, let’s check if there are already modules that use <code>salmon index</code> and <code>salmon quant</code>.</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>process INDEX {</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    container "https://depot.galaxyproject.org/singularity/salmon:1.10.3--h6dccd9a_2"</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -382,16 +386,14 @@ Objectives
 <span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>                                                                  </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>By default, the example <code>include</code> command provided by running <code>nf-core modules install</code> will provide the <strong>relative output path</strong> from the <strong>analysis workflow file</strong>. Therefore, this can be copied directly into <code>workflows/customrnaseq.nf</code>. Recall that if you are importing the module from within a subworkflow file in the <code>subworkflows</code> folder, you will need to change the relative file path to match the new structure.</p>
 <div class="callout callout-style-default callout-warning callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
 Warning
 </div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-2" class="callout-2-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>If you are installing the module <strong>outside</strong> of the nf-core pipeline folder, you may see the below message:</p>
 <div class="sourceCode" id="cb9"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>                                          ,--./,-.</span>
@@ -408,7 +410,6 @@ Warning
 <span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a> » Pipeline</span>
 <span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>   Modules repository</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Cancel your <code>nf-core modules install</code> command, navigate inside your pipeline folder, then retry.</p>
-</div>
 </div>
 </div>
 <p>Note that this module has been installed inside the <code>modules</code> folder in the pipeline, inside the <code>nf-core</code> subfolder.</p>
@@ -679,69 +680,11 @@ modules.json
 </div>
 </section>
 </section>
-<section id="updating-modules-nf-core-modules-update" class="level3">
-<h3 class="anchored" data-anchor-id="updating-modules-nf-core-modules-update"><strong>5.1.2 Updating modules: <code>nf-core modules update</code></strong></h3>
-<p>A limitation of <code>nf-core modules install</code> is that it doesn’t explicitly print what has been changed within the module. The <code>nf-core modules update</code> command is an alternative that can do this.</p>
-<p>Let’s update <code>salmon/quant</code></p>
-<div class="sourceCode" id="cb29"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>nf-core modules update salmon/quant</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>The command will then prompt you if you wish to view the differences between the current installation and the update.</p>
-<div class="sourceCode" id="cb30"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>                                          ,--./,-.</span>
-<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>          ___     __   __   __   ___     /,-._.--~\ </span>
-<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>    |\ | |__  __ /  ` /  \ |__) |__         }  {</span>
-<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>    | \| |       \__, \__/ |  \ |___     \`-._,-`-,</span>
-<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>                                          `._,._,'</span>
-<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a>    nf-core/tools version 3.2.0 - https://nf-co.re</span>
-<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-10"><a href="#cb30-10" aria-hidden="true" tabindex="-1"></a>? Do you want to view diffs of the proposed changes? (Use arrow keys)</span>
-<span id="cb30-11"><a href="#cb30-11" aria-hidden="true" tabindex="-1"></a> » No previews, just update everything</span>
-<span id="cb30-12"><a href="#cb30-12" aria-hidden="true" tabindex="-1"></a>   Preview diff in terminal, choose whether to update files</span>
-<span id="cb30-13"><a href="#cb30-13" aria-hidden="true" tabindex="-1"></a>   Just write diffs to a patch file</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>Use the up/down arrow keys can to choose <strong>Preview diff in terminal, choose whether to update files</strong> and press <code>Enter</code>.</p>
-<div class="sourceCode" id="cb31"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>                                          ,--./,-.</span>
-<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>          ___     __   __   __   ___     /,-._.--~\ </span>
-<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>    |\ | |__  __ /  ` /  \ |__) |__         }  {</span>
-<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>    | \| |       \__, \__/ |  \ |___     \`-._,-`-,</span>
-<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a>                                          `._,._,'</span>
-<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a>    nf-core/tools version 3.2.0 - https://nf-co.re</span>
-<span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-10"><a href="#cb31-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-11"><a href="#cb31-11" aria-hidden="true" tabindex="-1"></a>? Do you want to view diffs of the proposed changes? Preview diff in terminal, choose whether to update files</span>
-<span id="cb31-12"><a href="#cb31-12" aria-hidden="true" tabindex="-1"></a>INFO     Changes in component 'nf-core/salmon/quant' between (85b5f8a0d9df9ce7587af50e2ee75b37c97515c6) and (05954dab2ff481bcb999f24455da29a5828af08d)                                                                   </span>
-<span id="cb31-13"><a href="#cb31-13" aria-hidden="true" tabindex="-1"></a>INFO     'modules/nf-core/salmon/quant/environment.yml' is unchanged                                                                                                                                                     </span>
-<span id="cb31-14"><a href="#cb31-14" aria-hidden="true" tabindex="-1"></a>┏━ salmon/quant ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓</span>
-<span id="cb31-15"><a href="#cb31-15" aria-hidden="true" tabindex="-1"></a>┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛</span>
-<span id="cb31-16"><a href="#cb31-16" aria-hidden="true" tabindex="-1"></a>INFO     'modules/nf-core/salmon/quant/meta.yml' is unchanged                                                                                                                                                            </span>
-<span id="cb31-17"><a href="#cb31-17" aria-hidden="true" tabindex="-1"></a>┏━ salmon/quant ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓</span>
-<span id="cb31-18"><a href="#cb31-18" aria-hidden="true" tabindex="-1"></a>┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛</span>
-<span id="cb31-19"><a href="#cb31-19" aria-hidden="true" tabindex="-1"></a>INFO     'modules/nf-core/salmon/quant/main.nf' is unchanged                                                                                                                                                             </span>
-<span id="cb31-20"><a href="#cb31-20" aria-hidden="true" tabindex="-1"></a>┏━ salmon/quant ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓</span>
-<span id="cb31-21"><a href="#cb31-21" aria-hidden="true" tabindex="-1"></a>┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛</span>
-<span id="cb31-22"><a href="#cb31-22" aria-hidden="true" tabindex="-1"></a>INFO     'modules/nf-core/salmon/quant/tests/nextflow.config' is unchanged                                                                                                                                               </span>
-<span id="cb31-23"><a href="#cb31-23" aria-hidden="true" tabindex="-1"></a>┏━ salmon/quant ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓</span>
-<span id="cb31-24"><a href="#cb31-24" aria-hidden="true" tabindex="-1"></a>┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛</span>
-<span id="cb31-25"><a href="#cb31-25" aria-hidden="true" tabindex="-1"></a>INFO     'modules/nf-core/salmon/quant/tests/main.nf.test' is unchanged                                                                                                                                                  </span>
-<span id="cb31-26"><a href="#cb31-26" aria-hidden="true" tabindex="-1"></a>┏━ salmon/quant ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓</span>
-<span id="cb31-27"><a href="#cb31-27" aria-hidden="true" tabindex="-1"></a>┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛</span>
-<span id="cb31-28"><a href="#cb31-28" aria-hidden="true" tabindex="-1"></a>INFO     'modules/nf-core/salmon/quant/tests/main.nf.test.snap' is unchanged                                                                                                                                             </span>
-<span id="cb31-29"><a href="#cb31-29" aria-hidden="true" tabindex="-1"></a>┏━ salmon/quant ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓</span>
-<span id="cb31-30"><a href="#cb31-30" aria-hidden="true" tabindex="-1"></a>┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛</span>
-<span id="cb31-31"><a href="#cb31-31" aria-hidden="true" tabindex="-1"></a>INFO     'modules/nf-core/salmon/quant/tests/tags.yml' was removed                                                                                                                                                       </span>
-<span id="cb31-32"><a href="#cb31-32" aria-hidden="true" tabindex="-1"></a>┏━ salmon/quant ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓</span>
-<span id="cb31-33"><a href="#cb31-33" aria-hidden="true" tabindex="-1"></a>┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛</span>
-<span id="cb31-34"><a href="#cb31-34" aria-hidden="true" tabindex="-1"></a>? Update module 'salmon/quant'? (y/N)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>We see that the only change between the two module versions is that <code>tags.yml</code> was removed. Since these changes are acceptable to us, we can now press <code>y</code>. Your module should now be updated.</p>
-<div class="sourceCode" id="cb32"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>INFO     Updating 'nf-core/salmon/quant'                                                                                                                                                                                 </span>
-<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>INFO     Updates complete ✨   </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</section>
-<section id="removing-modules" class="level3">
-<h3 class="anchored" data-anchor-id="removing-modules"><strong>5.1.3 Removing modules</strong></h3>
+<section id="removing-modules-nf-core-modules-remove" class="level3">
+<h3 class="anchored" data-anchor-id="removing-modules-nf-core-modules-remove"><strong>5.1.2 Removing modules <code>nf-core modules remove</code></strong></h3>
 <p>Previously, we saw that by simply removing the module folder didn’t delete the module from the pipeline. The pipeline automatically searches for missing module files and redownloads them, based on the SHA version specified in <code>modules.json</code>.</p>
 <p>To remove a module from a pipeline, the following can be used:</p>
-<div class="sourceCode" id="cb33"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>nf-core modules remove</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb29"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>nf-core modules remove</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p><strong>Exercise</strong>:</p>
 <ol type="1">
 <li><p>Use the <a href="https://nf-co.re/modules/">nf-core modules page</a> to find and install <strong>any</strong> module of <strong>any</strong> version to your pipeline</p></li>
@@ -762,87 +705,87 @@ Solution
 <div class="callout-body-container callout-body">
 <ol type="1">
 <li><p>The module chosen is <a href="https://nf-co.re/modules/samtools_sort/"><code>samtools/sort</code></a>. To install this module, the following command can be used (<strong>inside</strong> the pipeline folder):</p>
-<div class="sourceCode" id="cb34"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>nf-core modules install samtools/sort</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
+<div class="sourceCode" id="cb30"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>nf-core modules install samtools/sort</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
 <li><p>Listing the modules in the pipeline:</p>
-<div class="sourceCode" id="cb35"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>nf-core modules list local</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="sourceCode" id="cb36"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>                                      ,--./,-.</span>
-<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>      ___     __   __   __   ___     /,-._.--~\ </span>
-<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>|\ | |__  __ /  ` /  \ |__) |__         }  {</span>
-<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>| \| |       \__, \__/ |  \ |___     \`-._,-`-,</span>
-<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a>                                      `._,._,'</span>
-<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-7"><a href="#cb36-7" aria-hidden="true" tabindex="-1"></a>nf-core/tools version 3.2.0 - https://nf-co.re</span>
-<span id="cb36-8"><a href="#cb36-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-9"><a href="#cb36-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-10"><a href="#cb36-10" aria-hidden="true" tabindex="-1"></a>INFO     Repository type: pipeline                                                                                                 </span>
-<span id="cb36-11"><a href="#cb36-11" aria-hidden="true" tabindex="-1"></a>INFO     Modules installed in '.':                                                                                                 </span>
-<span id="cb36-12"><a href="#cb36-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-13"><a href="#cb36-13" aria-hidden="true" tabindex="-1"></a>┏━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━┓</span>
-<span id="cb36-14"><a href="#cb36-14" aria-hidden="true" tabindex="-1"></a>┃ Module Name   ┃ Repository      ┃ Version SHA ┃ Message                                                            ┃ Date       ┃</span>
-<span id="cb36-15"><a href="#cb36-15" aria-hidden="true" tabindex="-1"></a>┡━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━┩</span>
-<span id="cb36-16"><a href="#cb36-16" aria-hidden="true" tabindex="-1"></a>│ fastqc        │ nf-core/modules │ 0810805     │ use detailed profiles in tests/nf-test.config (#7207)              │ 2024-12-13 │</span>
-<span id="cb36-17"><a href="#cb36-17" aria-hidden="true" tabindex="-1"></a>│ multiqc       │ nf-core/modules │ f0719ae     │ bump multiqc 1.26 to 1.27 (#7364)                                  │ 2025-01-27 │</span>
-<span id="cb36-18"><a href="#cb36-18" aria-hidden="true" tabindex="-1"></a>│ salmon/index  │ nf-core/modules │ 05954da     │ Delete all tag.yml + relative path in antismash/antismashlite      │ 2025-03-26 │</span>
-<span id="cb36-19"><a href="#cb36-19" aria-hidden="true" tabindex="-1"></a>│               │                 │             │ tests (#8116)                                                      │            │</span>
-<span id="cb36-20"><a href="#cb36-20" aria-hidden="true" tabindex="-1"></a>│ salmon/quant  │ nf-core/modules │ 05954da     │ Delete all tag.yml + relative path in antismash/antismashlite      │ 2025-03-26 │</span>
-<span id="cb36-21"><a href="#cb36-21" aria-hidden="true" tabindex="-1"></a>│               │                 │             │ tests (#8116)                                                      │            │</span>
-<span id="cb36-22"><a href="#cb36-22" aria-hidden="true" tabindex="-1"></a>│ samtools/sort │ nf-core/modules │ 05954da     │ Delete all tag.yml + relative path in antismash/antismashlite      │ 2025-03-26 │</span>
-<span id="cb36-23"><a href="#cb36-23" aria-hidden="true" tabindex="-1"></a>│               │                 │             │ tests (#8116)                                                      │            │</span>
-<span id="cb36-24"><a href="#cb36-24" aria-hidden="true" tabindex="-1"></a>└───────────────┴─────────────────┴─────────────┴────────────────────────────────────────────────────────────────────┴────────────┘</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb31"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>nf-core modules list local</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb32"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>                                      ,--./,-.</span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>      ___     __   __   __   ___     /,-._.--~\ </span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>|\ | |__  __ /  ` /  \ |__) |__         }  {</span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>| \| |       \__, \__/ |  \ |___     \`-._,-`-,</span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>                                      `._,._,'</span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a>nf-core/tools version 3.2.0 - https://nf-co.re</span>
+<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-9"><a href="#cb32-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-10"><a href="#cb32-10" aria-hidden="true" tabindex="-1"></a>INFO     Repository type: pipeline                                                                                                 </span>
+<span id="cb32-11"><a href="#cb32-11" aria-hidden="true" tabindex="-1"></a>INFO     Modules installed in '.':                                                                                                 </span>
+<span id="cb32-12"><a href="#cb32-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-13"><a href="#cb32-13" aria-hidden="true" tabindex="-1"></a>┏━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━┓</span>
+<span id="cb32-14"><a href="#cb32-14" aria-hidden="true" tabindex="-1"></a>┃ Module Name   ┃ Repository      ┃ Version SHA ┃ Message                                                            ┃ Date       ┃</span>
+<span id="cb32-15"><a href="#cb32-15" aria-hidden="true" tabindex="-1"></a>┡━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━┩</span>
+<span id="cb32-16"><a href="#cb32-16" aria-hidden="true" tabindex="-1"></a>│ fastqc        │ nf-core/modules │ 0810805     │ use detailed profiles in tests/nf-test.config (#7207)              │ 2024-12-13 │</span>
+<span id="cb32-17"><a href="#cb32-17" aria-hidden="true" tabindex="-1"></a>│ multiqc       │ nf-core/modules │ f0719ae     │ bump multiqc 1.26 to 1.27 (#7364)                                  │ 2025-01-27 │</span>
+<span id="cb32-18"><a href="#cb32-18" aria-hidden="true" tabindex="-1"></a>│ salmon/index  │ nf-core/modules │ 05954da     │ Delete all tag.yml + relative path in antismash/antismashlite      │ 2025-03-26 │</span>
+<span id="cb32-19"><a href="#cb32-19" aria-hidden="true" tabindex="-1"></a>│               │                 │             │ tests (#8116)                                                      │            │</span>
+<span id="cb32-20"><a href="#cb32-20" aria-hidden="true" tabindex="-1"></a>│ salmon/quant  │ nf-core/modules │ 05954da     │ Delete all tag.yml + relative path in antismash/antismashlite      │ 2025-03-26 │</span>
+<span id="cb32-21"><a href="#cb32-21" aria-hidden="true" tabindex="-1"></a>│               │                 │             │ tests (#8116)                                                      │            │</span>
+<span id="cb32-22"><a href="#cb32-22" aria-hidden="true" tabindex="-1"></a>│ samtools/sort │ nf-core/modules │ 05954da     │ Delete all tag.yml + relative path in antismash/antismashlite      │ 2025-03-26 │</span>
+<span id="cb32-23"><a href="#cb32-23" aria-hidden="true" tabindex="-1"></a>│               │                 │             │ tests (#8116)                                                      │            │</span>
+<span id="cb32-24"><a href="#cb32-24" aria-hidden="true" tabindex="-1"></a>└───────────────┴─────────────────┴─────────────┴────────────────────────────────────────────────────────────────────┴────────────┘</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>The module is also present in <code>modules.json</code>:</p>
-<div class="sourceCode" id="cb37"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>{</span>
-<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>    "name": "nf-core/customrnaseq",</span>
-<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>    "homePage": "https://github.com/nf-core/customrnaseq",</span>
-<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a>    "repos": {</span>
-<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a>        "https://github.com/nf-core/modules.git": {</span>
-<span id="cb37-6"><a href="#cb37-6" aria-hidden="true" tabindex="-1"></a>            "modules": {</span>
-<span id="cb37-7"><a href="#cb37-7" aria-hidden="true" tabindex="-1"></a>                "nf-core": {</span>
-<span id="cb37-8"><a href="#cb37-8" aria-hidden="true" tabindex="-1"></a>                    ...</span>
-<span id="cb37-9"><a href="#cb37-9" aria-hidden="true" tabindex="-1"></a>                    "samtools/sort": {</span>
-<span id="cb37-10"><a href="#cb37-10" aria-hidden="true" tabindex="-1"></a>                        "branch": "master",</span>
-<span id="cb37-11"><a href="#cb37-11" aria-hidden="true" tabindex="-1"></a>                        "git_sha": "05954dab2ff481bcb999f24455da29a5828af08d",</span>
-<span id="cb37-12"><a href="#cb37-12" aria-hidden="true" tabindex="-1"></a>                        "installed_by": ["modules"]</span>
-<span id="cb37-13"><a href="#cb37-13" aria-hidden="true" tabindex="-1"></a>                    }</span>
-<span id="cb37-14"><a href="#cb37-14" aria-hidden="true" tabindex="-1"></a>                }</span>
-<span id="cb37-15"><a href="#cb37-15" aria-hidden="true" tabindex="-1"></a>            },</span>
-<span id="cb37-16"><a href="#cb37-16" aria-hidden="true" tabindex="-1"></a>    ...</span>
-<span id="cb37-17"><a href="#cb37-17" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
+<div class="sourceCode" id="cb33"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>{</span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>    "name": "nf-core/customrnaseq",</span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>    "homePage": "https://github.com/nf-core/customrnaseq",</span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>    "repos": {</span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a>        "https://github.com/nf-core/modules.git": {</span>
+<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a>            "modules": {</span>
+<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a>                "nf-core": {</span>
+<span id="cb33-8"><a href="#cb33-8" aria-hidden="true" tabindex="-1"></a>                    ...</span>
+<span id="cb33-9"><a href="#cb33-9" aria-hidden="true" tabindex="-1"></a>                    "samtools/sort": {</span>
+<span id="cb33-10"><a href="#cb33-10" aria-hidden="true" tabindex="-1"></a>                        "branch": "master",</span>
+<span id="cb33-11"><a href="#cb33-11" aria-hidden="true" tabindex="-1"></a>                        "git_sha": "05954dab2ff481bcb999f24455da29a5828af08d",</span>
+<span id="cb33-12"><a href="#cb33-12" aria-hidden="true" tabindex="-1"></a>                        "installed_by": ["modules"]</span>
+<span id="cb33-13"><a href="#cb33-13" aria-hidden="true" tabindex="-1"></a>                    }</span>
+<span id="cb33-14"><a href="#cb33-14" aria-hidden="true" tabindex="-1"></a>                }</span>
+<span id="cb33-15"><a href="#cb33-15" aria-hidden="true" tabindex="-1"></a>            },</span>
+<span id="cb33-16"><a href="#cb33-16" aria-hidden="true" tabindex="-1"></a>    ...</span>
+<span id="cb33-17"><a href="#cb33-17" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
 <li><p>To remove <code>ssamtools/sort</code>, the following command is used:</p>
-<div class="sourceCode" id="cb38"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>nf-core modules remove samtools/sort</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="sourceCode" id="cb39"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>                                          ,--./,-.</span>
-<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>      ___     __   __   __   ___     /,-._.--~\ </span>
-<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>|\ | |__  __ /  ` /  \ |__) |__         }  {</span>
-<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a>| \| |       \__, \__/ |  \ |___     \`-._,-`-,</span>
-<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a>                                      `._,._,'</span>
-<span id="cb39-6"><a href="#cb39-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-7"><a href="#cb39-7" aria-hidden="true" tabindex="-1"></a>nf-core/tools version 3.2.0 - https://nf-co.re</span>
-<span id="cb39-8"><a href="#cb39-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-9"><a href="#cb39-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-10"><a href="#cb39-10" aria-hidden="true" tabindex="-1"></a>INFO     Removed files for 'samtools/sort' and its dependencies 'samtools/sort'.    </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb34"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>nf-core modules remove samtools/sort</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb35"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>                                          ,--./,-.</span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>      ___     __   __   __   ___     /,-._.--~\ </span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>|\ | |__  __ /  ` /  \ |__) |__         }  {</span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>| \| |       \__, \__/ |  \ |___     \`-._,-`-,</span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a>                                      `._,._,'</span>
+<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a>nf-core/tools version 3.2.0 - https://nf-co.re</span>
+<span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-9"><a href="#cb35-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-10"><a href="#cb35-10" aria-hidden="true" tabindex="-1"></a>INFO     Removed files for 'samtools/sort' and its dependencies 'samtools/sort'.    </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Checking the module has been correctly removed:</p>
-<div class="sourceCode" id="cb40"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>nf-core modules list local</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb36"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>nf-core modules list local</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>The module <code>samtools/sort</code> has been removed from the modules list.</p>
-<div class="sourceCode" id="cb41"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>                                      ,--./,-.</span>
-<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>      ___     __   __   __   ___     /,-._.--~\ </span>
-<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a>|\ | |__  __ /  ` /  \ |__) |__         }  {</span>
-<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a>| \| |       \__, \__/ |  \ |___     \`-._,-`-,</span>
-<span id="cb41-6"><a href="#cb41-6" aria-hidden="true" tabindex="-1"></a>                                      `._,._,'</span>
-<span id="cb41-7"><a href="#cb41-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb41-8"><a href="#cb41-8" aria-hidden="true" tabindex="-1"></a>nf-core/tools version 3.2.0 - https://nf-co.re</span>
-<span id="cb41-9"><a href="#cb41-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb41-10"><a href="#cb41-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb41-11"><a href="#cb41-11" aria-hidden="true" tabindex="-1"></a>INFO     Repository type: pipeline                                                                                                                  </span>
-<span id="cb41-12"><a href="#cb41-12" aria-hidden="true" tabindex="-1"></a>INFO     Modules installed in '.':                                                                                                                  </span>
-<span id="cb41-13"><a href="#cb41-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb41-14"><a href="#cb41-14" aria-hidden="true" tabindex="-1"></a>┏━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━┓</span>
-<span id="cb41-15"><a href="#cb41-15" aria-hidden="true" tabindex="-1"></a>┃ Module Name  ┃ Repository      ┃ Version SHA ┃ Message                                                                     ┃ Date       ┃</span>
-<span id="cb41-16"><a href="#cb41-16" aria-hidden="true" tabindex="-1"></a>┡━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━┩</span>
-<span id="cb41-17"><a href="#cb41-17" aria-hidden="true" tabindex="-1"></a>│ fastqc       │ nf-core/modules │ 0810805     │ use detailed profiles in tests/nf-test.config (#7207)                       │ 2024-12-13 │</span>
-<span id="cb41-18"><a href="#cb41-18" aria-hidden="true" tabindex="-1"></a>│ multiqc      │ nf-core/modules │ f0719ae     │ bump multiqc 1.26 to 1.27 (#7364)                                           │ 2025-01-27 │</span>
-<span id="cb41-19"><a href="#cb41-19" aria-hidden="true" tabindex="-1"></a>│ salmon/index │ nf-core/modules │ 05954da     │ Delete all tag.yml + relative path in antismash/antismashlite tests (#8116) │ 2025-03-26 │</span>
-<span id="cb41-20"><a href="#cb41-20" aria-hidden="true" tabindex="-1"></a>│ salmon/quant │ nf-core/modules │ 05954da     │ Delete all tag.yml + relative path in antismash/antismashlite tests (#8116) │ 2025-03-26 │</span>
-<span id="cb41-21"><a href="#cb41-21" aria-hidden="true" tabindex="-1"></a>└──────────────┴─────────────────┴─────────────┴─────────────────────────────────────────────────────────────────────────────┴────────────┘</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
+<div class="sourceCode" id="cb37"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>                                      ,--./,-.</span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>      ___     __   __   __   ___     /,-._.--~\ </span>
+<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a>|\ | |__  __ /  ` /  \ |__) |__         }  {</span>
+<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a>| \| |       \__, \__/ |  \ |___     \`-._,-`-,</span>
+<span id="cb37-6"><a href="#cb37-6" aria-hidden="true" tabindex="-1"></a>                                      `._,._,'</span>
+<span id="cb37-7"><a href="#cb37-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-8"><a href="#cb37-8" aria-hidden="true" tabindex="-1"></a>nf-core/tools version 3.2.0 - https://nf-co.re</span>
+<span id="cb37-9"><a href="#cb37-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-10"><a href="#cb37-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-11"><a href="#cb37-11" aria-hidden="true" tabindex="-1"></a>INFO     Repository type: pipeline                                                                                                                  </span>
+<span id="cb37-12"><a href="#cb37-12" aria-hidden="true" tabindex="-1"></a>INFO     Modules installed in '.':                                                                                                                  </span>
+<span id="cb37-13"><a href="#cb37-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-14"><a href="#cb37-14" aria-hidden="true" tabindex="-1"></a>┏━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━┓</span>
+<span id="cb37-15"><a href="#cb37-15" aria-hidden="true" tabindex="-1"></a>┃ Module Name  ┃ Repository      ┃ Version SHA ┃ Message                                                                     ┃ Date       ┃</span>
+<span id="cb37-16"><a href="#cb37-16" aria-hidden="true" tabindex="-1"></a>┡━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━┩</span>
+<span id="cb37-17"><a href="#cb37-17" aria-hidden="true" tabindex="-1"></a>│ fastqc       │ nf-core/modules │ 0810805     │ use detailed profiles in tests/nf-test.config (#7207)                       │ 2024-12-13 │</span>
+<span id="cb37-18"><a href="#cb37-18" aria-hidden="true" tabindex="-1"></a>│ multiqc      │ nf-core/modules │ f0719ae     │ bump multiqc 1.26 to 1.27 (#7364)                                           │ 2025-01-27 │</span>
+<span id="cb37-19"><a href="#cb37-19" aria-hidden="true" tabindex="-1"></a>│ salmon/index │ nf-core/modules │ 05954da     │ Delete all tag.yml + relative path in antismash/antismashlite tests (#8116) │ 2025-03-26 │</span>
+<span id="cb37-20"><a href="#cb37-20" aria-hidden="true" tabindex="-1"></a>│ salmon/quant │ nf-core/modules │ 05954da     │ Delete all tag.yml + relative path in antismash/antismashlite tests (#8116) │ 2025-03-26 │</span>
+<span id="cb37-21"><a href="#cb37-21" aria-hidden="true" tabindex="-1"></a>└──────────────┴─────────────────┴─────────────┴─────────────────────────────────────────────────────────────────────────────┴────────────┘</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
 </ol>
 </div>
 </div>
@@ -852,49 +795,49 @@ Solution
 <section id="nf-core-subworkflows" class="level2">
 <h2 class="anchored" data-anchor-id="nf-core-subworkflows"><strong>5.2 <code>nf-core subworkflows</code></strong></h2>
 <p>Like modules, subworkflows can be added to a workflow using the <code>nf-core</code> tools suite.</p>
-<div class="sourceCode" id="cb42"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>nf-core subworkflows</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb38"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>nf-core subworkflows</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>The <code>subworkflows</code> command contains similar sub-commands to <code>modules</code></p>
-<div class="sourceCode" id="cb43"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>                                          ,--./,-.</span>
-<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>          ___     __   __   __   ___     /,-._.--~\ </span>
-<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a>    |\ | |__  __ /  ` /  \ |__) |__         }  {</span>
-<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a>    | \| |       \__, \__/ |  \ |___     \`-._,-`-,</span>
-<span id="cb43-5"><a href="#cb43-5" aria-hidden="true" tabindex="-1"></a>                                          `._,._,'</span>
-<span id="cb43-6"><a href="#cb43-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb43-7"><a href="#cb43-7" aria-hidden="true" tabindex="-1"></a>    nf-core/tools version 3.2.0 - https://nf-co.re</span>
-<span id="cb43-8"><a href="#cb43-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb43-9"><a href="#cb43-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb43-10"><a href="#cb43-10" aria-hidden="true" tabindex="-1"></a>                                                                                              </span>
-<span id="cb43-11"><a href="#cb43-11" aria-hidden="true" tabindex="-1"></a> Usage: nf-core subworkflows [OPTIONS] COMMAND [ARGS]...                                      </span>
-<span id="cb43-12"><a href="#cb43-12" aria-hidden="true" tabindex="-1"></a>                                                                                              </span>
-<span id="cb43-13"><a href="#cb43-13" aria-hidden="true" tabindex="-1"></a> Commands to manage Nextflow DSL2 subworkflows (tool wrappers).                               </span>
-<span id="cb43-14"><a href="#cb43-14" aria-hidden="true" tabindex="-1"></a>                                                                                              </span>
-<span id="cb43-15"><a href="#cb43-15" aria-hidden="true" tabindex="-1"></a>╭─ For pipelines ────────────────────────────────────────────────────────────────────────────╮</span>
-<span id="cb43-16"><a href="#cb43-16" aria-hidden="true" tabindex="-1"></a>│ list        List subworkflows in a local pipeline or remote repository.                    │</span>
-<span id="cb43-17"><a href="#cb43-17" aria-hidden="true" tabindex="-1"></a>│ info        Show developer usage information about a given subworkflow.                    │</span>
-<span id="cb43-18"><a href="#cb43-18" aria-hidden="true" tabindex="-1"></a>│ install     Install DSL2 subworkflow within a pipeline.                                    │</span>
-<span id="cb43-19"><a href="#cb43-19" aria-hidden="true" tabindex="-1"></a>│ update      Update DSL2 subworkflow within a pipeline.                                     │</span>
-<span id="cb43-20"><a href="#cb43-20" aria-hidden="true" tabindex="-1"></a>│ remove      Remove a subworkflow from a pipeline.                                          │</span>
-<span id="cb43-21"><a href="#cb43-21" aria-hidden="true" tabindex="-1"></a>╰────────────────────────────────────────────────────────────────────────────────────────────╯</span>
-<span id="cb43-22"><a href="#cb43-22" aria-hidden="true" tabindex="-1"></a>╭─ Developing new subworkflows ──────────────────────────────────────────────────────────────╮</span>
-<span id="cb43-23"><a href="#cb43-23" aria-hidden="true" tabindex="-1"></a>│ create      Create a new subworkflow from the nf-core template.                            │</span>
-<span id="cb43-24"><a href="#cb43-24" aria-hidden="true" tabindex="-1"></a>│ lint        Lint one or more subworkflows in a directory.                                  │</span>
-<span id="cb43-25"><a href="#cb43-25" aria-hidden="true" tabindex="-1"></a>│ test        Run nf-test for a subworkflow.                                                 │</span>
-<span id="cb43-26"><a href="#cb43-26" aria-hidden="true" tabindex="-1"></a>╰────────────────────────────────────────────────────────────────────────────────────────────╯</span>
-<span id="cb43-27"><a href="#cb43-27" aria-hidden="true" tabindex="-1"></a>╭─ Commands ─────────────────────────────────────────────────────────────────────────────────╮</span>
-<span id="cb43-28"><a href="#cb43-28" aria-hidden="true" tabindex="-1"></a>│ patch     Create a patch file for minor changes in a subworkflow                           │</span>
-<span id="cb43-29"><a href="#cb43-29" aria-hidden="true" tabindex="-1"></a>╰────────────────────────────────────────────────────────────────────────────────────────────╯</span>
-<span id="cb43-30"><a href="#cb43-30" aria-hidden="true" tabindex="-1"></a>╭─ Options ──────────────────────────────────────────────────────────────────────────────────╮</span>
-<span id="cb43-31"><a href="#cb43-31" aria-hidden="true" tabindex="-1"></a>│ --git-remote  -g  TEXT  Remote git repo to fetch files from                                │</span>
-<span id="cb43-32"><a href="#cb43-32" aria-hidden="true" tabindex="-1"></a>│ --branch      -b  TEXT  Branch of git repository hosting modules.                          │</span>
-<span id="cb43-33"><a href="#cb43-33" aria-hidden="true" tabindex="-1"></a>│ --no-pull     -N        Do not pull in latest changes to local clone of modules            │</span>
-<span id="cb43-34"><a href="#cb43-34" aria-hidden="true" tabindex="-1"></a>│                         repository.                                                        │</span>
-<span id="cb43-35"><a href="#cb43-35" aria-hidden="true" tabindex="-1"></a>│ --help        -h        Show this message and exit.                                        │</span>
-<span id="cb43-36"><a href="#cb43-36" aria-hidden="true" tabindex="-1"></a>╰────────────────────────────────────────────────────────────────────────────────────────────╯</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb39"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>                                          ,--./,-.</span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>          ___     __   __   __   ___     /,-._.--~\ </span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>    |\ | |__  __ /  ` /  \ |__) |__         }  {</span>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a>    | \| |       \__, \__/ |  \ |___     \`-._,-`-,</span>
+<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a>                                          `._,._,'</span>
+<span id="cb39-6"><a href="#cb39-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-7"><a href="#cb39-7" aria-hidden="true" tabindex="-1"></a>    nf-core/tools version 3.2.0 - https://nf-co.re</span>
+<span id="cb39-8"><a href="#cb39-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-9"><a href="#cb39-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-10"><a href="#cb39-10" aria-hidden="true" tabindex="-1"></a>                                                                                              </span>
+<span id="cb39-11"><a href="#cb39-11" aria-hidden="true" tabindex="-1"></a> Usage: nf-core subworkflows [OPTIONS] COMMAND [ARGS]...                                      </span>
+<span id="cb39-12"><a href="#cb39-12" aria-hidden="true" tabindex="-1"></a>                                                                                              </span>
+<span id="cb39-13"><a href="#cb39-13" aria-hidden="true" tabindex="-1"></a> Commands to manage Nextflow DSL2 subworkflows (tool wrappers).                               </span>
+<span id="cb39-14"><a href="#cb39-14" aria-hidden="true" tabindex="-1"></a>                                                                                              </span>
+<span id="cb39-15"><a href="#cb39-15" aria-hidden="true" tabindex="-1"></a>╭─ For pipelines ────────────────────────────────────────────────────────────────────────────╮</span>
+<span id="cb39-16"><a href="#cb39-16" aria-hidden="true" tabindex="-1"></a>│ list        List subworkflows in a local pipeline or remote repository.                    │</span>
+<span id="cb39-17"><a href="#cb39-17" aria-hidden="true" tabindex="-1"></a>│ info        Show developer usage information about a given subworkflow.                    │</span>
+<span id="cb39-18"><a href="#cb39-18" aria-hidden="true" tabindex="-1"></a>│ install     Install DSL2 subworkflow within a pipeline.                                    │</span>
+<span id="cb39-19"><a href="#cb39-19" aria-hidden="true" tabindex="-1"></a>│ update      Update DSL2 subworkflow within a pipeline.                                     │</span>
+<span id="cb39-20"><a href="#cb39-20" aria-hidden="true" tabindex="-1"></a>│ remove      Remove a subworkflow from a pipeline.                                          │</span>
+<span id="cb39-21"><a href="#cb39-21" aria-hidden="true" tabindex="-1"></a>╰────────────────────────────────────────────────────────────────────────────────────────────╯</span>
+<span id="cb39-22"><a href="#cb39-22" aria-hidden="true" tabindex="-1"></a>╭─ Developing new subworkflows ──────────────────────────────────────────────────────────────╮</span>
+<span id="cb39-23"><a href="#cb39-23" aria-hidden="true" tabindex="-1"></a>│ create      Create a new subworkflow from the nf-core template.                            │</span>
+<span id="cb39-24"><a href="#cb39-24" aria-hidden="true" tabindex="-1"></a>│ lint        Lint one or more subworkflows in a directory.                                  │</span>
+<span id="cb39-25"><a href="#cb39-25" aria-hidden="true" tabindex="-1"></a>│ test        Run nf-test for a subworkflow.                                                 │</span>
+<span id="cb39-26"><a href="#cb39-26" aria-hidden="true" tabindex="-1"></a>╰────────────────────────────────────────────────────────────────────────────────────────────╯</span>
+<span id="cb39-27"><a href="#cb39-27" aria-hidden="true" tabindex="-1"></a>╭─ Commands ─────────────────────────────────────────────────────────────────────────────────╮</span>
+<span id="cb39-28"><a href="#cb39-28" aria-hidden="true" tabindex="-1"></a>│ patch     Create a patch file for minor changes in a subworkflow                           │</span>
+<span id="cb39-29"><a href="#cb39-29" aria-hidden="true" tabindex="-1"></a>╰────────────────────────────────────────────────────────────────────────────────────────────╯</span>
+<span id="cb39-30"><a href="#cb39-30" aria-hidden="true" tabindex="-1"></a>╭─ Options ──────────────────────────────────────────────────────────────────────────────────╮</span>
+<span id="cb39-31"><a href="#cb39-31" aria-hidden="true" tabindex="-1"></a>│ --git-remote  -g  TEXT  Remote git repo to fetch files from                                │</span>
+<span id="cb39-32"><a href="#cb39-32" aria-hidden="true" tabindex="-1"></a>│ --branch      -b  TEXT  Branch of git repository hosting modules.                          │</span>
+<span id="cb39-33"><a href="#cb39-33" aria-hidden="true" tabindex="-1"></a>│ --no-pull     -N        Do not pull in latest changes to local clone of modules            │</span>
+<span id="cb39-34"><a href="#cb39-34" aria-hidden="true" tabindex="-1"></a>│                         repository.                                                        │</span>
+<span id="cb39-35"><a href="#cb39-35" aria-hidden="true" tabindex="-1"></a>│ --help        -h        Show this message and exit.                                        │</span>
+<span id="cb39-36"><a href="#cb39-36" aria-hidden="true" tabindex="-1"></a>╰────────────────────────────────────────────────────────────────────────────────────────────╯</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <ul>
 <li><code>list</code>: list the installed subworkflows in the pipeline</li>
 <li><code>install</code>: install a subworkflow to the pipeline</li>
 <li><code>update</code>: update the pipeline version using the GitHub SHA</li>
-<li><code>remove</code>: remoe a subworkflow from the pipeline</li>
+<li><code>remove</code>: remove a subworkflow from the pipeline</li>
 </ul>
 <p><strong>Exercise</strong>: Search the <a href="https://nf-co.re/subworkflows">nf-core subworkflows page</a> for the <code>fastq_subsample_fq_salmon</code> subworkflow. Install it into the workflow, and list all the subworkflows that are installed in the pipeline.</p>
 <div class="callout callout-style-default callout-note callout-titled">
@@ -910,45 +853,45 @@ Solution
 <div id="callout-7" class="callout-7-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>The <code>fastq_subsample_fq_salmon</code> subworkflow is located in the nf-core subworkflows page <a href="https://nf-co.re/subworkflows/fastq_subsample_fq_salmon/">here</a>. To install the module, the following command can be used:</p>
-<div class="sourceCode" id="cb44"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>nf-core subworkflows install fastq_subsample_fq_salmon</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="sourceCode" id="cb45"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>                                          ,--./,-.</span>
-<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a>          ___     __   __   __   ___     /,-._.--~\ </span>
-<span id="cb45-4"><a href="#cb45-4" aria-hidden="true" tabindex="-1"></a>    |\ | |__  __ /  ` /  \ |__) |__         }  {</span>
-<span id="cb45-5"><a href="#cb45-5" aria-hidden="true" tabindex="-1"></a>    | \| |       \__, \__/ |  \ |___     \`-._,-`-,</span>
-<span id="cb45-6"><a href="#cb45-6" aria-hidden="true" tabindex="-1"></a>                                          `._,._,'</span>
-<span id="cb45-7"><a href="#cb45-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb45-8"><a href="#cb45-8" aria-hidden="true" tabindex="-1"></a>    nf-core/tools version 3.2.0 - https://nf-co.re</span>
-<span id="cb45-9"><a href="#cb45-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb45-10"><a href="#cb45-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb45-11"><a href="#cb45-11" aria-hidden="true" tabindex="-1"></a>INFO     Installing 'fastq_subsample_fq_salmon'                                                                                                     </span>
-<span id="cb45-12"><a href="#cb45-12" aria-hidden="true" tabindex="-1"></a>INFO     Use the following statement to include this subworkflow:                                                                                   </span>
-<span id="cb45-13"><a href="#cb45-13" aria-hidden="true" tabindex="-1"></a>                                                                                                                                                    </span>
-<span id="cb45-14"><a href="#cb45-14" aria-hidden="true" tabindex="-1"></a> include { FASTQ_SUBSAMPLE_FQ_SALMON } from '../subworkflows/nf-core/fastq_subsample_fq_salmon/main'  </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb40"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>nf-core subworkflows install fastq_subsample_fq_salmon</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb41"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>                                          ,--./,-.</span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>          ___     __   __   __   ___     /,-._.--~\ </span>
+<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a>    |\ | |__  __ /  ` /  \ |__) |__         }  {</span>
+<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a>    | \| |       \__, \__/ |  \ |___     \`-._,-`-,</span>
+<span id="cb41-6"><a href="#cb41-6" aria-hidden="true" tabindex="-1"></a>                                          `._,._,'</span>
+<span id="cb41-7"><a href="#cb41-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-8"><a href="#cb41-8" aria-hidden="true" tabindex="-1"></a>    nf-core/tools version 3.2.0 - https://nf-co.re</span>
+<span id="cb41-9"><a href="#cb41-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-10"><a href="#cb41-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-11"><a href="#cb41-11" aria-hidden="true" tabindex="-1"></a>INFO     Installing 'fastq_subsample_fq_salmon'                                                                                                     </span>
+<span id="cb41-12"><a href="#cb41-12" aria-hidden="true" tabindex="-1"></a>INFO     Use the following statement to include this subworkflow:                                                                                   </span>
+<span id="cb41-13"><a href="#cb41-13" aria-hidden="true" tabindex="-1"></a>                                                                                                                                                    </span>
+<span id="cb41-14"><a href="#cb41-14" aria-hidden="true" tabindex="-1"></a> include { FASTQ_SUBSAMPLE_FQ_SALMON } from '../subworkflows/nf-core/fastq_subsample_fq_salmon/main'  </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>To list the subworkflows in the pipeline:</p>
-<div class="sourceCode" id="cb46"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>nf-core subworkflows list local </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb42"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>nf-core subworkflows list local </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>This output contains the newly installed subworkflow <code>fastq_subsample_fq_salmon</code>:</p>
-<div class="sourceCode" id="cb47"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a>                                          ,--./,-.</span>
-<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a>          ___     __   __   __   ___     /,-._.--~\ </span>
-<span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a>    |\ | |__  __ /  ` /  \ |__) |__         }  {</span>
-<span id="cb47-4"><a href="#cb47-4" aria-hidden="true" tabindex="-1"></a>    | \| |       \__, \__/ |  \ |___     \`-._,-`-,</span>
-<span id="cb47-5"><a href="#cb47-5" aria-hidden="true" tabindex="-1"></a>                                          `._,._,'</span>
-<span id="cb47-6"><a href="#cb47-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb47-7"><a href="#cb47-7" aria-hidden="true" tabindex="-1"></a>    nf-core/tools version 3.2.0 - https://nf-co.re</span>
-<span id="cb47-8"><a href="#cb47-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb47-9"><a href="#cb47-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb47-10"><a href="#cb47-10" aria-hidden="true" tabindex="-1"></a>INFO     Repository type: pipeline                                                                                                                  </span>
-<span id="cb47-11"><a href="#cb47-11" aria-hidden="true" tabindex="-1"></a>INFO     Subworkflows installed in '.':                                                                                                             </span>
-<span id="cb47-12"><a href="#cb47-12" aria-hidden="true" tabindex="-1"></a>                                                                                                                                                    </span>
-<span id="cb47-13"><a href="#cb47-13" aria-hidden="true" tabindex="-1"></a>┏━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━┓</span>
-<span id="cb47-14"><a href="#cb47-14" aria-hidden="true" tabindex="-1"></a>┃ Subworkflow Name          ┃ Repository      ┃ Version SHA ┃ Message                                                                 ┃ Date       ┃</span>
-<span id="cb47-15"><a href="#cb47-15" aria-hidden="true" tabindex="-1"></a>┡━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━┩</span>
-<span id="cb47-16"><a href="#cb47-16" aria-hidden="true" tabindex="-1"></a>│ fastq_subsample_fq_salmon │ nf-core/modules │ 05954da     │ Delete all tag.yml + relative path in antismash/antismashlite tests     │ 2025-03-26 │</span>
-<span id="cb47-17"><a href="#cb47-17" aria-hidden="true" tabindex="-1"></a>│                           │                 │             │ (#8116)                                                                 │            │</span>
-<span id="cb47-18"><a href="#cb47-18" aria-hidden="true" tabindex="-1"></a>│ utils_nextflow_pipeline   │ nf-core/modules │ c2b22d8     │ Utils Nextflow: Avoid unused variables (#7070)                          │ 2024-11-24 │</span>
-<span id="cb47-19"><a href="#cb47-19" aria-hidden="true" tabindex="-1"></a>│ utils_nfcore_pipeline     │ nf-core/modules │ 51ae540     │ Replace switch with else-if in utils_nfcore_pipeline (#7168)            │ 2024-12-06 │</span>
-<span id="cb47-20"><a href="#cb47-20" aria-hidden="true" tabindex="-1"></a>│ utils_nfschema_plugin     │ nf-core/modules │ 2fd2cd6     │ fails with lenient mode (#6865)                                         │ 2024-10-28 │</span>
-<span id="cb47-21"><a href="#cb47-21" aria-hidden="true" tabindex="-1"></a>└───────────────────────────┴─────────────────┴─────────────┴─────────────────────────────────────────────────────────────────────────┴────────────┘</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb43"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>                                          ,--./,-.</span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>          ___     __   __   __   ___     /,-._.--~\ </span>
+<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a>    |\ | |__  __ /  ` /  \ |__) |__         }  {</span>
+<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a>    | \| |       \__, \__/ |  \ |___     \`-._,-`-,</span>
+<span id="cb43-5"><a href="#cb43-5" aria-hidden="true" tabindex="-1"></a>                                          `._,._,'</span>
+<span id="cb43-6"><a href="#cb43-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-7"><a href="#cb43-7" aria-hidden="true" tabindex="-1"></a>    nf-core/tools version 3.2.0 - https://nf-co.re</span>
+<span id="cb43-8"><a href="#cb43-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-9"><a href="#cb43-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-10"><a href="#cb43-10" aria-hidden="true" tabindex="-1"></a>INFO     Repository type: pipeline                                                                                                                  </span>
+<span id="cb43-11"><a href="#cb43-11" aria-hidden="true" tabindex="-1"></a>INFO     Subworkflows installed in '.':                                                                                                             </span>
+<span id="cb43-12"><a href="#cb43-12" aria-hidden="true" tabindex="-1"></a>                                                                                                                                                    </span>
+<span id="cb43-13"><a href="#cb43-13" aria-hidden="true" tabindex="-1"></a>┏━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━┓</span>
+<span id="cb43-14"><a href="#cb43-14" aria-hidden="true" tabindex="-1"></a>┃ Subworkflow Name          ┃ Repository      ┃ Version SHA ┃ Message                                                                 ┃ Date       ┃</span>
+<span id="cb43-15"><a href="#cb43-15" aria-hidden="true" tabindex="-1"></a>┡━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━┩</span>
+<span id="cb43-16"><a href="#cb43-16" aria-hidden="true" tabindex="-1"></a>│ fastq_subsample_fq_salmon │ nf-core/modules │ 05954da     │ Delete all tag.yml + relative path in antismash/antismashlite tests     │ 2025-03-26 │</span>
+<span id="cb43-17"><a href="#cb43-17" aria-hidden="true" tabindex="-1"></a>│                           │                 │             │ (#8116)                                                                 │            │</span>
+<span id="cb43-18"><a href="#cb43-18" aria-hidden="true" tabindex="-1"></a>│ utils_nextflow_pipeline   │ nf-core/modules │ c2b22d8     │ Utils Nextflow: Avoid unused variables (#7070)                          │ 2024-11-24 │</span>
+<span id="cb43-19"><a href="#cb43-19" aria-hidden="true" tabindex="-1"></a>│ utils_nfcore_pipeline     │ nf-core/modules │ 51ae540     │ Replace switch with else-if in utils_nfcore_pipeline (#7168)            │ 2024-12-06 │</span>
+<span id="cb43-20"><a href="#cb43-20" aria-hidden="true" tabindex="-1"></a>│ utils_nfschema_plugin     │ nf-core/modules │ 2fd2cd6     │ fails with lenient mode (#6865)                                         │ 2024-10-28 │</span>
+<span id="cb43-21"><a href="#cb43-21" aria-hidden="true" tabindex="-1"></a>└───────────────────────────┴─────────────────┴─────────────┴─────────────────────────────────────────────────────────────────────────┴────────────┘</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 </div>
